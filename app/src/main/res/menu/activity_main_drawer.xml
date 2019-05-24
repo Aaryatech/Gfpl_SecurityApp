@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dash"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_visitor_gp"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Visitor Gate Pass" />
+
+        <item
+            android:id="@+id/nav_visitor_gp_list"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Visitor Gate Pass List" />
+
+        <item
+            android:id="@+id/nav_maintenance_gp"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Maintenance Gate Pass" />
+
+        <item
+            android:id="@+id/nav_maintenance_gp_list"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Maintenance Gate Pass List" />
+
+        <item
+            android:id="@+id/nav_emp_gp"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Employee Gate Pass" />
+
+        <item
+            android:id="@+id/nav_emp_gp_list"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Employee Gate Pass List" />
+
+        <item
+            android:id="@+id/nav_material_gp"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Material Gate Pass" />
+
+        <item
+            android:id="@+id/nav_material_gp_list"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Material Gate Pass List" />
+
+        <item
+            android:id="@+id/nav_material_tracking"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Material Tracking" />
+        <item
+            android:visible="false"
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Logout" />
+
+    </group>
+
+
+</menu>
