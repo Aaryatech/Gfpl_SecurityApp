@@ -47,6 +47,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee_gate_pass_list, container, false);
+        getActivity().setTitle("Employee List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);

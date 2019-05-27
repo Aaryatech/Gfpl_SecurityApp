@@ -51,6 +51,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_maintenance_gate_pass_list, container, false);
+        getActivity().setTitle("Maintenance List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);

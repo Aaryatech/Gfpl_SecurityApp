@@ -36,6 +36,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee_gate_pass, container, false);
+        getActivity().setTitle("Employee Gate pass");
 
         edRemark = view.findViewById(R.id.edRemark);
         edFrom = view.findViewById(R.id.edFrom);

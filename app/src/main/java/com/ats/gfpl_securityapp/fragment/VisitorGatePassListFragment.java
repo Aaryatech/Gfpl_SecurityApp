@@ -45,6 +45,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_visitor_gate_pass_list, container, false);
+        getActivity().setTitle("Visitors List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);

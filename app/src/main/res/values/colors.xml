@@ -21,4 +21,7 @@
     <color name="colorGreen">#3C88FD00</color>
     <color name="colorBlue">#3E008EFF</color>
 
+    <color name="colorOne">#57BBA9</color>
+    <color name="colorTwo">#184E5E</color>
+
 </resources>

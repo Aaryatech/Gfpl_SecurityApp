@@ -15,6 +15,7 @@ public class MaintenanceGatePassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_maintenance_gate_pass, container, false);
+        getActivity().setTitle("Maintenance Gate Pass");
 
 
         return view;

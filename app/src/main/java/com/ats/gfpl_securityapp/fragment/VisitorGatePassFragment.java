@@ -25,6 +25,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_visitor_gate_pass, container, false);
+        getActivity().setTitle("Visitor Gate Pass");
 
         edName = view.findViewById(R.id.edName);
         edMobile = view.findViewById(R.id.edMobile);

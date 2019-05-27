@@ -53,6 +53,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_info, container, false);
+        getActivity().setTitle("Add Information");
 
         ivCamera1 = view.findViewById(R.id.ivCamera1);
         ivCamera2 = view.findViewById(R.id.ivCamera2);

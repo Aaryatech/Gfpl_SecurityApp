@@ -27,6 +27,7 @@ public class TabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab, container, false);
+        getActivity().setTitle("Details");
 
         viewPager = view.findViewById(R.id.viewPager);
         tab = view.findViewById(R.id.tab);

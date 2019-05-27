@@ -46,6 +46,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_close_meeting);
+        setTitle("Close Meeting");
 
         tvVisitor = findViewById(R.id.tvVisitor);
         tvPurpose = findViewById(R.id.tvPurpose);
