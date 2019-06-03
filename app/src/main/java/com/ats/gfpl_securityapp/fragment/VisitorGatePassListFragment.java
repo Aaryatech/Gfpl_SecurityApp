@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +26,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.VisitorGatePassListAdapter;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
+import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VisitorGatePassListFragment extends Fragment implements View.OnClickListener {
 
@@ -40,6 +52,10 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
+
+    Login loginUser;
+
+    ArrayList<VisitorList> visitorList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,21 +67,76 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        ArrayList<String> strList = new ArrayList<>();
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-        VisitorGatePassListAdapter adapter = new VisitorGatePassListAdapter(strList, getContext());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        ArrayList<Integer> statusList = new ArrayList<>();
+        statusList.add(0);
 
+        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+        getPassTypeList.add(1);
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
 
         return view;
+    }
+
+    private void getVisitorGetPassList(String formatDate, String toDate, ArrayList<Integer> getPassType, String empIds, ArrayList<Integer> status) {
+        Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       GEAT PASS TYPE   " +  getPassType  +"            EMP ID   "+   empIds  +"             STATUS"  +status);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<VisitorList>> listCall = Constants.myInterface.getVisitorGatepassListInDate("2019-05-01","2019-05-31",getPassType,empIds,status);
+            listCall.enqueue(new Callback<ArrayList<VisitorList>>() {
+                @Override
+                public void onResponse(Call<ArrayList<VisitorList>> call, Response<ArrayList<VisitorList>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("VISITOR LIST : ", " - " + response.body());
+                            visitorList.clear();
+                            visitorList = response.body();
+
+                            VisitorGatePassListAdapter adapter = new VisitorGatePassListAdapter(visitorList, getContext(),loginUser);
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerView.setLayoutManager(mLayoutManager);
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            recyclerView.setAdapter(adapter);
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<VisitorList>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -108,16 +179,21 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             tvFromDate = findViewById(R.id.tvFromDate);
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
-            Spinner spType = findViewById(R.id.spType);
+            final Spinner spType = findViewById(R.id.spType);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
             tvType = findViewById(R.id.tvType);
             tvEmp = findViewById(R.id.tvEmp);
 
             ArrayList<String> typeArray = new ArrayList<>();
+            final ArrayList<Integer> typeIdArray = new ArrayList<>();
             typeArray.add("All");
             typeArray.add("Visitor");
             typeArray.add("Maintenance");
+
+            typeIdArray.add(0);
+            typeIdArray.add(1);
+            typeIdArray.add(2);
 
             ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
             spType.setAdapter(spTypeAdapter);
@@ -216,10 +292,18 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                     } else {
                         dismiss();
 
+                        final int getPassType = typeIdArray.get(spType.getSelectedItemPosition());
+
+                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                        getPassTypeList.add(getPassType);
+
+                        ArrayList<Integer> statusList = new ArrayList<>();
+                        statusList.add(0);
+
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();
 
-                        // getSPCakeOrders(fromDate, toDate, menuIdArrayListSP, slotList, sortOrder);
+                        getVisitorGetPassList(fromDate, toDate, getPassTypeList, "-1", statusList);
                         dismiss();
 
                     }

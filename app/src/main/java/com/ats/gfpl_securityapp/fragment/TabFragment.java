@@ -15,13 +15,15 @@ import android.view.ViewGroup;
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.interfaces.NotificationInterface;
 import com.ats.gfpl_securityapp.interfaces.VisitorDetailInterface;
+import com.ats.gfpl_securityapp.model.VisitorList;
+import com.google.gson.Gson;
 
 public class TabFragment extends Fragment {
 
     private ViewPager viewPager;
     private TabLayout tab;
     FragmentPagerAdapter adapterViewPager;
-
+    public static VisitorList staticVisitorModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +78,14 @@ public class TabFragment extends Fragment {
 
             }
         });
+
+        try {
+            String json = getArguments().getString("model");
+            Gson gsonPlant = new Gson();
+            staticVisitorModel = gsonPlant.fromJson(json, VisitorList.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         return view;

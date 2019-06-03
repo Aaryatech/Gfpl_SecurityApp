@@ -8,6 +8,17 @@
             android:id="@+id/nav_dash"
             android:icon="@drawable/ic_menu_manage"
             android:title="Dashboard" />
+
+        <item
+            android:id="@+id/nav_purpose_gp"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Add Purpose" />
+
+        <item
+            android:id="@+id/nav_purpose_list_gp"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Purpose List" />
+
         <item
             android:id="@+id/nav_visitor_gp"
             android:icon="@drawable/ic_menu_manage"
@@ -47,6 +58,7 @@
             android:id="@+id/nav_material_gp_list"
             android:icon="@drawable/ic_menu_manage"
             android:title="Material Gate Pass List" />
+
 
         <item
             android:id="@+id/nav_material_tracking"
