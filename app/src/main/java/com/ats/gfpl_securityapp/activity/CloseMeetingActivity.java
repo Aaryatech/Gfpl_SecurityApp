@@ -8,25 +8,42 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.ats.gfpl_securityapp.utils.RealPathUtil;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CloseMeetingActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -34,10 +51,10 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
     private ImageView ivCamera1, ivCamera2, ivPhoto1, ivPhoto2;
     private Button btnCloseMeeting;
     private EditText edRemark;
-
+    VisitorList model;
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
-
+     VisitorList visitorList;
     Bitmap myBitmap1 = null, myBitmap2 = null;
     public static String path1, imagePath1 = null, imagePath2 = null;
 
@@ -70,7 +87,25 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
 
         createFolder();
 
+        String closeMetting = getIntent().getStringExtra("model");
+        Gson gson = new Gson();
+        try {
+            model = gson.fromJson(closeMetting, VisitorList.class);
+            Log.e("Close metting", "-----------------------" + model);
+            tvVisitor.setText(model.getPersonName());
+            tvPurpose.setText(model.getPurposeHeading());
+           // tvOutCome.setText(model.getMeetingDiscussion());
+            if(model.getVisitType()==1) {
+                tvType.setText("Appointment");
+            }else if(model.getVisitType()==2)
+            {
+                tvType.setText("Random");
+            }
 
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -84,8 +119,240 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
             showCameraDialog("Photo2");
 
         } else if (v.getId() == R.id.btnCloseMeeting) {
+            String strRemark;
+            boolean isValidRemark=false;
+
+            strRemark=edRemark.getText().toString();
+
+            if (strRemark.isEmpty()) {
+                edRemark.setError("required");
+            } else {
+                edRemark.setError(null);
+                isValidRemark = true;
+            }
+
+            if(isValidRemark)
+            {
+                visitorList = new VisitorList(model.getGatepassVisitorId(),model.getVisitDateIn(),model.getSecurityIdIn(),model.getPersonName(),model.getPersonCompany(),model.getPersonPhoto(),model.getMobileNo(),model.getIdProof(),model.getIdProof1(),model.getOtherPhoto(),model.getPurposeId(),model.getPurposeHeading(),model.getPurposeRemark(),model.getEmpIds(),model.getEmpName(),model.getGateId(),model.getGatePasstype(),4,model.getVisitType(),model.getInTime(),model.getVisitCardId(),model.getVisitCardNo(),model.getTakeMobile(),strRemark,model.getUploadPhoto(),model.getVisitOutTime(),model.getTotalTimeDifference(),model.getSecurityIdOut(),model.getVisitDateOut(),model.getUserSignImage(),model.getDelStatus(),model.getIsUsed(),model.getExInt1(),model.getExInt2(),model.getExInt3(),model.getExVar1(),model.getExVar2(),model.getExVar3(),model.getSecurityInName(),model.getSecurityOutName(),model.getPurposeHeading(),model.getGateName(),model.getAssignEmpName());
+                if (imagePath1 == null && imagePath2 == null) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
+                    builder.setTitle("Confirmation");
+                    builder.setMessage("Do you want to close visitor ?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            saveVisitor(visitorList);
+                            Log.e("VISITOR CLOSING LIST", "-----------------------" + visitorList);
+
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }else{
+                    final ArrayList<String> pathArray = new ArrayList<>();
+                    final ArrayList<String> fileNameArray = new ArrayList<>();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
+                    builder.setTitle("Confirmation");
+                    builder.setMessage("Do you want to close visitor ?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                    String photo1 = "", photo2 = "";
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+
+                    if (imagePath1 != null) {
+
+                        pathArray.add(imagePath1);
+
+                        File imgFile1 = new File(imagePath1);
+                        int pos = imgFile1.getName().lastIndexOf(".");
+                        String ext = imgFile1.getName().substring(pos + 1);
+                        photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                        fileNameArray.add(photo1);
+                        visitorList.setUploadPhoto(photo1);
+                    }
+
+                    if (imagePath2 != null) {
+
+                        pathArray.add(imagePath2);
+
+                        File imgFile2 = new File(imagePath2);
+                        int pos2 = imgFile2.getName().lastIndexOf(".");
+                        String ext2 = imgFile2.getName().substring(pos2 + 1);
+                        photo2 = sdf.format(System.currentTimeMillis()) + "_p2." + ext2;
+                        fileNameArray.add(photo2);
+                        visitorList.setExVar2(photo2);
+
+                    }
+                    
+                    sendImage(pathArray, fileNameArray, visitorList);
+
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
 
         }
+    }
+
+    private void sendImage(final ArrayList<String> filePath, final ArrayList<String> fileName, final VisitorList visitorList) {
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName  +"           VISITER BIN  "+visitorList);
+
+        final CommonDialog commonDialog = new CommonDialog(CloseMeetingActivity.this, "Loading", "Please Wait...");
+        commonDialog.show();
+
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+                imagePath2 = null;
+
+                Log.e("Response : ", "--" + response.body());
+//
+//                if (filePath.size() > 0) {
+//                    for (int i = 0; i < filePath.size(); i++) {
+//                        visitorList.setUploadPhoto(fileName.get(i));
+//
+//                    }
+//                }
+                saveVisitor(visitorList);
+            }
+
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(CloseMeetingActivity.this, "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveVisitor(VisitorList visitorList) {
+        Log.e("PARAMETER","---------------------------------------VISITOR CLOSING--------------------------"+visitorList);
+
+        if (Constants.isOnline(getApplicationContext())) {
+            final CommonDialog commonDialog = new CommonDialog(CloseMeetingActivity.this, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<VisitorList> listCall = Constants.myInterface.saveGatepassVisitor(visitorList);
+            listCall.enqueue(new Callback<VisitorList>() {
+                @Override
+                public void onResponse(Call<VisitorList> call, Response<VisitorList> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SAVE VISITOR CLOSING : ", " ------------------------------SAVE VISITOR CLOSING------------------------- " + response.body());
+                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+
+//                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                            ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+//                            ft.commit();
+                            commonDialog.dismiss();
+                            finish();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
+                            builder.setTitle("" + CloseMeetingActivity.this.getResources().getString(R.string.app_name));
+                            builder.setMessage("Unable to process! please try again.");
+
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
+                        builder.setTitle("" + CloseMeetingActivity.this.getResources().getString(R.string.app_name));
+                        builder.setMessage("Unable to process! please try again.");
+
+                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VisitorList> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
+                    builder.setTitle("" + CloseMeetingActivity.this.getResources().getString(R.string.app_name));
+                    builder.setMessage("Unable to process! please try again.");
+
+                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
+        } else {
+            Toast.makeText(CloseMeetingActivity.this, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 

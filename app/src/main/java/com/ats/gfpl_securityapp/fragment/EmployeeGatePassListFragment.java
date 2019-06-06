@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,23 +26,36 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.EmployeeGatePassListAdapter;
-import com.ats.gfpl_securityapp.adapter.VisitorGatePassListAdapter;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.EmpGatePass;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
+import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
+import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EmployeeGatePassListFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+    Login loginUser;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
-
+    ArrayList<EmpGatePass> empList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,21 +68,85 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
 
         fab.setOnClickListener(this);
 
-        ArrayList<String> strList = new ArrayList<>();
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-        EmployeeGatePassListAdapter adapter = new EmployeeGatePassListAdapter(strList, getContext());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        ArrayList<Integer> statusList = new ArrayList<>();
+        statusList.add(0);
+        statusList.add(1);
+
+        ArrayList<Integer> deptList = new ArrayList<>();
+        deptList.add(-1);
 
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
+
+//        ArrayList<String> strList = new ArrayList<>();
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
+//
         return view;
+    }
+
+    private void getEmployeeGetPassList(String formatDate, String toDate,  ArrayList<Integer> deptList, String emp, ArrayList<Integer> statusList) {
+        Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       Dept   " +  deptList  +"            EMP ID   "+   emp  +"             STATUS"  +statusList);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<EmpGatePass>> listCall = Constants.myInterface.getEmpGatepassListWithDateFilter(formatDate,toDate,deptList,emp,statusList);
+            listCall.enqueue(new Callback<ArrayList<EmpGatePass>>() {
+                @Override
+                public void onResponse(Call<ArrayList<EmpGatePass>> call, Response<ArrayList<EmpGatePass>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("EMPLOYEE LIST : ", " - " + response.body());
+                            empList.clear();
+                            empList = response.body();
+
+                            EmployeeGatePassListAdapter adapter = new EmployeeGatePassListAdapter(empList, getContext());
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerView.setLayoutManager(mLayoutManager);
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                             recyclerView.setAdapter(adapter);
+
+                             commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<EmpGatePass>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -86,6 +164,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
         Spinner spDept, spType;
         ImageView ivClose;
         LinearLayout llSup;
+        String DateTo;
 
 
         public FilterDialog(@NonNull Context context) {
@@ -118,12 +197,37 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             llSup = findViewById(R.id.llSup);
 
             ArrayList<String> typeArray = new ArrayList<>();
+            final ArrayList<Integer> typeIdArray = new ArrayList<>();
             typeArray.add("All");
             typeArray.add("Visitor");
             typeArray.add("Maintenance");
 
+            typeIdArray.add(-1);
+            typeIdArray.add(1);
+            typeIdArray.add(2);
+
             ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
             spDept.setAdapter(spTypeAdapter);
+
+            Date todayDate = Calendar.getInstance().getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            String currentDate = formatter.format(todayDate);
+            Log.e("Mytag","todayString"+currentDate);
+
+            edToDate.setText(currentDate);
+
+            SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+            Date ToDate = null;
+            try {
+                ToDate = formatter1.parse(currentDate);//catch exception
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            DateTo = formatter2.format(ToDate);
+            tvToDate.setText(DateTo);
 
 //            final String frmDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_FROM_DATE);
 //            String toDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_TO_DATE);
@@ -210,6 +314,8 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             btnFilter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    final int getDept = typeIdArray.get(spDept.getSelectedItemPosition());
+
                     if (edFromDate.getText().toString().isEmpty()) {
                         edFromDate.setError("Select From Date");
                         edFromDate.requestFocus();
@@ -217,14 +323,22 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
                         edToDate.setError("Select To Date");
                         edToDate.requestFocus();
                     } else {
-                        dismiss();
+
+//                        TextView viewType = (TextView) spDept.getSelectedView();
+//                        viewType.setError(null);
+
+                        ArrayList<Integer> getPassDeptList = new ArrayList<>();
+                        getPassDeptList.add(getDept);
+
+                        ArrayList<Integer> statusList = new ArrayList<>();
+                        statusList.add(0);
+                        statusList.add(1);
 
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();
 
-                        // getSPCakeOrders(fromDate, toDate, menuIdArrayListSP, slotList, sortOrder);
+                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, "-1", statusList);
                         dismiss();
-
                     }
                 }
             });

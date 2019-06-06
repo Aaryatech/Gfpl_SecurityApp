@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +47,8 @@ import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.ats.gfpl_securityapp.utils.RealPathUtil;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -53,6 +56,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,13 +69,14 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
     private EditText edName, edMobile,edCompany,edNoOfPer,edEmployee,edRemark;
     private TextInputLayout textEmp;
-    private TextView tvPerson;
+    private TextView tvPerson,tvImageLable;
     private Spinner spPurpose, spPerson,spGate;
     private RadioButton rbAppointment, rbRandom;
     private Button btnSubmit;
     int purposeId= 0,purposeType;
     private ImageView ivCamera1,ivPhoto1;
     private TextView tvPhoto1;
+    private LinearLayout linearLayoutImage;
     String empIds;
     Login loginUser;
     VisitorList model;
@@ -110,9 +117,12 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
         edCompany = view.findViewById(R.id.edCompany);
         edNoOfPer = view.findViewById(R.id.edNoOfPer);
         tvPerson=(TextView)view.findViewById(R.id.tvPerson);
+        tvImageLable=(TextView)view.findViewById(R.id.tvImageLable);
         edEmployee=(EditText) view.findViewById(R.id.edEmployee);
         textEmp=(TextInputLayout) view.findViewById(R.id.textEmployee);
         edRemark=(EditText)view.findViewById(R.id.edRemark);
+
+        linearLayoutImage=(LinearLayout)view.findViewById(R.id.linearLayoutImage);
 
         ivCamera1 = view.findViewById(R.id.ivCamera1);
         ivPhoto1 = view.findViewById(R.id.ivPhoto1);
@@ -144,11 +154,26 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             edNoOfPer.setText(""+model.getExInt1());
             edRemark.setText(model.getPurposeRemark());
 
-
+//            String imageUri = String.valueOf(model.getPersonPhoto());
+//            try {
+//                Picasso.with(getActivity()).load(imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto1);
+//
+//            } catch (Exception e) {
+//
+//            }
 
         }catch (Exception e)
         {
             e.printStackTrace();
+        }
+
+        if(model==null)
+        {
+            linearLayoutImage.setVisibility(View.VISIBLE);
+            tvImageLable.setVisibility(View.VISIBLE);
+        }else{
+            linearLayoutImage.setVisibility(View.GONE);
+            tvImageLable.setVisibility(View.GONE);
         }
 
         if (PermissionsUtil.checkAndRequestPermissions(getActivity())) {
@@ -263,7 +288,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                                 int position = 0;
                                 if (getIdList.size() > 0) {
                                     for (int i = 0; i < getIdList.size(); i++) {
-                                        if (model.getExInt1() == getIdList.get(i)) {
+                                        if (model.getGateId() == getIdList.get(i)) {
                                             position = i;
                                             break;
                                         }
@@ -503,6 +528,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 isValidRemark = true;
             }
 
+
             //int
             visitorType = 1;
             if (rbAppointment.isChecked()) {
@@ -511,7 +537,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 visitorType = 2;
             }
 
-            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && isValidRemark) {
+            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && isValidRemark ) {
                 //get Time
                 Calendar cal = Calendar.getInstance();
                 Date date = cal.getTime();
@@ -521,37 +547,40 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                 if (model == null) {
-                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), 0, strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
+
+                    if (imagePath1 != null)
+                    {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
-                    builder.setMessage("Do you want to add visitor ?");
+                    builder.setMessage("Do you want visitor gate pass ?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            saveVisitor(visitor);
-                            Log.e("VISITOR", "-----------------------" + visitor);
+                            //saveVisitor(visitor);
+                            //Log.e("VISITOR", "-----------------------" + visitor);
 
-//                        ArrayList<String> pathArray = new ArrayList<>();
-//                        ArrayList<String> fileNameArray = new ArrayList<>();
-//
-//                        String photo1 = "", photo2 = "", photo3 = "";
-//
-//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-//
-//                        if (imagePath1 != null) {
-//
-//                            pathArray.add(imagePath1);
-//
-//                            File imgFile1 = new File(imagePath1);
-//                            int pos = imgFile1.getName().lastIndexOf(".");
-//                            String ext = imgFile1.getName().substring(pos + 1);
-//                            photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
-//                            fileNameArray.add(photo1);
-//                        }
-//
-//                        sendImage(pathArray, fileNameArray, visitor);
+                            ArrayList<String> pathArray = new ArrayList<>();
+                            ArrayList<String> fileNameArray = new ArrayList<>();
 
+                            String photo1 = "";
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+
+                            if (imagePath1 != null) {
+
+                                pathArray.add(imagePath1);
+
+                                File imgFile1 = new File(imagePath1);
+                                int pos = imgFile1.getName().lastIndexOf(".");
+                                String ext = imgFile1.getName().substring(pos + 1);
+                                photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                fileNameArray.add(photo1);
+                            }
+
+                            visitor.setPersonPhoto(photo1);
+                            sendImage(pathArray, fileNameArray, visitor);
 
                         }
                     });
@@ -563,8 +592,9 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                }
                 }else {
-                    final Visitor visitor = new Visitor(model.getGatepassVisitorId(), sdf.format(System.currentTimeMillis()), 0, strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, Time, model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), sdf.format(System.currentTimeMillis()), "NA", model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
+                    final Visitor visitor = new Visitor(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), strVisitorName, strCompany, model.getPersonPhoto(), strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, model.getInTime(), model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
                     builder.setMessage("Do you want to edit visitor ?");
@@ -572,29 +602,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            saveVisitor(visitor);
-                            Log.e("VISITOR", "-----------------------" + visitor);
-
-//                        ArrayList<String> pathArray = new ArrayList<>();
-//                        ArrayList<String> fileNameArray = new ArrayList<>();
-//
-//                        String photo1 = "", photo2 = "", photo3 = "";
-//
-//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-//
-//                        if (imagePath1 != null) {
-//
-//                            pathArray.add(imagePath1);
-//
-//                            File imgFile1 = new File(imagePath1);
-//                            int pos = imgFile1.getName().lastIndexOf(".");
-//                            String ext = imgFile1.getName().substring(pos + 1);
-//                            photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
-//                            fileNameArray.add(photo1);
-//                        }
-//
-//                        sendImage(pathArray, fileNameArray, visitor);
-
+                                saveVisitor(visitor);
+                                Log.e("Image Not Upload", "-----------------------" + visitor);
 
                         }
                     });
@@ -612,6 +621,51 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             }
         }
 
+    }
+
+    private void sendImage(ArrayList<String> filePath, ArrayList<String> fileName, final Visitor visitor) {
+
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName  +"           VISITOR      "+visitor);
+
+        final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+        commonDialog.show();
+
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+
+
+                Log.e("Response : ", "--" + response.body());
+                saveVisitor(visitor);
+                commonDialog.dismiss();
+
+            }
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(getContext(), "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void createFolder() {

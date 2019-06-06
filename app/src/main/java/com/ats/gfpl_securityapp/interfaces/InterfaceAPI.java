@@ -1,21 +1,29 @@
 package com.ats.gfpl_securityapp.interfaces;
 
+import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Purpose;
 import com.ats.gfpl_securityapp.model.PurposeList;
+import com.ats.gfpl_securityapp.model.VisitCard;
 import com.ats.gfpl_securityapp.model.Visitor;
 import com.ats.gfpl_securityapp.model.VisitorList;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface InterfaceAPI {
@@ -44,11 +52,38 @@ public interface InterfaceAPI {
     @POST("transaction/saveGatepassVisitor")
     Call<Visitor> saveGatepassVisitor(@Body Visitor visitor);
 
+    @POST("transaction/saveGatepassVisitor")
+    Call<VisitorList> saveGatepassVisitor(@Body VisitorList visitorList);
+
     @POST("transaction/getVisitorGatepassListInDate")
     Call<ArrayList<VisitorList>> getVisitorGatepassListInDate(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("gatepassType") ArrayList<Integer> gatepassType, @Query("empIds") String empIds, @Query("status") List<Integer> status);
 
     @POST("transaction/updateGatepassStatus")
     Call<Info> updateGatepassStatus(@Query("gatepassVisitorId") int gatepassVisitorId, @Query("empId") int empId,@Query("status") int status,@Query("gateId") int gateId);
 
+    @GET("master/allVisitCard")
+    Call<ArrayList<VisitCard>> allVisitCard();
+
+    @Multipart
+    @POST("photoUpload")
+    Call<JSONObject> imageUpload(@Part MultipartBody.Part[] filePath, @Part("imageName") ArrayList<String> name, @Part("type") RequestBody type);
+
+    @POST("master/deleteVisitor")
+    Call<Info> deleteVisitor(@Query("gatepassVisitorId") int gatepassVisitorId);
+
+    @POST("transaction/updateVisitorStatus")
+    Call<Info> updateVisitorStatus(@Query("gatepassVisitorId") int gatepassVisitorId,@Query("status") int status);
+
+    @POST("master/saveEmployeeGatepass")
+    Call<EmpGatePass> saveEmployeeGatepass(@Body EmpGatePass empGatePass);
+
+    @POST("transaction/getEmpGatepassListWithDateFilter")
+    Call<ArrayList<EmpGatePass>> getEmpGatepassListWithDateFilter(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("deptIds") ArrayList<Integer> deptIds, @Query("empIds") String empIds, @Query("status") List<Integer> status);
+
+    @POST("master/deleteEmployeeGatepass")
+    Call<Info> deleteEmployeeGatepass(@Query("gatepassEmpId") int gatepassEmpId);
+
+    @POST("transaction/updateEmpGatepass")
+    Call<Info> updateEmpGatepass(@Query("gatepassEmpId") int gatepassEmpId,@Query("securityId") int securityId,@Query("status") int status,@Query("type") int type);
 
 }

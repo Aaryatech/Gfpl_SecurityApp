@@ -24,51 +24,25 @@
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:fontFamily="@font/sf_ui_bold"
-                android:text="Gate Pass No : "
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvGPNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:fontFamily="@font/sf_ui_bold"
-                android:text="125"
-                android:textSize="15sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight="1"
-                android:gravity="right">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:fontFamily="@font/sf_ui_bold"
+                    android:text="Gate Pass No : "
+                    android:textSize="15sp" />
 
                 <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:fontFamily="@font/sf_ui_bold"
-                android:text="Security Id : "
-                android:gravity="right"
-                android:textSize="15sp" />
+                    android:id="@+id/tvGPNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:fontFamily="@font/sf_ui_bold"
+                    android:text="125"
+                    android:textSize="15sp" />
 
-            <TextView
-                android:id="@+id/tvSecurityId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:fontFamily="@font/sf_ui_bold"
-                android:text="DSC125"
-               android:gravity="right"
-                android:textSize="15sp" />
             </LinearLayout>
+
 
         </LinearLayout>
 
@@ -80,8 +54,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/ivPhoto"
-                android:layout_width="85dp"
-                android:layout_height="85dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_margin="3dp"
                 android:src="@drawable/profile" />
 
@@ -103,13 +77,13 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvCompany"
+                    android:id="@+id/tvType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:layout_marginRight="3dp"
                     android:layout_marginBottom="3dp"
-                    android:text="Company Name"
+                    android:text="Gate pass type"
                     android:textSize="15sp" />
 
                 <TextView
@@ -121,18 +95,6 @@
                     android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     android:text="9887765845"
-                    android:textSize="15sp" />
-
-
-                <TextView
-                    android:id="@+id/tvType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:drawablePadding="10dp"
-                    android:gravity="end"
-                    android:text="Appointment"
                     android:textSize="15sp" />
 
 
@@ -198,84 +160,71 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center_vertical"-->
-            <!--android:orientation="horizontal">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvgateName"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_gate_name"
-                    android:drawablePadding="10dp"
-                    android:text="Gate Name"
+                    android:layout_margin="3dp"
+                    android:textSize="15sp"
                     android:fontFamily="@font/sf_ui_bold"
-                    android:gravity="center_vertical"
-                    android:padding="5dp"
-                    />
+                    android:text="New Out Time : " />
 
                 <TextView
-                    android:id="@+id/tvgatePassType"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tvNewOutTime"
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_gate_pass_type"
-                    android:drawablePadding="10dp"
-                    android:text="Gate Pass Type"
+                    android:layout_margin="3dp"
                     android:fontFamily="@font/sf_ui_bold"
-                    android:gravity="center_vertical"
-                    android:padding="5dp"
-                    />
+                    android:text="4:00 " />
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:fontFamily="@font/sf_ui_bold"
+                    android:text="New In Time : " />
+
+                <TextView
+                    android:id="@+id/tvNewInTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_margin="3dp"
+                    android:fontFamily="@font/sf_ui_bold"
+                    android:text="6:00 " />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:orientation="horizontal">-->
+
         <!--</LinearLayout>-->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end|center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_status"
-            android:drawablePadding="10dp"
-            android:text="Status/Pending"
-            android:fontFamily="@font/sf_ui_bold"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            />
-
-        <TextView
-            android:id="@+id/tvMob"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_call"
-            android:drawablePadding="10dp"
-            android:text="Take Mobile"
-            android:fontFamily="@font/sf_ui_bold"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            />
-
-    </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -293,20 +242,6 @@
                 android:drawableLeft="@drawable/ic_employee"
                 android:drawablePadding="10dp"
                 android:text="Purpose Heading"
-                android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                />
-
-            <TextView
-                android:id="@+id/tvVisiteCardNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_visite_card"
-                android:drawablePadding="10dp"
-                android:text="Visite Card Number"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
@@ -365,28 +300,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end|center_vertical"
-            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvgMeetingDisc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_meeting_disc"
-                android:drawablePadding="10dp"
-                android:text="Meeting Disccustion"
-                android:fontFamily="@font/sf_ui_bold"
-                android:gravity="center_vertical"
-                android:padding="5dp"
-                />
-
-        </LinearLayout>
 
     </LinearLayout>
 

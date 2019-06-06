@@ -209,6 +209,7 @@
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
                 android:text="Photo"
+                android:visibility="gone"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -217,6 +218,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <ImageView

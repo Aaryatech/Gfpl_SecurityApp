@@ -218,6 +218,7 @@
             </RadioGroup>
 
             <TextView
+                android:id="@+id/tvImageLable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -225,15 +226,18 @@
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
                 android:text="Photo"
+                android:visibility="gone"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/linearLayoutImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/ivCamera1"

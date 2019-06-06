@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,12 +26,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.adapter.MaintenanceGatePassListAdapter;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
+import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
+import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MaintenanceGatePassListFragment extends Fragment implements View.OnClickListener {
 
@@ -37,6 +54,10 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
+
+    Login loginUser;
+
+    ArrayList<VisitorList> visitorList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,22 +69,86 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
         fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(this);
+//
+//        ArrayList<String> strList = new ArrayList<>();
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
+//        strList.add("");
 
-        ArrayList<String> strList = new ArrayList<>();
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-//        VisitorGatePassListAdapter adapter = new VisitorGatePassListAdapter(strList, getContext());
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-//        recyclerView.setLayoutManager(mLayoutManager);
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setAdapter(adapter);
+        ArrayList<Integer> statusList = new ArrayList<>();
+        statusList.add(0);
+
+        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+        getPassTypeList.add(2);
+
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+
 
 
         return view;
+    }
+
+    private void getMaintenanceGetPassList(String formatDate, String toDate, ArrayList<Integer> getPassType, String empIds, ArrayList<Integer> status) {
+        Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       GEAT PASS TYPE   " +  getPassType  +"            EMP ID   "+   empIds  +"             STATUS"  +status);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<VisitorList>> listCall = Constants.myInterface.getVisitorGatepassListInDate(formatDate,toDate,getPassType,empIds,status);
+            listCall.enqueue(new Callback<ArrayList<VisitorList>>() {
+                @Override
+                public void onResponse(Call<ArrayList<VisitorList>> call, Response<ArrayList<VisitorList>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("MAINTENANCE LIST : ", " - " + response.body());
+                            visitorList.clear();
+                            visitorList = response.body();
+
+                            MaintenanceGatePassListAdapter adapter = new MaintenanceGatePassListAdapter(visitorList, getContext(),loginUser);
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerView.setLayoutManager(mLayoutManager);
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            recyclerView.setAdapter(adapter);
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<VisitorList>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -80,6 +165,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
         EditText edFromDate, edToDate;
         TextView tvFromDate, tvToDate, tvType, tvEmp;
         ImageView ivClose;
+        String DateTo;
 
 
         public FilterDialog(@NonNull Context context) {
@@ -107,19 +193,45 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             tvFromDate = findViewById(R.id.tvFromDate);
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
-            Spinner spType = findViewById(R.id.spType);
+            final Spinner spType = findViewById(R.id.spType);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
             tvType = findViewById(R.id.tvType);
             tvEmp = findViewById(R.id.tvEmp);
 
             ArrayList<String> typeArray = new ArrayList<>();
+            final ArrayList<Integer> typeIdArray = new ArrayList<>();;
             typeArray.add("All");
             typeArray.add("Visitor");
             typeArray.add("Maintenance");
 
+            typeIdArray.add(-1);
+            typeIdArray.add(1);
+            typeIdArray.add(2);
+
             ArrayAdapter<String> spTypeAdapter=new ArrayAdapter<>(getContext(),R.layout.spinner_item,typeArray);
             spType.setAdapter(spTypeAdapter);
+
+            Date todayDate = Calendar.getInstance().getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            String currentDate = formatter.format(todayDate);
+            Log.e("Mytag","todayString"+currentDate);
+
+
+            edToDate.setText(currentDate);
+
+            SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+            Date ToDate = null;
+            try {
+                ToDate = formatter1.parse(currentDate);//catch exception
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            DateTo = formatter2.format(ToDate);
+            tvToDate.setText(DateTo);
 
 //            final String frmDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_FROM_DATE);
 //            String toDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_TO_DATE);
@@ -215,11 +327,20 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
                     } else {
                         dismiss();
 
+                        final int getPassType = typeIdArray.get(spType.getSelectedItemPosition());
+
+                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                        getPassTypeList.add(getPassType);
+
+                        ArrayList<Integer> statusList = new ArrayList<>();
+                        statusList.add(0);
+
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();
 
-                        // getSPCakeOrders(fromDate, toDate, menuIdArrayListSP, slotList, sortOrder);
+                        getMaintenanceGetPassList(fromDate, toDate, getPassTypeList, "-1", statusList);
                         dismiss();
+
 
                     }
                 }

@@ -13,24 +13,44 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.VisitCard;
+import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.ats.gfpl_securityapp.utils.RealPathUtil;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -41,6 +61,11 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
     private Button btnSubmit;
     private RadioButton rbYes, rbNo;
     private TextView tvPhoto1, tvPhoto2, tvPhoto3;
+    VisitorList model;
+    int submitMob;
+
+    ArrayList<String> cardNumberList = new ArrayList<>();
+    ArrayList<Integer> cardIdList = new ArrayList<>();
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -74,13 +99,76 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
         ivCamera3.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
+        rbYes.setChecked(true);
+
+        String quoteStr = getArguments().getString("model");
+        Gson gson = new Gson();
+        model = gson.fromJson(quoteStr, VisitorList.class);
+        Log.e("MODEL INFO","-----------------------------------"+model);
+
         if (PermissionsUtil.checkAndRequestPermissions(getActivity())) {
         }
 
         createFolder();
-
-
+        getCardNumber();
         return view;
+    }
+
+    private void getCardNumber() {
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<VisitCard>> listCall = Constants.myInterface.allVisitCard();
+            listCall.enqueue(new Callback<ArrayList<VisitCard>>() {
+                @Override
+                public void onResponse(Call<ArrayList<VisitCard>> call, Response<ArrayList<VisitCard>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("CARD NUMBER LIST : ", " - " + response.body());
+
+                            cardNumberList.clear();
+                            cardIdList.clear();
+
+
+                            cardNumberList.add("Select Card Number");
+                            cardIdList.add(0);
+
+                            if (response.body().size() > 0) {
+                                for (int i = 0; i < response.body().size(); i++) {
+                                    cardIdList.add(response.body().get(i).getCardId());
+                                    cardNumberList.add(response.body().get(i).getCardNumber());
+                                }
+
+                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, cardNumberList);
+                                spCard.setAdapter(projectAdapter);
+
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<VisitCard>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -98,10 +186,229 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
             showCameraDialog("Photo3");
 
         } else if (v.getId() == R.id.btnSubmit) {
+            if (imagePath1 != null && imagePath2 != null && imagePath3 != null) {
 
+                submitMob = 1;
+                if (rbYes.isChecked()) {
+                    submitMob = 1;
+                } else if (rbNo.isChecked()) {
+                    submitMob = 2;
+                }
+                int cardID = 0;
+                String cardNumber = null;
+                try {
+                     cardID = cardIdList.get(spCard.getSelectedItemPosition());
+                     cardNumber = cardNumberList.get(spCard.getSelectedItemPosition());
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+                final ArrayList<String> pathArray = new ArrayList<>();
+                final ArrayList<String> fileNameArray = new ArrayList<>();
+
+                String photo1 = "", photo2 = "", photo3 = "";
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+
+                if (imagePath1 != null) {
+
+                    pathArray.add(imagePath1);
+
+                    File imgFile1 = new File(imagePath1);
+                    int pos = imgFile1.getName().lastIndexOf(".");
+                    String ext = imgFile1.getName().substring(pos + 1);
+                    photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                    fileNameArray.add(photo1);
+                }
+
+                if (imagePath2 != null) {
+
+                    pathArray.add(imagePath2);
+
+                    File imgFile2 = new File(imagePath2);
+                    int pos2 = imgFile2.getName().lastIndexOf(".");
+                    String ext2 = imgFile2.getName().substring(pos2 + 1);
+                    photo2 = sdf.format(System.currentTimeMillis()) + "_p2." + ext2;
+                    fileNameArray.add(photo2);
+
+                }
+
+                if (imagePath3 != null) {
+
+                    pathArray.add(imagePath3);
+
+                    File imgFile3 = new File(imagePath3);
+                    int pos3 = imgFile3.getName().lastIndexOf(".");
+                    String ext3 = imgFile3.getName().substring(pos3 + 1);
+                    photo3 = sdf.format(System.currentTimeMillis()) + "_p3." + ext3;
+                    fileNameArray.add(photo3);
+
+                }
+
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                final String currDate = sdf1.format(System.currentTimeMillis());
+
+                 final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(),model.getVisitDateIn(),model.getSecurityIdIn(),model.getPersonName(),model.getPersonCompany(),model.getPersonPhoto(),model.getMobileNo(),photo1,photo2,photo3,model.getPurposeId(),model.getPurposeHeading(),model.getPurposeRemark(),model.getEmpIds(),model.getEmpName(),model.getGateId(),model.getGatePasstype(),3,model.getVisitType(),model.getInTime(),cardID,cardNumber,submitMob,model.getMeetingDiscussion(),"",model.getVisitOutTime(),model.getTotalTimeDifference(),model.getSecurityIdOut(),model.getVisitDateOut(),model.getUserSignImage(),model.getDelStatus(),model.getIsUsed(),model.getExInt1(),model.getExInt2(),model.getExInt3(),model.getExVar1(),model.getExVar2(),model.getExVar3(),model.getSecurityInName(),model.getSecurityOutName(),model.getPurposeHeading(),model.getGateName(),model.getAssignEmpName());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Do you want to add info of visitor ?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                       // saveVisitor(visitor);
+                       // Log.e("VISITOR", "-----------------------" + visitor);
+                        sendImage(pathArray, fileNameArray, visitor);
+
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+
+            }
         }
     }
 
+    private void sendImage(final ArrayList<String> filePath, final ArrayList<String> fileName, final VisitorList visitor) {
+
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName);
+
+        final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+        commonDialog.show();
+
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+                imagePath2 = null;
+                imagePath3 = null;
+
+                Log.e("Response : ", "--" + response.body());
+                saveVisitor(visitor);
+                commonDialog.dismiss();
+
+            }
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(getContext(), "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveVisitor(VisitorList visitor) {
+        Log.e("PARAMETER","---------------------------------------VISITOR--------------------------"+visitor);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<VisitorList> listCall = Constants.myInterface.saveGatepassVisitor(visitor);
+            listCall.enqueue(new Callback<VisitorList>() {
+                @Override
+                public void onResponse(Call<VisitorList> call, Response<VisitorList> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SAVE VISITOR INFO : ", " ------------------------------SAVE VISITOR INFO------------------------- " + response.body());
+                            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                            ft.commit();
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                            builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                            builder.setMessage("Unable to process! please try again.");
+
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                        builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                        builder.setMessage("Unable to process! please try again.");
+
+                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VisitorList> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                    builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                    builder.setMessage("Unable to process! please try again.");
+
+                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public void createFolder() {
         if (!folder.exists()) {

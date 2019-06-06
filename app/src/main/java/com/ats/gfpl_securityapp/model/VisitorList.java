@@ -135,6 +135,52 @@ public class VisitorList {
     @Expose
     private String assignEmpName;
 
+    public VisitorList(Integer gatepassVisitorId, String visitDateIn, Integer securityIdIn, String personName, String personCompany, String personPhoto, String mobileNo, String idProof, String idProof1, String otherPhoto, Integer purposeId, String visitPurposeText, String purposeRemark, String empIds, String empName, Integer gateId, Integer gatePasstype, Integer visitStatus, Integer visitType, String inTime, Integer visitCardId, String visitCardNo, Integer takeMobile, String meetingDiscussion, String uploadPhoto, String visitOutTime, Integer totalTimeDifference, Integer securityIdOut, String visitDateOut, String userSignImage, Integer delStatus, Integer isUsed, Integer exInt1, Integer exInt2, Integer exInt3, String exVar1, String exVar2, String exVar3, Object securityInName, Object securityOutName, String purposeHeading, String gateName, String assignEmpName) {
+        this.gatepassVisitorId = gatepassVisitorId;
+        this.visitDateIn = visitDateIn;
+        this.securityIdIn = securityIdIn;
+        this.personName = personName;
+        this.personCompany = personCompany;
+        this.personPhoto = personPhoto;
+        this.mobileNo = mobileNo;
+        this.idProof = idProof;
+        this.idProof1 = idProof1;
+        this.otherPhoto = otherPhoto;
+        this.purposeId = purposeId;
+        this.visitPurposeText = visitPurposeText;
+        this.purposeRemark = purposeRemark;
+        this.empIds = empIds;
+        this.empName = empName;
+        this.gateId = gateId;
+        this.gatePasstype = gatePasstype;
+        this.visitStatus = visitStatus;
+        this.visitType = visitType;
+        this.inTime = inTime;
+        this.visitCardId = visitCardId;
+        this.visitCardNo = visitCardNo;
+        this.takeMobile = takeMobile;
+        this.meetingDiscussion = meetingDiscussion;
+        this.uploadPhoto = uploadPhoto;
+        this.visitOutTime = visitOutTime;
+        this.totalTimeDifference = totalTimeDifference;
+        this.securityIdOut = securityIdOut;
+        this.visitDateOut = visitDateOut;
+        this.userSignImage = userSignImage;
+        this.delStatus = delStatus;
+        this.isUsed = isUsed;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exInt3 = exInt3;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+        this.exVar3 = exVar3;
+        this.securityInName = securityInName;
+        this.securityOutName = securityOutName;
+        this.purposeHeading = purposeHeading;
+        this.gateName = gateName;
+        this.assignEmpName = assignEmpName;
+    }
+
     public Integer getGatepassVisitorId() {
         return gatepassVisitorId;
     }

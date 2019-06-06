@@ -34,8 +34,9 @@ import com.ats.gfpl_securityapp.activity.CloseMeetingActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
+import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
+import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.TabFragment;
-import com.ats.gfpl_securityapp.fragment.VisitorGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
@@ -52,20 +53,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGatePassListAdapter.MyViewHolder> {
-    private ArrayList<VisitorList> visitorList;
+public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<MaintenanceGatePassListAdapter.MyViewHolder> {
+    private ArrayList<VisitorList> maintenanceList;
     private Context context;
     private Login login;
 
-    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context,Login login) {
-        this.visitorList = visitorList;
+    public MaintenanceGatePassListAdapter(ArrayList<VisitorList> maintenanceList, Context context, Login login) {
+        this.maintenanceList = maintenanceList;
         this.context = context;
         this.login = login;
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public MaintenanceGatePassListAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.adapter_visitor_gate_pass_list, viewGroup, false);
 
@@ -73,8 +74,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-        final VisitorList model=visitorList.get(i);
+    public void onBindViewHolder(@NonNull MaintenanceGatePassListAdapter.MyViewHolder myViewHolder, int i) {
+        final VisitorList model=maintenanceList.get(i);
 
         Log.e("LOGIN USER","---------------------------"+login);
 
@@ -113,10 +114,9 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         myViewHolder.ivApprove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  // getUpdateStatus(model.getGatepassVisitorId(),login.getEmpId(),1,model.getGateId());
+                //getUpdateStatus(model.getGatepassVisitorId(),login.getEmpId(),1,model.getGateId());
 
                 new AddApproveDialog(context,model,login).show();
-
             }
         });
 
@@ -124,6 +124,13 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             @Override
             public void onClick(View v) {
                 getUpdateStatus(model.getGatepassVisitorId(),login.getEmpId(),2,model.getGateId());
+            }
+        });
+
+        myViewHolder.ivOutFactory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUpdateFactoryStatus(model.getGatepassVisitorId(),5);
             }
         });
 
@@ -138,15 +145,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                 Bundle args = new Bundle();
                 args.putString("model",json);
                 adf.setArguments(args);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
 
-            }
-        });
-
-        myViewHolder.ivOutFactory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getUpdateFactoryStatus(model.getGatepassVisitorId(),5);
             }
         });
 
@@ -163,21 +163,21 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             String json = gson.toJson(model);
 
                             MainActivity activity = (MainActivity) context;
-                            Fragment adf = new VisitorGatePassFragment();
+                            Fragment adf = new MaintenanceGatePassFragment();
                             Bundle args = new Bundle();
                             args.putString("model", json);
                             adf.setArguments(args);
-                            activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
+                            activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
 
                         }else if(menuItem.getItemId()==R.id.action_delete)
                         {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
                             builder.setTitle("Confirm Action");
-                            builder.setMessage("Do you want to delete Visitor?");
+                            builder.setMessage("Do you want to delete Maintenance?");
                             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    deleteVisitor(model.getGatepassVisitorId());
+                                    deleteMaintenance(model.getGatepassVisitorId());
                                     dialog.dismiss();
                                 }
                             });
@@ -210,7 +210,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                 Bundle args = new Bundle();
                 args.putString("model", json);
                 adf.setArguments(args);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
 
             }
         });
@@ -246,73 +246,14 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                 if (result == PackageManager.PERMISSION_GRANTED) {
                     context.startActivity(intent);
                 } else {
-                      //Toast.makeText(getActivity(), "Device not supported", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "Device not supported", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
-    private void getUpdateFactoryStatus(Integer gatepassVisitorId, int status) {
-        Log.e("PARAMETER","                 GATE PASS ID     "+gatepassVisitorId +"       SATAUS      "+status);
 
-        if (Constants.isOnline(context)) {
-            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
-            commonDialog.show();
-
-            Call<Info> listCall = Constants.myInterface.updateVisitorStatus(gatepassVisitorId,status);
-            listCall.enqueue(new Callback<Info>() {
-                @Override
-                public void onResponse(Call<Info> call, Response<Info> response) {
-                    try {
-                        if (response.body() != null) {
-
-                            Log.e("UPDATE FACTORY STATUS: ", " - " + response.body());
-
-                            if (!response.body().getError()) {
-
-                                MainActivity activity = (MainActivity) context;
-
-                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
-
-                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
-                                ft.commit();
-
-                            } else {
-                                Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                            }
-
-                            commonDialog.dismiss();
-
-                        } else {
-                            commonDialog.dismiss();
-                            Log.e("Data Null : ", "-----------");
-                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        commonDialog.dismiss();
-                        Log.e("Exception : ", "-----------" + e.getMessage());
-                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Info> call, Throwable t) {
-                    commonDialog.dismiss();
-                    Log.e("onFailure : ", "-----------" + t.getMessage());
-                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
-                }
-            });
-        } else {
-            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void deleteVisitor(Integer gatepassVisitorId) {
+    private void deleteMaintenance(Integer gatepassVisitorId) {
         if (Constants.isOnline(context)) {
             final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
             commonDialog.show();
@@ -324,7 +265,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                     try {
                         if (response.body() != null) {
 
-                            Log.e("DELETE VISITOR: ", " - " + response.body());
+                            Log.e("DELETE MAINTENANCE: ", " - " + response.body());
 
                             if (!response.body().getError()) {
 
@@ -333,7 +274,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
                                 FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                                ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
                                 ft.commit();
 
                             } else {
@@ -370,7 +311,6 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
     private void getUpdateStatus(Integer gatepassVisitorId, Integer empId, int status, Integer gateId) {
         Log.e("PARAMETER","                 GATE PASS ID     "+gatepassVisitorId +"              EMP ID       "+empId +"       SATAUS      "+status  +"      GATE ID         "+gateId);
-
         if (Constants.isOnline(context)) {
             final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
             commonDialog.show();
@@ -382,7 +322,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                     try {
                         if (response.body() != null) {
 
-                            Log.e("APPROVE & REJECT EMP: ", " - " + response.body());
+                            Log.e("APPROVE & REJECT MAIN: ", " - " + response.body());
 
                             if (!response.body().getError()) {
 
@@ -426,42 +366,6 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         }
 
     }
-
-    @Override
-    public int getItemCount() {
-        return visitorList.size();
-    }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo;
-        public ImageView ivReject, ivApprove, ivClose, ivInfo, ivOutSide,ivOutFactory,ivEdit;
-        public CircleImageView ivPhoto;
-        public LinearLayout linearLayout;
-
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvGPNo = itemView.findViewById(R.id.tvGPNo);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvCompany = itemView.findViewById(R.id.tvCompany);
-            tvMobile = itemView.findViewById(R.id.tvMobile);
-            tvType = itemView.findViewById(R.id.tvType);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvRemark = itemView.findViewById(R.id.tvRemark);
-            linearLayout = itemView.findViewById(R.id.linearLayout);
-
-            ivReject = itemView.findViewById(R.id.ivReject);
-            ivApprove = itemView.findViewById(R.id.ivApprove);
-            ivClose = itemView.findViewById(R.id.ivClose);
-            ivInfo = itemView.findViewById(R.id.ivInfo);
-            ivOutSide = itemView.findViewById(R.id.ivOutSide);
-            ivOutFactory = itemView.findViewById(R.id.ivOutFactory);
-            ivPhoto = itemView.findViewById(R.id.ivPhoto);
-
-            ivEdit=itemView.findViewById(R.id.ivEdit);
-
-        }
-    }
-
 
     private class AddApproveDialog extends Dialog {
         public Button btnCancel, btnSubmit;
@@ -529,8 +433,6 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
                 }
             });
-
-
         }
 
         private void getGate() {
@@ -590,5 +492,95 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         }
     }
 
+    private void getUpdateFactoryStatus(Integer gatepassVisitorId, int status) {
+        Log.e("PARAMETER","                 GATE PASS ID     "+gatepassVisitorId +"       SATAUS      "+status);
 
+        if (Constants.isOnline(context)) {
+            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Info> listCall = Constants.myInterface.updateVisitorStatus(gatepassVisitorId,status);
+            listCall.enqueue(new Callback<Info>() {
+                @Override
+                public void onResponse(Call<Info> call, Response<Info> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("UPDATE FACTORY STATUS: ", " - " + response.body());
+
+                            if (!response.body().getError()) {
+
+                                MainActivity activity = (MainActivity) context;
+
+                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+
+                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+                                ft.commit();
+
+                            } else {
+                                Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Info> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return maintenanceList.size();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo;
+        public ImageView ivReject, ivApprove, ivClose, ivInfo, ivOutSide,ivEdit,ivOutFactory;
+        public LinearLayout linearLayout;
+        public CircleImageView ivPhoto;
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvGPNo = itemView.findViewById(R.id.tvGPNo);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvCompany = itemView.findViewById(R.id.tvCompany);
+            tvMobile = itemView.findViewById(R.id.tvMobile);
+            tvType = itemView.findViewById(R.id.tvType);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvRemark = itemView.findViewById(R.id.tvRemark);
+            linearLayout = itemView.findViewById(R.id.linearLayout);
+
+            ivReject = itemView.findViewById(R.id.ivReject);
+            ivApprove = itemView.findViewById(R.id.ivApprove);
+            ivClose = itemView.findViewById(R.id.ivClose);
+            ivInfo = itemView.findViewById(R.id.ivInfo);
+            ivOutSide = itemView.findViewById(R.id.ivOutSide);
+            ivPhoto = itemView.findViewById(R.id.ivPhoto);
+            ivOutFactory = itemView.findViewById(R.id.ivOutFactory);
+
+            ivEdit=itemView.findViewById(R.id.ivEdit);
+        }
+    }
 }

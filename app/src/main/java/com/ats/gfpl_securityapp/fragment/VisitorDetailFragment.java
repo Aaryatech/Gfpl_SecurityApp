@@ -14,7 +14,7 @@ import com.ats.gfpl_securityapp.interfaces.VisitorDetailInterface;
 import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
 
 public class VisitorDetailFragment extends Fragment implements VisitorDetailInterface {
-    public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,tvSecurityId,tvOutTime,tvInTime,tvgateName,tvgatePassType,tvPurposeText,tvgEmpName;
+    public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,tvSecurityId,tvOutTime,tvInTime,tvgateName,tvgatePassType,tvPurposeText,tvgEmpName,tvPhone,tvMeetingDisc,tvVisitCardNumber;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +33,9 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         tvgatePassType = view.findViewById(R.id.tvgatePassType);
         tvPurposeText = view.findViewById(R.id.tvPurposeText);
         tvgEmpName = view.findViewById(R.id.tvgEmpName);
+        tvPhone = view.findViewById(R.id.tvMob);
+        tvMeetingDisc = view.findViewById(R.id.tvgMeetingDisc);
+        tvVisitCardNumber = view.findViewById(R.id.tvVisiteCardNumber);
 
         tvGPNo.setText(staticVisitorModel.getExVar1());
         tvName.setText(staticVisitorModel.getPersonName());
@@ -45,6 +48,16 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         tvgateName.setText(staticVisitorModel.getGateName());
         tvPurposeText.setText(staticVisitorModel.getPurposeHeading());
         tvgEmpName.setText(staticVisitorModel.getEmpName());
+        tvMeetingDisc.setText(staticVisitorModel.getMeetingDiscussion());
+        tvVisitCardNumber.setText(staticVisitorModel.getVisitCardNo());
+
+        if(staticVisitorModel.getTakeMobile()==1)
+        {
+            tvPhone.setText("Yes");
+        }else if(staticVisitorModel.getTakeMobile()==2)
+        {
+            tvPhone.setText("No");
+        }
 
         if(staticVisitorModel.getVisitType()==1)
         {

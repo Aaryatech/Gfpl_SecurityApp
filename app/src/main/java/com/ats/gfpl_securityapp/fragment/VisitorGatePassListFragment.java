@@ -37,9 +37,11 @@ import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,7 +85,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         ArrayList<Integer> getPassTypeList = new ArrayList<>();
         getPassTypeList.add(1);
 
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
 
@@ -97,7 +98,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<VisitorList>> listCall = Constants.myInterface.getVisitorGatepassListInDate("2019-05-01","2019-05-31",getPassType,empIds,status);
+            Call<ArrayList<VisitorList>> listCall = Constants.myInterface.getVisitorGatepassListInDate(formatDate,toDate,getPassType,empIds,status);
             listCall.enqueue(new Callback<ArrayList<VisitorList>>() {
                 @Override
                 public void onResponse(Call<ArrayList<VisitorList>> call, Response<ArrayList<VisitorList>> response) {
@@ -152,6 +153,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         EditText edFromDate, edToDate;
         TextView tvFromDate, tvToDate, tvType, tvEmp;
         ImageView ivClose;
+        String DateTo;
 
 
         public FilterDialog(@NonNull Context context) {
@@ -191,12 +193,33 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             typeArray.add("Visitor");
             typeArray.add("Maintenance");
 
-            typeIdArray.add(0);
+            typeIdArray.add(-1);
             typeIdArray.add(1);
             typeIdArray.add(2);
 
             ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
             spType.setAdapter(spTypeAdapter);
+
+            Date todayDate = Calendar.getInstance().getTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            String currentDate = formatter.format(todayDate);
+            Log.e("Mytag","todayString"+currentDate);
+
+
+            edToDate.setText(currentDate);
+
+            SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+            Date ToDate = null;
+            try {
+                ToDate = formatter1.parse(currentDate);//catch exception
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            DateTo = formatter2.format(ToDate);
+            tvToDate.setText(DateTo);
 
 //            final String frmDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_FROM_DATE);
 //            String toDate = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_SP_TO_DATE);
