@@ -13,28 +13,51 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Item;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Material;
+import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.ats.gfpl_securityapp.model.Party;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
+import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.ats.gfpl_securityapp.utils.RealPathUtil;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,8 +68,12 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
     private ImageView ivCamera1, ivCamera2, ivCamera3, ivPhoto1, ivPhoto2, ivPhoto3;
     private Spinner spParty, spItem;
     private Button btnSubmit;
-    private TextView tvPhoto1,tvPhoto2,tvPhoto3;
+    private LinearLayout linearLayout_photo1,LinearLayout_photo2;
+    private TextView tvPhoto1,tvPhoto2,tvPhoto3,tvPhoto1lable,tvPhoto2label;
     private int gatePassType;
+    Login loginUser;
+    MaterialDetail model;
+    int materialType;
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -84,42 +111,218 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         tvPhoto2 = view.findViewById(R.id.tvPhoto2);
         tvPhoto3 = view.findViewById(R.id.tvPhoto3);
 
+        tvPhoto1lable = view.findViewById(R.id.tvPhoto1lable);
+        tvPhoto2label = view.findViewById(R.id.tvPhoto2lable);
+
+        linearLayout_photo1 = view.findViewById(R.id.linearLayout_photo1);
+        LinearLayout_photo2 = view.findViewById(R.id.linearLayout_photo2);
+
         ivCamera1.setOnClickListener(this);
         ivCamera2.setOnClickListener(this);
         ivCamera3.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
+        getAllItem();
+        getAllPart();
+
         if (PermissionsUtil.checkAndRequestPermissions(getActivity())) {
         }
 
-        rbInward.setChecked(true);
 
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
-        partyNameList.add("Select Party");
-        partyNameList.add("Party1");
-        partyNameList.add("Party2");
-        partyNameList.add("Party3");
+        try {
+            String quoteStr = getArguments().getString("model");
+            Gson gson = new Gson();
+            model = gson.fromJson(quoteStr, MaterialDetail.class);
+            Log.e("MODEL MATERIAL","-----------------------------------"+model);
 
+           edNugs.setText(""+model.getNoOfNugs());
+           edInvoice.setText(""+model.getInvoiceNumber());
 
-        partyIdList.add(0);
-        partyIdList.add(1);
-        partyIdList.add(2);
-        partyIdList.add(3);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
+        if(model==null)
+        {
+            getActivity().setTitle("Add Material Gate Pass");
+            tvPhoto1lable.setVisibility(View.VISIBLE);
+            tvPhoto2label.setVisibility(View.VISIBLE);
+            linearLayout_photo1.setVisibility(View.VISIBLE);
+            LinearLayout_photo2.setVisibility(View.VISIBLE);
 
-        itemList.add("Select Item");
-        itemList.add("Item1");
-        itemList.add("Item2");
-        itemList.add("Item3");
+        }else{
+            getActivity().setTitle("Edit Material Gate Pass");
+            tvPhoto1lable.setVisibility(View.GONE);
+            tvPhoto2label.setVisibility(View.GONE);
+            linearLayout_photo1.setVisibility(View.GONE);
+            LinearLayout_photo2.setVisibility(View.GONE);
+        }
 
-        itemIdList.add(0);
-        itemIdList.add(1);
-        itemIdList.add(2);
-        itemIdList.add(3);
+        if(model==null) {
+            rbInward.setChecked(true);
+        }else{
+            materialType = model.getGatePassSubType();
+            if (materialType==1) {
+                rbInward.setChecked(true);
+            } else if (materialType==2) {
+                rbParcel.setChecked(true);
+
+            }
+        }
 
         createFolder();
 
         return view;
+    }
+
+    private void getAllPart() {
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Party>> listCall = Constants.myInterface1.getAllVendorByIsUsed();
+            listCall.enqueue(new Callback<ArrayList<Party>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Party>> call, Response<ArrayList<Party>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("PARTY LIST : ", " - " + response.body());
+
+                            partyIdList.clear();
+                            partyNameList.clear();
+
+                            partyNameList.add("Select Party");
+                            partyIdList.add(0);
+
+                            if (response.body().size() > 0) {
+                                for (int i = 0; i < response.body().size(); i++) {
+                                    partyIdList.add(response.body().get(i).getVendorId());
+                                    partyNameList.add(response.body().get(i).getVendorName());
+                                }
+
+                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, partyNameList);
+                                spParty.setAdapter(projectAdapter);
+
+                            }
+                            if (model != null) {
+                                int position = 0;
+                                if (partyIdList.size() > 0) {
+                                    for (int i = 0; i < partyIdList.size(); i++) {
+                                        if (model.getPartyId().equals(partyIdList.get(i))) {
+                                            position = i;
+                                            break;
+                                        }
+                                    }
+                                    spParty.setSelection(position);
+
+                                }
+                            }
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Party>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void getAllItem() {
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Item>> listCall = Constants.myInterface1.getAllItems();
+            listCall.enqueue(new Callback<ArrayList<Item>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Item>> call, Response<ArrayList<Item>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("ITEM LIST : ", " - " + response.body());
+
+                            itemList.clear();
+                            itemIdList.clear();
+
+                            itemList.add("Select Item");
+                            itemIdList.add(0);
+
+                            if (response.body().size() > 0) {
+                                for (int i = 0; i < response.body().size(); i++) {
+                                    itemIdList.add(response.body().get(i).getItemId());
+                                    itemList.add(response.body().get(i).getItemDesc());
+                                }
+
+                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, itemList);
+                                spItem.setAdapter(projectAdapter);
+
+                            }
+
+                            if (model != null) {
+                                int position = 0;
+                                if (itemIdList.size() > 0) {
+                                    for (int i = 0; i < itemIdList.size(); i++) {
+                                        if (model.getItemType()==itemIdList.get(i)) {
+                                            position = i;
+                                            break;
+                                        }
+                                    }
+                                    spItem.setSelection(position);
+
+                                }
+                            }
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null1 : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception1 : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Item>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure1 : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -141,7 +344,14 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
             boolean isValidInvoiceNumber = false,isvalidNoNuges = false;
 
             strInvoiceNumber=edInvoice.getText().toString();
-            strNoOfNugs=edInvoice.getText().toString();
+            strNoOfNugs=edNugs.getText().toString();
+            float noOfNuges = 0;
+            try {
+                 noOfNuges = Float.parseFloat(strNoOfNugs);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             if (strInvoiceNumber.isEmpty()) {
                 edInvoice.setError("required");
@@ -155,7 +365,6 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                 edNugs.setError(null);
                 isvalidNoNuges = true;
             }
-
             gatePassType = 1;
             if (rbInward.isChecked()) {
                 gatePassType = 1;
@@ -168,49 +377,81 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
             if(isValidInvoiceNumber && isvalidNoNuges)
             {
-                if(imagePath1!=null && imagePath2!=null)
-                {
+                Calendar calender = Calendar.getInstance();
+                SimpleDateFormat mdformat = new SimpleDateFormat("hh:mm");
+                String strTime = mdformat.format(calender.getTime());
+                Log.e("Current time", "---------------------" + strTime);
+
+                if (model == null) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, partyName, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, 0, 0, 0, "", "", 0, 0, 0, "", "", "");
+                    if (imagePath1 != null && imagePath2 != null) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                        builder.setTitle("Confirmation");
+                        builder.setMessage("Do you want material gate pass ?");
+                        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                //saveVisitor(visitor);
+                                //Log.e("VISITOR", "-----------------------" + visitor);
+
+                                ArrayList<String> pathArray = new ArrayList<>();
+                                ArrayList<String> fileNameArray = new ArrayList<>();
+
+                                String photo1 = "", photo2 = "";
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+
+                                if (imagePath1 != null) {
+
+                                    pathArray.add(imagePath1);
+
+                                    File imgFile1 = new File(imagePath1);
+                                    int pos = imgFile1.getName().lastIndexOf(".");
+                                    String ext = imgFile1.getName().substring(pos + 1);
+                                    photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                    fileNameArray.add(photo1);
+                                }
+
+                                if (imagePath2 != null) {
+
+                                    pathArray.add(imagePath2);
+
+                                    File imgFile1 = new File(imagePath2);
+                                    int pos = imgFile1.getName().lastIndexOf(".");
+                                    String ext = imgFile1.getName().substring(pos + 1);
+                                    photo2 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                    fileNameArray.add(photo2);
+                                }
+
+                                material.setPersonPhoto(photo1);
+                                material.setInwardPhoto(photo2);
+                                sendImage(pathArray, fileNameArray, material);
+                                Log.e("Material Bin", "------------------------------" + material);
+
+                            }
+                        });
+                        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }else {
+                     final Material material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, partyName, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "","","");
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
-                    builder.setMessage("Do you want to material gate pass ?");
+                    builder.setMessage("Do you want to edit Material gate pass ?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            //saveVisitor(visitor);
-                            //Log.e("VISITOR", "-----------------------" + visitor);
-
-                            ArrayList<String> pathArray = new ArrayList<>();
-                            ArrayList<String> fileNameArray = new ArrayList<>();
-
-                            String photo1 = "",photo2 = "";
-
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
-                            if (imagePath1 != null) {
-
-                                pathArray.add(imagePath1);
-
-                                File imgFile1 = new File(imagePath1);
-                                int pos = imgFile1.getName().lastIndexOf(".");
-                                String ext = imgFile1.getName().substring(pos + 1);
-                                photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
-                                fileNameArray.add(photo1);
-                            }
-
-                            if (imagePath2 != null) {
-
-                                pathArray.add(imagePath2);
-
-                                File imgFile1 = new File(imagePath2);
-                                int pos = imgFile1.getName().lastIndexOf(".");
-                                String ext = imgFile1.getName().substring(pos + 1);
-                                photo2 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
-                                fileNameArray.add(photo2);
-                            }
-
-//                            visitor.setPersonPhoto(photo1);
-//                            sendImage(pathArray, fileNameArray, visitor);
+                            saveMaterial(material);
+                            Log.e("MATERIAL GATE PASS EDIT", "-----------------------" + material);
 
                         }
                     });
@@ -223,11 +464,141 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+            }
+        }
+    }
+
+    private void sendImage(final ArrayList<String> filePath, final ArrayList<String> fileName, final Material material) {
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName);
+
+        final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+        commonDialog.show();
+        
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+                imagePath2 = null;
+               
+                Log.e("Response : ", "--" + response.body());
+                saveMaterial(material);
+                
 
             }
 
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(getContext(), "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
+    private void saveMaterial(Material material) {
+        Log.e("PARAMETER","---------------------------------------MATERIAL--------------------------"+material);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Material> listCall = Constants.myInterface.saveMaterialGatepass(material);
+            listCall.enqueue(new Callback<Material>() {
+                @Override
+                public void onResponse(Call<Material> call, Response<Material> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SAVE MATERIAL : ", " ------------------------------SAVE MATERIAL------------------------- " + response.body());
+                            Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
+                            ft.commit();
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                            builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                            builder.setMessage("Unable to process! please try again.");
+
+                            builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                        builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                        builder.setMessage("Unable to process! please try again.");
+
+                        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Material> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                    builder.setTitle("" + getActivity().getResources().getString(R.string.app_name));
+                    builder.setMessage("Unable to process! please try again.");
+
+                    builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
+
     }
 
 

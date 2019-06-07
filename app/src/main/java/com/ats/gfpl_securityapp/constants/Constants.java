@@ -22,7 +22,9 @@ public class Constants {
 
    // public static final String BASE_URL ="http://192.168.2.4:8096/";
    // public static final String BASE_URL = " http://132.148.151.41:8080/SecurityAppApi/";
-    public static final String BASE_URL = "http://192.168.2.7:9000/";
+    public static final String BASE_URL = "http://192.168.2.6:9000/";
+    public static final String IMAGE_URL = "";
+    public static final String BASE_URL_SPINNER = "http://132.148.151.41:8080/storewebapi/";
 
 
     public static OkHttpClient client = new OkHttpClient.Builder()
@@ -51,6 +53,14 @@ public class Constants {
             .addConverterFactory(GsonConverterFactory.create()).build();
 
     public static InterfaceAPI myInterface = retrofit.create(InterfaceAPI.class);
+
+
+    public static Retrofit retrofit1 = new Retrofit.Builder()
+            .baseUrl(BASE_URL_SPINNER)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create()).build();
+
+    public static InterfaceAPI myInterface1 = retrofit1.create(InterfaceAPI.class);
 
     public static boolean isOnline(Context context) {
         ConnectivityManager conMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -31,6 +31,7 @@ import com.ats.gfpl_securityapp.model.PurposeList;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,11 +54,12 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     private TextView tvName,tvLabelTotalHrs;
     private CircleImageView ivPhoto;
     int gatePassType,employeeType;;
-    String selectedtext,employeeName;
+    String selectedtext,employeeName,employeeImage;
     Login loginUser;
     EmpGatePass model;
 
     ArrayList<String> empNameList = new ArrayList<>();
+    ArrayList<String> empImageList = new ArrayList<>();
     ArrayList<Integer> empIdList = new ArrayList<>();
 
     ArrayList<String> purposeHeadingList = new ArrayList<>();
@@ -142,8 +144,17 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                  employeeName = empNameList.get(position);
+                employeeImage = empImageList.get(position);
                 Log.e("EMP Name","---------------------"+employeeName);
+                Log.e("EMP Image","---------------------"+employeeImage);
                 tvName.setText(employeeName);
+
+                try {
+                    Picasso.with(getActivity()).load(Constants.IMAGE_URL+ " " +employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+
+                } catch (Exception e) {
+
+                }
 
 
             }
@@ -473,10 +484,13 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                             if (response.body().size() > 0) {
                                 for (int i = 0; i < response.body().size(); i++) {
                                     empIdList.add(response.body().get(i).getEmpId());
+                                    empImageList.add(response.body().get(i).getEmpPhoto());
                                     empNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+
                                 }
 
                                 ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+
                                 spEmployee.setAdapter(projectAdapter);
 
                             }

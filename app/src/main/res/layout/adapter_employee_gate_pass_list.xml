@@ -192,6 +192,7 @@
                     android:textSize="15sp"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
+                    android:visibility="gone"
                     android:fontFamily="@font/sf_ui_regular"
                     android:text="9898989898" />
 

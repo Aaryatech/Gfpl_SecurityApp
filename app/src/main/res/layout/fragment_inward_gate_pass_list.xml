@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/ParentPadding"
-    tools:context=".fragment.InwardGatePassListFragment">
+    tools:context=".fragment.PendingInwardFragment">
 
     <CheckBox
         android:id="@+id/cbAll"

@@ -86,7 +86,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 
         String imageUri = String.valueOf(model.getPersonPhoto());
         try {
-            Picasso.with(context).load(imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
+            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
 
         } catch (Exception e) {
 

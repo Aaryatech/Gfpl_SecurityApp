@@ -1,10 +1,15 @@
 package com.ats.gfpl_securityapp.interfaces;
 
+import com.ats.gfpl_securityapp.model.Department;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
+import com.ats.gfpl_securityapp.model.Item;
 import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Material;
+import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.ats.gfpl_securityapp.model.Party;
 import com.ats.gfpl_securityapp.model.Purpose;
 import com.ats.gfpl_securityapp.model.PurposeList;
 import com.ats.gfpl_securityapp.model.VisitCard;
@@ -85,5 +90,27 @@ public interface InterfaceAPI {
 
     @POST("transaction/updateEmpGatepass")
     Call<Info> updateEmpGatepass(@Query("gatepassEmpId") int gatepassEmpId,@Query("securityId") int securityId,@Query("status") int status,@Query("type") int type);
+
+    @POST("transaction/saveMaterialGatepass")
+    Call<Material> saveMaterialGatepass(@Body Material material);
+
+    @GET("master/allEmployeeDepartment")
+    Call<ArrayList<Department>> allEmployeeDepartment();
+
+    @POST("transaction/getMaterialTrackGPListWithSupFilter")
+    Call<ArrayList<MaterialDetail>> getMaterialTrackGPListWithSupFilter(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("deptIds") ArrayList<Integer> deptIds, @Query("supIds") ArrayList<Integer> supIds, @Query("status") List<Integer> status);
+
+    @POST("transaction/getMaterialTrackGatepassListWithDateFilter")
+    Call<ArrayList<MaterialDetail>> getMaterialTrackGatepassListWithDateFilter(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("deptIds") ArrayList<Integer> deptIds, @Query("empIds") ArrayList<Integer> empIds, @Query("status") List<Integer> status);
+
+    @POST("master/deleteMaterialGatepass")
+    Call<Info> deleteMaterialGatepass(@Query("gatepassInwardId") int gatepassInwardId);
+
+    @GET("getAllItems")
+    Call<ArrayList<Item>> getAllItems();
+
+    @GET("getAllVendorByIsUsed ")
+    Call<ArrayList<Party>> getAllVendorByIsUsed ();
+
 
 }

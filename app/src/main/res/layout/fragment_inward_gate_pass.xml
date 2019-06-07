@@ -115,21 +115,25 @@
 
 
             <TextView
+               android:id="@+id/tvPhoto1lable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:visibility="gone"
                 android:fontFamily="@font/sf_ui_regular"
                 android:text="Photo"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/linearLayout_photo1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -159,21 +163,25 @@
 
 
             <TextView
+                android:id="@+id/tvPhoto2lable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:visibility="gone"
                 android:fontFamily="@font/sf_ui_regular"
                 android:text="Photo"
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/linearLayout_photo2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <ImageView

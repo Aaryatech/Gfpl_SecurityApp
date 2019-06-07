@@ -7,21 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.model.MaterialDetail;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePassListAdapter.MyViewHolder> {
-    private ArrayList<String> visitorList;
+    private ArrayList<MaterialDetail> materialList;
     private Context context;
 
-    public InwardGatePassListAdapter(ArrayList<String> visitorList, Context context) {
-        this.visitorList = visitorList;
+    public InwardGatePassListAdapter(ArrayList<MaterialDetail> materialList, Context context) {
+        this.materialList = materialList;
         this.context = context;
     }
 
@@ -36,14 +36,54 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-        // myViewHolder.tvName.setText("");
+       final MaterialDetail model=materialList.get(i);
+       myViewHolder.tvGPNo.setText(""+model.getExVar1());
+       myViewHolder.tvInvoice.setText(""+model.getInvoiceNumber());
+       myViewHolder.tvDate.setText(""+model.getInwardDate());
+       myViewHolder.tvParty.setText(""+model.getPartyName());
+       myViewHolder.tvNugs.setText(""+model.getNoOfNugs());
+       myViewHolder.tvTime.setText(""+model.getInTime());
+        myViewHolder.tvLastDept.setText(model.getToDeptName());
+        myViewHolder.tvLastPerson.setText(model.getToEmpName());
+
+//       for (int j=0;j<=model.getDocHandoverDetail().size();j++)
+//       {
+//           if(j==model.getDocHandoverDetail().size()-1)
+//           {
+//               myViewHolder.tvLastDept.setText(model.getDocHandoverDetail().get(j).getToDeptName());
+//               myViewHolder.tvLastPerson.setText(model.getDocHandoverDetail().get(j).getToUserName());
+//           }
+//       }
+
+        if(model.getChecked())
+        {
+            myViewHolder.checkBox.setChecked(true);
+        }else{
+            myViewHolder.checkBox.setChecked(false);
+        }
+
+        myViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+
+                    model.setChecked(true);
+
+                } else {
+
+                    model.setChecked(false);
+
+                }
+
+            }
+        });
 
 
     }
 
     @Override
     public int getItemCount() {
-        return visitorList.size();
+        return materialList.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

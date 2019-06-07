@@ -49,11 +49,8 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.MyView
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-
                     model.setChecked(true);
-
                 } else {
-
                     model.setChecked(false);
 
                 }

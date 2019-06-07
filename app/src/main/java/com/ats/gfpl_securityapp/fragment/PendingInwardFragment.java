@@ -12,6 +12,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,59 +21,152 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.InwardGatePassListAdapter;
-import com.ats.gfpl_securityapp.adapter.VisitorGatePassListAdapter;
+import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.interfaces.PendingInwardInterface;
+import com.ats.gfpl_securityapp.model.Department;
+import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
-public class InwardGatePassListFragment extends Fragment implements View.OnClickListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class PendingInwardFragment extends Fragment implements View.OnClickListener, PendingInwardInterface {
 
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private Button btnSubmit;
+    CheckBox checkBox;
 
     long fromDateMillis, toDateMillis,dateMillis;
     int yyyy, mm, dd;
+
+    ArrayList<MaterialDetail> materialList = new ArrayList<>();
+    public static ArrayList<MaterialDetail> assignStaticMaterialList = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inward_gate_pass_list, container, false);
-        getActivity().setTitle("Materials List");
+        //getActivity().setTitle("Materials List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);
         btnSubmit = view.findViewById(R.id.btnSubmit);
+        checkBox = view.findViewById(R.id.cbAll);
         fab.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-        ArrayList<String> strList = new ArrayList<>();
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
-        strList.add("");
+        ArrayList<Integer> statusList = new ArrayList<>();
+        statusList.add(0);
 
-        InwardGatePassListAdapter adapter = new InwardGatePassListAdapter(strList, getContext());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
+        ArrayList<Integer> deptIdList = new ArrayList<>();
+        deptIdList.add(-1);
+
+        ArrayList<Integer> suppIdList = new ArrayList<>();
+        suppIdList.add(-1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        getMaterial(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptIdList,suppIdList,statusList);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+                   for(int k=0;k<=materialList.size();k++)
+                   {
+                       materialList.get(k).setChecked(true);
+                   }
+                    InwardGatePassListAdapter adapter = new InwardGatePassListAdapter(materialList, getContext());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(adapter);
+                }
+            }
+        });
 
         return view;
     }
+
+    private void getMaterial(String fromDate, String toDate, ArrayList<Integer> deptIdList, ArrayList<Integer> suppIdList, ArrayList<Integer> statusList) {
+
+        Log.e("PARAMETER","            FROM DATE       "+ fromDate        +"          TO DATE     " +   toDate  +"       DEPT ID   " +  deptIdList  +"           SUPPLY ID   "+   suppIdList  +"             STATUS"  +statusList);
+
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<MaterialDetail>> listCall = Constants.myInterface.getMaterialTrackGPListWithSupFilter(fromDate,toDate,deptIdList,suppIdList,statusList);
+            listCall.enqueue(new Callback<ArrayList<MaterialDetail>>() {
+                @Override
+                public void onResponse(Call<ArrayList<MaterialDetail>> call, Response<ArrayList<MaterialDetail>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("MATERIAL LIST : ", " - " + response.body());
+                            materialList.clear();
+                            materialList = response.body();
+
+                            assignStaticMaterialList.clear();
+                            assignStaticMaterialList = materialList;
+
+                            for (int i = 0; i < assignStaticMaterialList.size(); i++) {
+                                assignStaticMaterialList.get(i).setChecked(false);
+                            }
+
+
+                            InwardGatePassListAdapter adapter = new InwardGatePassListAdapter(materialList, getContext());
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerView.setLayoutManager(mLayoutManager);
+                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+                            recyclerView.setAdapter(adapter);
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<MaterialDetail>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -81,11 +175,30 @@ public class InwardGatePassListFragment extends Fragment implements View.OnClick
             new FilterDialog(getContext()).show();
 
         } else if (v.getId() == R.id.btnSubmit) {
+            ArrayList<MaterialDetail> assignedArray = new ArrayList<>();
+
+
+            if (assignStaticMaterialList != null) {
+                if (assignStaticMaterialList.size() > 0) {
+                    assignedArray.clear();
+                    for (int i = 0; i < assignStaticMaterialList.size(); i++) {
+                        if (assignStaticMaterialList.get(i).getChecked()) {
+                            assignedArray.add(assignStaticMaterialList.get(i));
+
+                        }
+                    }
+                }
+                Log.e("ASSIGN EMP", "---------------------------------" + assignedArray);
+                Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedArray.size());
+            }
 
         }
     }
 
+    @Override
+    public void fragmentBecameVisible() {
 
+    }
     public class FilterDialog extends Dialog {
 
         EditText edFromDate, edToDate, edDate;
@@ -94,7 +207,13 @@ public class InwardGatePassListFragment extends Fragment implements View.OnClick
         RadioButton rbAsOnDate, rbFromToDate, rbDept, rbParty;
         ImageView ivClose;
         CardView cvDate, cvFromToDate, cvDept, cvParty;
+        ArrayList<String> deptNameList = new ArrayList<>();
+        ArrayList<Integer> deptIdList = new ArrayList<>();
+        int dateType,type,deptId,partyId;
+        ArrayList<String> partyNameList = new ArrayList<>();
+        ArrayList<Integer> partyIdList = new ArrayList<>();
 
+        // String dateFrom,dateTo;
 
         public FilterDialog(@NonNull Context context) {
             super(context);
@@ -134,6 +253,23 @@ public class InwardGatePassListFragment extends Fragment implements View.OnClick
             cvFromToDate = findViewById(R.id.cvFromToDate);
             cvDept = findViewById(R.id.cvDept);
             cvParty = findViewById(R.id.cvParty);
+
+            getDepartment();
+
+
+            partyNameList.add("All");
+            partyNameList.add("Party1");
+            partyNameList.add("Party2");
+            partyNameList.add("Party3");
+
+            partyIdList.add(-1);
+            partyIdList.add(1);
+            partyIdList.add(2);
+            partyIdList.add(3);
+
+            ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, partyNameList);
+            spParty.setAdapter(projectAdapter);
+
 
             rbAsOnDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -290,22 +426,83 @@ public class InwardGatePassListFragment extends Fragment implements View.OnClick
             btnFilter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (edFromDate.getText().toString().isEmpty()) {
-                        edFromDate.setError("Select From Date");
-                        edFromDate.requestFocus();
-                    } else if (edToDate.getText().toString().isEmpty()) {
-                        edToDate.setError("Select To Date");
-                        edToDate.requestFocus();
-                    } else {
-                        dismiss();
-
-                        String fromDate = tvFromDate.getText().toString();
-                        String toDate = tvToDate.getText().toString();
-
-                        // getSPCakeOrders(fromDate, toDate, menuIdArrayListSP, slotList, sortOrder);
-                        dismiss();
-
+                    String strFromDate = null,strToDate = null,dateFrom,dateTo;
+                    dateType = 0;
+                    if (rbAsOnDate.isChecked()) {
+                        dateType = 1;
+                    } else if (rbFromToDate.isChecked()) {
+                        dateType = 2;
                     }
+                    Log.e("DATE TYPE","---------------------------------"+dateType);
+
+                    if(dateType==1)
+                    {
+                       strFromDate=edDate.getText().toString();
+                       strToDate=edDate.getText().toString();
+                    }else if(dateType==2)
+                    {
+                        strFromDate=edFromDate.getText().toString();
+                        strToDate=edToDate.getText().toString();
+                    }
+
+                    //select department or party
+
+                    type = 0;
+                    if (rbDept.isChecked()) {
+                        type = 1;
+                    } else if (rbParty.isChecked()) {
+                        type = 2;
+                    }
+                    Log.e("TYPE","---------------------------------"+type);
+
+                    if(type!=1)
+                    {
+                        deptId=deptIdList.get(spDept.getSelectedItemPosition());
+                        Log.e("Dept Id","------------------------"+deptId);
+                        partyId=partyIdList.get(spParty.getSelectedItemPosition());
+                        Log.e("Party Id","------------------------"+partyId);
+                    }
+
+                    ArrayList<Integer> statusList = new ArrayList<>();
+                    statusList.add(0);
+
+                    ArrayList<Integer> deptIdList = new ArrayList<>();
+                    deptIdList.add(deptId);
+
+                    ArrayList<Integer> suppIdList = new ArrayList<>();
+                    suppIdList.add(partyId);
+
+                    if(dateType!=0 && type!=0)
+                    {
+                        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+                        Date fromDate = null;
+                        try {
+                            fromDate = formatter1.parse(strFromDate);//catch exception
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        dateFrom = formatter2.format(fromDate);
+                        Log.e("dateFrom","--------------------------"+dateFrom);
+
+
+                        Date toDate = null;
+                        try {
+                            toDate = formatter1.parse(strToDate);//catch exception
+                        } catch (ParseException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        dateTo = formatter2.format(toDate);
+                        Log.e("dateTo","--------------------------"+dateTo);
+
+
+                        getMaterial(dateFrom,dateTo,deptIdList,suppIdList,statusList);
+                        dismiss();
+                    }
+
                 }
             });
 
@@ -316,6 +513,75 @@ public class InwardGatePassListFragment extends Fragment implements View.OnClick
                 }
             });
 
+        }
+
+        private void getDepartment() {
+            if (Constants.isOnline(getContext())) {
+                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+                commonDialog.show();
+
+                Call<ArrayList<Department>> listCall = Constants.myInterface.allEmployeeDepartment();
+                listCall.enqueue(new Callback<ArrayList<Department>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<Department>> call, Response<ArrayList<Department>> response) {
+                        try {
+                            if (response.body() != null) {
+
+                                Log.e("DEPT LIST : ", " - " + response.body());
+
+                                deptNameList.clear();
+                                deptIdList.clear();
+
+                                deptNameList.add("All");
+                                deptIdList.add(-1);
+
+                                if (response.body().size() > 0) {
+                                    for (int i = 0; i < response.body().size(); i++) {
+                                        deptIdList.add(response.body().get(i).getEmpDeptId());
+                                        deptNameList.add(response.body().get(i).getEmpDeptName());
+                                    }
+
+                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
+                                    spDept.setAdapter(projectAdapter);
+
+                                }
+
+//                                if (model != null) {
+//                                    int position = 0;
+//                                    if (purposeIdList.size() > 0) {
+//                                        for (int i = 0; i < purposeIdList.size(); i++) {
+//                                            if (model.getPurposeId() == purposeIdList.get(i)) {
+//                                                position = i;
+//                                                break;
+//                                            }
+//                                        }
+//                                        spPurpose.setSelection(position);
+//
+//                                    }
+//                                }
+                                commonDialog.dismiss();
+
+                            } else {
+                                commonDialog.dismiss();
+                                Log.e("Data Null : ", "-----------");
+                            }
+                        } catch (Exception e) {
+                            commonDialog.dismiss();
+                            Log.e("Exception : ", "-----------" + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Department>> call, Throwable t) {
+                        commonDialog.dismiss();
+                        Log.e("onFailure : ", "-----------" + t.getMessage());
+                        t.printStackTrace();
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+            }
         }
 
         DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
