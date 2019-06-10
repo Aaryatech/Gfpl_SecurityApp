@@ -14,9 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.AddPurposeFragment;
 import com.ats.gfpl_securityapp.fragment.DashboardFragment;
@@ -37,6 +40,9 @@ import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -71,6 +77,24 @@ public class MainActivity extends AppCompatActivity
         }catch (Exception e)
         {
             e.printStackTrace();
+        }
+
+        View header = navigationView.getHeaderView(0);
+
+        TextView tvNavHeadName = header.findViewById(R.id.tvNavHeadName);
+        TextView tvNavHeadDesg = header.findViewById(R.id.tvNavHeadDesg);
+        CircleImageView ivNavHeadPhoto = header.findViewById(R.id.ivNavHeadPhoto);
+
+        if (loginUser != null) {
+            tvNavHeadName.setText("" + loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname());
+            tvNavHeadDesg.setText("" + loginUser.getEmpEmail());
+
+            try {
+                Picasso.with(MainActivity.this).load(Constants.IMAGE_URL + "" + loginUser.getEmpPhoto()).placeholder(getResources().getDrawable(R.drawable.profile)).into(ivNavHeadPhoto);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         try {
@@ -126,6 +150,10 @@ public class MainActivity extends AppCompatActivity
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new PurposeListFragment(), "DashFragment");
                     ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Material Tracking")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+                    ft.commit();
                 }
                 else {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -149,6 +177,7 @@ public class MainActivity extends AppCompatActivity
         Fragment maintenanceGPListFragment = getSupportFragmentManager().findFragmentByTag("MaintenanceGPListFragment");
         Fragment employeeGPListFragment = getSupportFragmentManager().findFragmentByTag("EmployeeGPListFragment");
         Fragment inwardGPListFragment = getSupportFragmentManager().findFragmentByTag("InwardGPListFragment");
+        Fragment materialTrackingListFragment = getSupportFragmentManager().findFragmentByTag("MaterialTrackingListFragment");
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -368,9 +397,14 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.nav_material_tracking) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
-            ft.commit();
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+//            ft.commit();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Material Tracking");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
 
 
         } else if (id == R.id.nav_logout) {

@@ -30,8 +30,10 @@ import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.EmployeeGatePassListAdapter;
+import com.ats.gfpl_securityapp.adapter.VisitorEmployeeAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
+import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
@@ -55,6 +57,12 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
+
+    String stringId;
+    ArrayList<Employee> empList1 = new ArrayList<>();
+    RecyclerView recyclerViewFilter;
+    public static ArrayList<Employee> assignEmployeeStaticList = new ArrayList<>();
+
     ArrayList<EmpGatePass> empList = new ArrayList<>();
 
     @Override
@@ -73,10 +81,13 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             Gson gson = new Gson();
             loginUser = gson.fromJson(userStr, Login.class);
             Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
+
         }catch (Exception e)
         {
             e.printStackTrace();
         }
+
+        getEmployee();
 
         ArrayList<Integer> statusList = new ArrayList<>();
         statusList.add(0);
@@ -89,15 +100,101 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
 
-
-//        ArrayList<String> strList = new ArrayList<>();
-//        strList.add("");
-//        strList.add("");
-//        strList.add("");
-//        strList.add("");
-//        strList.add("");
-//
         return view;
+    }
+
+    private void getEmployee() {
+        if (Constants.isOnline(getActivity())) {
+            final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
+            listCall.enqueue(new Callback<ArrayList<Employee>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
+                            empList1.clear();
+//                            empIdList.clear();
+                            empList1 = response.body();
+
+                            assignEmployeeStaticList.clear();
+                            assignEmployeeStaticList = empList1;
+
+                            for (int i = 0; i < assignEmployeeStaticList.size(); i++) {
+                                assignEmployeeStaticList.get(i).setChecked(false);
+                            }
+
+                            getAssignUser();
+
+                            VisitorEmployeeAdapter adapter = new VisitorEmployeeAdapter(assignEmployeeStaticList, getContext());
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerViewFilter.setLayoutManager(mLayoutManager);
+                            recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                            recyclerViewFilter.setAdapter(adapter);
+
+                            // }
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getAssignUser() {
+        ArrayList<Employee> assignedEmpArray = new ArrayList<>();
+        ArrayList<Integer> assignedEmpIdArray = new ArrayList<>();
+        ArrayList<String> assignedEmpNameArray = new ArrayList<>();
+
+        if (assignEmployeeStaticList != null) {
+            if (assignEmployeeStaticList.size() > 0) {
+                assignedEmpArray.clear();
+                for (int i = 0; i < assignEmployeeStaticList.size(); i++) {
+                    if (assignEmployeeStaticList.get(i).getChecked()) {
+                        assignedEmpArray.add(assignEmployeeStaticList.get(i));
+                        assignedEmpIdArray.add(assignEmployeeStaticList.get(i).getEmpId());
+                        assignedEmpNameArray.add(assignEmployeeStaticList.get(i).getEmpFname() + " " + assignEmployeeStaticList.get(i).getEmpMname() + " " + assignEmployeeStaticList.get(i).getEmpSname());
+                    }
+                }
+            }
+            Log.e("ASSIGN EMP", "---------------------------------" + assignedEmpArray);
+            Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedEmpArray.size());
+
+            String empIds = assignedEmpIdArray.toString().trim();
+            Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
+
+            stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
+
+            Log.e("ASSIGN EMP ID STRING", "---------------------------------" + stringId);
+
+//            String empName=assignedEmpNameArray.toString().trim();
+////            Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
+////
+////            stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+////
+////            Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+////            edEmployee.setText(stringName);
+        }
     }
 
     private void getEmployeeGetPassList(String formatDate, String toDate,  ArrayList<Integer> deptList, String emp, ArrayList<Integer> statusList) {
@@ -122,7 +219,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
-                             recyclerView.setAdapter(adapter);
+                            recyclerView.setAdapter(adapter);
 
                              commonDialog.dismiss();
 
@@ -165,6 +262,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
         ImageView ivClose;
         LinearLayout llSup;
         String DateTo;
+        private VisitorEmployeeAdapter mAdapter;
 
 
         public FilterDialog(@NonNull Context context) {
@@ -176,7 +274,8 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setTitle("Filter");
-            setContentView(R.layout.dialog_employee_gate_pass_filter);
+            setContentView(R.layout.dialog_visitor_gate_pass_filter);
+           // dialog_employee_gate_pass_filter
             setCancelable(false);
 
             Window window = getWindow();
@@ -195,6 +294,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             ivClose = findViewById(R.id.ivClose);
             spDept = findViewById(R.id.spDept);
             llSup = findViewById(R.id.llSup);
+            recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
 
             ArrayList<String> typeArray = new ArrayList<>();
             final ArrayList<Integer> typeIdArray = new ArrayList<>();
@@ -208,6 +308,17 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
 
             ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
             spDept.setAdapter(spTypeAdapter);
+
+            try {
+                mAdapter = new VisitorEmployeeAdapter(assignEmployeeStaticList, getActivity());
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerViewFilter.setLayoutManager(mLayoutManager);
+                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewFilter.setAdapter(mAdapter);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -326,6 +437,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
 
 //                        TextView viewType = (TextView) spDept.getSelectedView();
 //                        viewType.setError(null);
+                        getAssignUser();
 
                         ArrayList<Integer> getPassDeptList = new ArrayList<>();
                         getPassDeptList.add(getDept);
@@ -337,7 +449,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();
 
-                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, "-1", statusList);
+                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, stringId, statusList);
                         dismiss();
                     }
                 }

@@ -183,7 +183,7 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setTitle("Filter");
-            setContentView(R.layout.dialog_visitor_gate_pass_filter);
+            setContentView(R.layout.dialog_inwared_gate_pass_filter);
             setCancelable(false);
 
             Window window = getWindow();

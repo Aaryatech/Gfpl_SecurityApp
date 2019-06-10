@@ -30,7 +30,6 @@ import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,7 +65,7 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         //myViewHolder.tvEmpMobile.setText(model.get());
         myViewHolder.tvHrs.setText(""+model.getNoOfHr()+"("+model.getOutTime()+" to "+model.getInTime()+")");
         myViewHolder.tvSupName.setText(""+model.getUserName());
-
+        myViewHolder.tvTotalHrs.setText(""+model.getActualTimeDifference());
         SimpleDateFormat f1 = new SimpleDateFormat("HH:mm:ss"); //HH for hour of the day (0 - 23)
         SimpleDateFormat f2 = new SimpleDateFormat("hh:mm");
 
@@ -100,38 +99,44 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         }
 
 
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        Date date1 = null, date2 = null;
-        String diff;
-        try {
-
-            String time1=myViewHolder.tvOutTime.getText().toString();
-            String time2=myViewHolder.tvInTime.getText().toString();
-            date1 = format.parse(time1);
-            date2 = format.parse(time2);
-
-            Log.e("PARAMETER1","             TIME 1    "+date1 +"           TIME 2             "+date2);
-            long difference = date2.getTime() - date1.getTime();
-
-            int hours = (int) (difference/(1000 * 60 * 60));
-            int mins = (int) ((difference/(1000*60)) % 60);
-
-            // diff=DurationFormatUtils.formatDuration(difference, "HH:mm");
-            diff=hours + "."+mins;
-            Log.e("Total Hrs","----------------------------------------"+diff);
-            myViewHolder.tvTotalHrs.setText(diff);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+//        Date date1 = null, date2 = null;
+//        int date1Int,date2INT;
+//        long difference;
+//        String diff;
+//        try {
+//
+//            String time1=myViewHolder.tvOutTime.getText().toString();
+//            String time2=myViewHolder.tvInTime.getText().toString();
+////            date1Int = Integer.parseInt(time1);
+////            date2INT = Integer.parseInt(time2);
+//
+//            date1 = format.parse(time1);
+//            date2 = format.parse(time2);
+//
+//            Log.e("PARAMETER1","             TIME 1    "+date1 +"           TIME 2             "+date2);
+//            //Log.e("PARAMETER1","             TIME INT1    "+date1Int +"           TIME INT2             "+date2INT);
+////            if(date2INT<date1Int)
+////            {
+////                myViewHolder.tvTotalHrs.setText("00:00");
+////            }
+//
+//             difference = date2.getTime() - date1.getTime();
+//
+//            int hours = (int) (difference/(1000 * 60 * 60));
+//            int mins = (int) ((difference/(1000*60)) % 60);
+//
+//            // diff=DurationFormatUtils.formatDuration(difference, "HH:mm");
+//            diff=hours + "."+mins;
+//            Log.e("Total Hrs","----------------------------------------"+diff);
+//
+//
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
 
        // myViewHolder.tvTotalHrs.setText(""+model.getNoOfHr());
-
-
-
-
-
 
         if(model.getGatePassSubType()==1)
         {

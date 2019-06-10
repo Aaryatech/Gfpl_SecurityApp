@@ -59,7 +59,7 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
             tvPhone.setText("No");
         }
 
-        if(staticVisitorModel.getVisitType()==1)
+               if(staticVisitorModel.getVisitType()==1)
         {
             tvType.setText("Appointment");
         }else if(staticVisitorModel.getVisitType()==2){

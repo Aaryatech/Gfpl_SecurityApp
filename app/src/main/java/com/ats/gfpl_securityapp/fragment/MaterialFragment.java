@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.interfaces.ApproveInwardInterface;
 import com.ats.gfpl_securityapp.interfaces.PendingInwardInterface;
 import com.ats.gfpl_securityapp.interfaces.RejectedInwardInterface;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
+import com.google.gson.Gson;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,13 +28,14 @@ public class MaterialFragment extends Fragment {
     private ViewPager viewPager;
     private TabLayout tab;
     FragmentPagerAdapter adapterViewPager;
+    public static Login staticLoginUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_material, container, false);
-        getActivity().setTitle("Material List");
+        getActivity().setTitle("Material Tracking");
         viewPager = view.findViewById(R.id.viewPager);
         tab = view.findViewById(R.id.tab);
 
@@ -85,7 +90,15 @@ public class MaterialFragment extends Fragment {
             }
         });
 
-
+        try {
+            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            staticLoginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER : ", "--------USER-------" + staticLoginUser);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return view;
     }
 

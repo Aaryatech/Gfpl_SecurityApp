@@ -6,63 +6,63 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_dash"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_home2"
             android:title="Dashboard" />
 
         <item
             android:id="@+id/nav_purpose_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_purpose"
             android:title="Add Purpose" />
 
         <item
             android:id="@+id/nav_purpose_list_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_purpose"
             android:title="Purpose List" />
 
         <item
             android:id="@+id/nav_visitor_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_employee"
             android:title="Visitor Gate Pass" />
 
         <item
             android:id="@+id/nav_visitor_gp_list"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_employee"
             android:title="Visitor Gate Pass List" />
 
         <item
             android:id="@+id/nav_maintenance_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_maintenance"
             android:title="Maintenance Gate Pass" />
 
         <item
             android:id="@+id/nav_maintenance_gp_list"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_maintenance"
             android:title="Maintenance Gate Pass List" />
 
         <item
             android:id="@+id/nav_emp_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_emp"
             android:title="Employee Gate Pass" />
 
         <item
             android:id="@+id/nav_emp_gp_list"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_emp"
             android:title="Employee Gate Pass List" />
 
         <item
             android:id="@+id/nav_material_gp"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_material"
             android:title="Material Gate Pass" />
 
         <item
             android:id="@+id/nav_material_gp_list"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_material"
             android:title="Material Gate Pass List" />
 
 
         <item
             android:id="@+id/nav_material_tracking"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_tracking"
             android:title="Material Tracking" />
         <item
             android:visible="false"

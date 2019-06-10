@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -46,14 +49,21 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
         myViewHolder.tvLastDept.setText(model.getToDeptName());
         myViewHolder.tvLastPerson.setText(model.getToEmpName());
 
-//       for (int j=0;j<=model.getDocHandoverDetail().size();j++)
-//       {
-//           if(j==model.getDocHandoverDetail().size()-1)
-//           {
-//               myViewHolder.tvLastDept.setText(model.getDocHandoverDetail().get(j).getToDeptName());
-//               myViewHolder.tvLastPerson.setText(model.getDocHandoverDetail().get(j).getToUserName());
-//           }
-//       }
+        String imageUri = String.valueOf(model.getPersonPhoto());
+        try {
+            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
+
+        } catch (Exception e) {
+
+        }
+
+        String imageUri1 = String.valueOf(model.getInwardPhoto());
+        try {
+            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
+
+        } catch (Exception e) {
+
+        }
 
         if(model.getChecked())
         {
@@ -61,6 +71,7 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
         }else{
             myViewHolder.checkBox.setChecked(false);
         }
+
 
         myViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -90,6 +101,7 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
         public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvLastDept, tvLastPerson;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3;
         public CheckBox checkBox;
+        public LinearLayout linearLayoutPhoto;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -105,6 +117,7 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);
             ivPhoto3 = itemView.findViewById(R.id.ivPhoto3);
             checkBox = itemView.findViewById(R.id.checkBox);
+            linearLayoutPhoto = itemView.findViewById(R.id.linearLayoutPhoto);
 
         }
     }

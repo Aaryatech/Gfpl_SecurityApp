@@ -30,7 +30,9 @@ import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.MaintenanceGatePassListAdapter;
+import com.ats.gfpl_securityapp.adapter.VisitorEmployeeAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.VisitorList;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
@@ -54,6 +56,11 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
+
+    String stringId;
+    ArrayList<Employee> empList = new ArrayList<>();
+    RecyclerView recyclerViewFilter;
+    public static ArrayList<Employee> assignMaintenanceEmpStaticList = new ArrayList<>();
 
     Login loginUser;
 
@@ -87,6 +94,8 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             e.printStackTrace();
         }
 
+        getEmployee();
+
         ArrayList<Integer> statusList = new ArrayList<>();
         statusList.add(0);
 
@@ -101,6 +110,113 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
 
         return view;
     }
+
+    private void getEmployee() {
+        if (Constants.isOnline(getActivity())) {
+            final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
+            listCall.enqueue(new Callback<ArrayList<Employee>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
+                            empList.clear();
+//                            empIdList.clear();
+                            empList = response.body();
+
+                            assignMaintenanceEmpStaticList.clear();
+                            assignMaintenanceEmpStaticList = empList;
+
+                            for (int i = 0; i < assignMaintenanceEmpStaticList.size(); i++) {
+                                assignMaintenanceEmpStaticList.get(i).setChecked(false);
+                            }
+
+
+//                            empNameList.add("All");
+//                            empIdList.add(-1);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    empIdList.add(response.body().get(i).getEmpDeptId());
+//                                    empNameList.add(response.body().get(i).getEmpFname()+" "+response.body().get(i).getEmpMname()+" "+response.body().get(i).getEmpSname());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+//                                spEmp.setAdapter(projectAdapter);
+                            getAssignUser();
+
+                            VisitorEmployeeAdapter adapter = new VisitorEmployeeAdapter(assignMaintenanceEmpStaticList, getContext());
+                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+                            recyclerViewFilter.setLayoutManager(mLayoutManager);
+                            recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                            recyclerViewFilter.setAdapter(adapter);
+
+                            // }
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getAssignUser() {
+        ArrayList<Employee> assignedEmpArray = new ArrayList<>();
+        ArrayList<Integer> assignedEmpIdArray = new ArrayList<>();
+        ArrayList<String> assignedEmpNameArray = new ArrayList<>();
+
+        if (assignMaintenanceEmpStaticList != null) {
+            if (assignMaintenanceEmpStaticList.size() > 0) {
+                assignedEmpArray.clear();
+                for (int i = 0; i < assignMaintenanceEmpStaticList.size(); i++) {
+                    if (assignMaintenanceEmpStaticList.get(i).getChecked()) {
+                        assignedEmpArray.add(assignMaintenanceEmpStaticList.get(i));
+                        assignedEmpIdArray.add(assignMaintenanceEmpStaticList.get(i).getEmpId());
+                        assignedEmpNameArray.add(assignMaintenanceEmpStaticList.get(i).getEmpFname() + " " + assignMaintenanceEmpStaticList.get(i).getEmpMname() + " " + assignMaintenanceEmpStaticList.get(i).getEmpSname());
+                    }
+                }
+            }
+            Log.e("ASSIGN EMP", "---------------------------------" + assignedEmpArray);
+            Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedEmpArray.size());
+
+            String empIds = assignedEmpIdArray.toString().trim();
+            Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
+
+            stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
+
+            Log.e("ASSIGN EMP ID STRING", "---------------------------------" + stringId);
+
+//            String empName=assignedEmpNameArray.toString().trim();
+////            Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
+////
+////            stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+////
+////            Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+////            edEmployee.setText(stringName);
+        }
+    }
+
 
     private void getMaintenanceGetPassList(String formatDate, String toDate, ArrayList<Integer> getPassType, String empIds, ArrayList<Integer> status) {
         Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       GEAT PASS TYPE   " +  getPassType  +"            EMP ID   "+   empIds  +"             STATUS"  +status);
@@ -166,6 +282,11 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
         TextView tvFromDate, tvToDate, tvType, tvEmp;
         ImageView ivClose;
         String DateTo;
+         Spinner spDept,spEmp;
+        private VisitorEmployeeAdapter mAdapter;
+
+        ArrayList<String> empNameList = new ArrayList<>();
+        ArrayList<Integer> empIdList = new ArrayList<>();
 
 
         public FilterDialog(@NonNull Context context) {
@@ -178,6 +299,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setTitle("Filter");
             setContentView(R.layout.dialog_visitor_gate_pass_filter);
+            //dialog_visitor_gate_pass_filter
             setCancelable(false);
 
             Window window = getWindow();
@@ -193,11 +315,13 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             tvFromDate = findViewById(R.id.tvFromDate);
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
-            final Spinner spType = findViewById(R.id.spType);
+            spDept = findViewById(R.id.spDept);
+             spEmp = findViewById(R.id.spEmp);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
             tvType = findViewById(R.id.tvType);
             tvEmp = findViewById(R.id.tvEmp);
+            recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
 
             ArrayList<String> typeArray = new ArrayList<>();
             final ArrayList<Integer> typeIdArray = new ArrayList<>();;
@@ -209,14 +333,24 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             typeIdArray.add(1);
             typeIdArray.add(2);
 
-            ArrayAdapter<String> spTypeAdapter=new ArrayAdapter<>(getContext(),R.layout.spinner_item,typeArray);
-            spType.setAdapter(spTypeAdapter);
+            ArrayAdapter<String> spTypeAdapter=new ArrayAdapter<>(getActivity(),R.layout.spinner_item,typeArray);
+            spDept.setAdapter(spTypeAdapter);
+
+            try {
+                mAdapter = new VisitorEmployeeAdapter(assignMaintenanceEmpStaticList, getActivity());
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerViewFilter.setLayoutManager(mLayoutManager);
+                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewFilter.setAdapter(mAdapter);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             String currentDate = formatter.format(todayDate);
             Log.e("Mytag","todayString"+currentDate);
-
 
             edToDate.setText(currentDate);
 
@@ -272,7 +406,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             });*/
 
 
-            edFromDate.setOnClickListener(new View.OnClickListener() {
+          edFromDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int yr, mn, dy;
@@ -325,9 +459,11 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
                         edToDate.setError("Select To Date");
                         edToDate.requestFocus();
                     } else {
+
+                        getAssignUser();
                         dismiss();
 
-                        final int getPassType = typeIdArray.get(spType.getSelectedItemPosition());
+                        final int getPassType = typeIdArray.get(spDept.getSelectedItemPosition());
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(getPassType);
@@ -338,7 +474,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();
 
-                        getMaintenanceGetPassList(fromDate, toDate, getPassTypeList, "-1", statusList);
+                        getMaintenanceGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList);
                         dismiss();
 
 
@@ -354,6 +490,61 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             });
 
         }
+
+//      private void getEmployee() {
+//            if (Constants.isOnline(getActivity())) {
+//                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+//                commonDialog.show();
+//
+//                Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
+//                listCall.enqueue(new Callback<ArrayList<Employee>>() {
+//                    @Override
+//                    public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+//                        try {
+//                            if (response.body() != null) {
+//
+//                                Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
+//                                empNameList.clear();
+//                                empIdList.clear();
+//
+//                                empNameList.add("All");
+//                                empIdList.add(-1);
+//
+//                                if (response.body().size() > 0) {
+//                                    for (int i = 0; i < response.body().size(); i++) {
+//                                        empIdList.add(response.body().get(i).getEmpDeptId());
+//                                        empNameList.add(response.body().get(i).getEmpFname()+" "+response.body().get(i).getEmpMname()+" "+response.body().get(i).getEmpSname());
+//                                    }
+//
+//                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+//                                    spEmp.setAdapter(projectAdapter);
+//
+//                                }
+//
+//                                commonDialog.dismiss();
+//
+//                            } else {
+//                                commonDialog.dismiss();
+//                                Log.e("Data Null : ", "-----------");
+//                            }
+//                        } catch (Exception e) {
+//                            commonDialog.dismiss();
+//                            Log.e("Exception : ", "-----------" + e.getMessage());
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+//                        commonDialog.dismiss();
+//                        Log.e("onFailure : ", "-----------" + t.getMessage());
+//                        t.printStackTrace();
+//                    }
+//                });
+//            } else {
+//                Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+//            }
+//        }
 
         DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
             @Override

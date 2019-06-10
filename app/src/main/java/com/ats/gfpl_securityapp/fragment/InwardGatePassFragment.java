@@ -384,7 +384,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, partyName, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, 0, 0, 0, "", "", 0, 0, 0, "", "", "");
+                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, partyName, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", "", "");
                     if (imagePath1 != null && imagePath2 != null) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                         builder.setTitle("Confirmation");

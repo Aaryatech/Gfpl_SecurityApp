@@ -9,6 +9,7 @@ import com.ats.gfpl_securityapp.model.Item;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Material;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.ats.gfpl_securityapp.model.Notification;
 import com.ats.gfpl_securityapp.model.Party;
 import com.ats.gfpl_securityapp.model.Purpose;
 import com.ats.gfpl_securityapp.model.PurposeList;
@@ -97,8 +98,8 @@ public interface InterfaceAPI {
     @GET("master/allEmployeeDepartment")
     Call<ArrayList<Department>> allEmployeeDepartment();
 
-    @POST("transaction/getMaterialTrackGPListWithSupFilter")
-    Call<ArrayList<MaterialDetail>> getMaterialTrackGPListWithSupFilter(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("deptIds") ArrayList<Integer> deptIds, @Query("supIds") ArrayList<Integer> supIds, @Query("status") List<Integer> status);
+    @POST("transaction/getMaterialTrackGatepassListWithFilter")
+    Call<ArrayList<MaterialDetail>> getMaterialTrackGatepassListWithFilter(@Query("deptIds") ArrayList<Integer> deptIds, @Query("empIds") ArrayList<Integer> empIds, @Query("status") List<Integer> status);
 
     @POST("transaction/getMaterialTrackGatepassListWithDateFilter")
     Call<ArrayList<MaterialDetail>> getMaterialTrackGatepassListWithDateFilter(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("deptIds") ArrayList<Integer> deptIds, @Query("empIds") ArrayList<Integer> empIds, @Query("status") List<Integer> status);
@@ -111,6 +112,15 @@ public interface InterfaceAPI {
 
     @GET("getAllVendorByIsUsed ")
     Call<ArrayList<Party>> getAllVendorByIsUsed ();
+
+    @POST("transaction/updateMaterialGatepass")
+    Call<Info> updateMaterialGatepass(@Query("headerList") ArrayList<Integer> headerList,@Query("status") int status);
+
+    @POST("transaction/materialGatepassHandover")
+    Call<Info> materialGatepassHandover(@Query("headerIdList") ArrayList<Integer> headerIdList,@Query("fromEmpId") int fromEmpId,@Query("fromDeptId") int fromDeptId,@Query("toEmpId") int toEmpId,@Query("toDeptId") int toDeptId);
+
+    @POST("master/getNotificationByGatepassId")
+    Call<ArrayList<Notification>> getNotificationByGatepassId(@Query("gatepassVisitorId") int gatepassVisitorId);
 
 
 }

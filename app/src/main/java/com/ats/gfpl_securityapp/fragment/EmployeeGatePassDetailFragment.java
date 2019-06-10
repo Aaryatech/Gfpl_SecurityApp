@@ -13,6 +13,9 @@ import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -49,8 +52,40 @@ EmpGatePass model;
             tvInTime.setText(""+model.getInTime());
             tvPurposeText.setText(model.getPurposeText());
             tvgEmpName.setText(model.getUserName());
-            tvNewInTime.setText(""+model.getNewInTime());
-            tvNewOutTime.setText(""+model.getNewOutTime());
+//            tvNewInTime.setText(""+model.getNewInTime());
+//            tvNewOutTime.setText(""+model.getNewOutTime());
+
+            SimpleDateFormat f1 = new SimpleDateFormat("HH:mm:ss"); //HH for hour of the day (0 - 23)
+            SimpleDateFormat f2 = new SimpleDateFormat("hh:mm");
+
+            Date fromTime=null;
+            try {
+                String outTime=model.getNewOutTime();
+                Log.e("Time","------------------"+outTime);
+                fromTime=f1.parse(outTime);
+                Log.e("Time Date","------------------"+fromTime);
+                String timeOut = f2.format(fromTime);
+                Log.e("Time Convert","------------------"+timeOut);
+                tvNewOutTime.setText(timeOut);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            Date toTime=null;
+            try {
+                String inTime=model.getNewInTime();
+                Log.e("Time1","------------------"+inTime);
+                toTime=f1.parse(inTime);
+                Log.e("Time Date1","------------------"+toTime);
+                String timeIn = f2.format(toTime);
+                Log.e("Time Convert1","------------------"+timeIn);
+                tvNewInTime.setText(timeIn);
+
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             if(model.getGatePassSubType()==1)
             {

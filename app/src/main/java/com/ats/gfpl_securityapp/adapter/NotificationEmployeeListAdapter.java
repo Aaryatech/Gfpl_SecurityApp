@@ -9,14 +9,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.model.Notification;
 
 import java.util.ArrayList;
 
 public class NotificationEmployeeListAdapter  extends RecyclerView.Adapter<NotificationEmployeeListAdapter.MyViewHolder> {
-    private ArrayList<String> empList;
+    private ArrayList<Notification> empList;
     private Context context;
 
-    public NotificationEmployeeListAdapter(ArrayList<String> empList, Context context) {
+    public NotificationEmployeeListAdapter(ArrayList<Notification> empList, Context context) {
         this.empList = empList;
         this.context = context;
     }
@@ -33,8 +34,18 @@ public class NotificationEmployeeListAdapter  extends RecyclerView.Adapter<Notif
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         // myViewHolder.tvName.setText("");
-
-
+        Notification model=empList.get(i);
+        myViewHolder.tvName.setText(model.getEmpName());
+        if(model.getStatus()==0)
+        {
+            myViewHolder.tvStatus.setText("Pending");
+        }else if(model.getStatus()==1)
+        {
+            myViewHolder.tvStatus.setText("Approve");
+        }else  if(model.getStatus()==2)
+        {
+            myViewHolder.tvStatus.setText("Rejected");
+        }
     }
 
     @Override
