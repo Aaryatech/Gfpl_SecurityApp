@@ -12,12 +12,16 @@ import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.model.Employee;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Sync;
 
 import java.util.ArrayList;
 
 public class VisitorEmployeeAdapter extends RecyclerView.Adapter<VisitorEmployeeAdapter.MyViewHolder> {
     private ArrayList<Employee> empList;
     private Context context;
+    ArrayList<Sync> syncArray;
+    Login loginUser;
 
     public VisitorEmployeeAdapter(ArrayList<Employee> empList, Context context) {
         this.empList = empList;
@@ -37,13 +41,13 @@ public class VisitorEmployeeAdapter extends RecyclerView.Adapter<VisitorEmployee
     public void onBindViewHolder(@NonNull VisitorEmployeeAdapter.MyViewHolder myViewHolder, int i) {
         final Employee model=empList.get(i);
         myViewHolder.tvEmp.setText(model.getEmpFname()+" "+model.getEmpSname());
-//
-//        if(model.getChecked())
-//        {
-//            myViewHolder.checkBox.setChecked(true);
-//        }else{
-//            myViewHolder.checkBox.setChecked(false);
-//        }
+
+        if(model.getChecked())
+        {
+            myViewHolder.checkBox.setChecked(true);
+        }else{
+            myViewHolder.checkBox.setChecked(false);
+        }
 
         myViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

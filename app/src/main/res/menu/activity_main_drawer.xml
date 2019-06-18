@@ -9,19 +9,22 @@
             android:icon="@drawable/ic_home2"
             android:title="Dashboard" />
 
-        <item
-            android:id="@+id/nav_purpose_gp"
-            android:icon="@drawable/ic_purpose"
-            android:title="Add Purpose" />
+        <!--<item-->
+            <!--android:id="@+id/nav_purpose_gp"-->
+            <!--android:icon="@drawable/ic_purpose"-->
+            <!--android:visible="false"-->
+            <!--android:title="Add Purpose" />-->
 
-        <item
-            android:id="@+id/nav_purpose_list_gp"
-            android:icon="@drawable/ic_purpose"
-            android:title="Purpose List" />
+        <!--<item-->
+            <!--android:id="@+id/nav_purpose_list_gp"-->
+            <!--android:icon="@drawable/ic_purpose"-->
+            <!--android:visible="false"-->
+            <!--android:title="Purpose List" />-->
 
         <item
             android:id="@+id/nav_visitor_gp"
             android:icon="@drawable/ic_employee"
+            android:visible="false"
             android:title="Visitor Gate Pass" />
 
         <item
@@ -32,6 +35,7 @@
         <item
             android:id="@+id/nav_maintenance_gp"
             android:icon="@drawable/ic_maintenance"
+            android:visible="false"
             android:title="Maintenance Gate Pass" />
 
         <item
@@ -42,6 +46,7 @@
         <item
             android:id="@+id/nav_emp_gp"
             android:icon="@drawable/ic_emp"
+            android:visible="false"
             android:title="Employee Gate Pass" />
 
         <item
@@ -64,6 +69,20 @@
             android:id="@+id/nav_material_tracking"
             android:icon="@drawable/ic_tracking"
             android:title="Material Tracking" />
+
+        <item
+            android:id="@+id/nav_purpose_gp"
+            android:icon="@drawable/ic_purpose"
+            android:visible="false"
+            android:title="Add Purpose" />
+
+        <item
+            android:id="@+id/nav_purpose_list_gp"
+            android:icon="@drawable/ic_purpose"
+            android:visible="false"
+            android:title="Purpose List" />
+
+
         <item
             android:visible="false"
             android:id="@+id/nav_logout"

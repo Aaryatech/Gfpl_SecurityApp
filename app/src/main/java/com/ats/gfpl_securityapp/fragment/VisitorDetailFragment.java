@@ -37,7 +37,7 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         tvMeetingDisc = view.findViewById(R.id.tvgMeetingDisc);
         tvVisitCardNumber = view.findViewById(R.id.tvVisiteCardNumber);
 
-        tvGPNo.setText(staticVisitorModel.getExVar1());
+        tvGPNo.setText(""+staticVisitorModel.getExVar1());
         tvName.setText(staticVisitorModel.getPersonName());
         tvCompany.setText(staticVisitorModel.getPersonCompany());
         tvMobile.setText(staticVisitorModel.getMobileNo());

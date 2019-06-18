@@ -2,7 +2,9 @@ package com.ats.gfpl_securityapp.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,9 +18,14 @@ import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fcm.SharedPrefManager;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,8 +34,10 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText edDSCCode;
-    private Button btnSubmit;
+    private Button btnSubmit,btnSync;
     public String strIntent;
+    ArrayList<Sync> syncArray = new ArrayList<>();
+    Sync syncData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +46,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edDSCCode = findViewById(R.id.edDSCCode);
 
         btnSubmit = findViewById(R.id.btnSubmit);
+        btnSync = findViewById(R.id.btnSync);
         btnSubmit.setOnClickListener(this);
+        btnSync.setOnClickListener(this);
 
         try {
             //strIntent = getIntent().getStringExtra("model");
@@ -49,6 +60,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
 
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Gson gson = new Gson();
+            String json = prefs.getString("Sync", null);
+            Type type = new TypeToken<ArrayList<Sync>>() {}.getType();
+            syncArray= gson.fromJson(json, type);
+            Log.e("SYNCH ONCR : ", "------------" + syncArray);
+            if(syncArray==null)
+            {
+                getSynch();
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        //getSynch();
 
     }
 
@@ -70,6 +98,121 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (isValidDSCCode) {
                 doLogin(strDSCCode);
             }
+        }else if(v.getId()==R.id.btnSync)
+        {
+            getSynch();
+        }
+    }
+
+    private void getSynch() {
+
+        if (Constants.isOnline(this)) {
+            final CommonDialog commonDialog = new CommonDialog(this, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Sync>> listCall = Constants.myInterface.allSettings();
+            listCall.enqueue(new Callback<ArrayList<Sync>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Sync>> call, Response<ArrayList<Sync>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("SYNCH DATA : ", "------------" + response.body());
+
+                            Sync data;
+                            syncArray=response.body();
+                            if (syncArray!=null) {
+                                commonDialog.dismiss();
+//                                Gson gson = new Gson();
+//                                String json = gson.toJson(syncArray);
+//                                Log.e("JSON","-------------------------------"+json);
+
+                                if(syncData==null) {
+
+                                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
+                                        SharedPreferences.Editor editor = prefs.edit();
+                                        Gson gson = new Gson();
+                                        String json = gson.toJson(syncArray);
+                                        editor.putString("Sync", json);
+                                        editor.apply();     // This line is IMPORTANT !!!
+
+                                }
+
+                            } else {
+                                commonDialog.dismiss();
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this, R.style.AlertDialogTheme);
+                                builder.setTitle(getResources().getString(R.string.app_name));
+                                builder.setMessage("Oops something went wrong! please check username & password.");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                            }
+                        } else {
+                            commonDialog.dismiss();
+
+                            Log.e("Data Null1 : ", "-----------");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this, R.style.AlertDialogTheme);
+                            builder.setTitle(getResources().getString(R.string.app_name));
+                            builder.setMessage("Oops something went wrong! please check username & password.");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        //Toast.makeText(LoginActivity.this, "Unable to login", Toast.LENGTH_SHORT).show();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this, R.style.AlertDialogTheme);
+                        builder.setTitle(getResources().getString(R.string.app_name));
+                        builder.setMessage("Oops something went wrong! please check username & password.");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Sync>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this, R.style.AlertDialogTheme);
+                    builder.setTitle(getResources().getString(R.string.app_name));
+                    builder.setMessage("Oops something went wrong! please check username & password.");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -71,7 +71,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         String imageUri1 = String.valueOf(model.getInwardPhoto());
@@ -79,7 +79,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         myViewHolder.ivEdit.setOnClickListener(new View.OnClickListener() {

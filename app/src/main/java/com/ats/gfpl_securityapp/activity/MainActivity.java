@@ -1,8 +1,10 @@
 package com.ats.gfpl_securityapp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +25,7 @@ import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.AddPurposeFragment;
 import com.ats.gfpl_securityapp.fragment.DashboardFragment;
+import com.ats.gfpl_securityapp.fragment.EmployeeFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassDetailFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassListFragment;
@@ -37,10 +40,15 @@ import com.ats.gfpl_securityapp.fragment.TabFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     boolean doubleBackToExitPressedOnce = false;
     public String strIntentMain;
     Login loginUser;
+    Sync sync;
+    ArrayList<Sync> syncArray = new ArrayList<>();
+    ArrayList<Integer> syncId= new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +89,55 @@ public class MainActivity extends AppCompatActivity
         {
             e.printStackTrace();
         }
+
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Gson gson = new Gson();
+            String json = prefs.getString("Sync", null);
+            Type type = new TypeToken<ArrayList<Sync>>() {}.getType();
+            syncArray= gson.fromJson(json, type);
+
+            Log.e("SYNC MAIN : ", "--------USER-------" + syncArray);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        for(int i=0;i<syncArray.size();i++)
+        {
+           if(syncArray.get(i).getSettingKey().equals("Security"))
+           {
+                if(syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
+                {
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(false);
+                }
+           }else{
+               navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(true);
+           }
+            if(syncArray.get(i).getSettingKey().equals("Admin"))
+            {
+                if(syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
+                {
+                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(true);
+                } else {
+                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
+                }
+            }
+            if(syncArray.get(i).getSettingKey().equals("Supervisor")) {
+                if (syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(false);
+                } else {
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(true);
+                }
+            }
+
+        }
+
 
         View header = navigationView.getHeaderView(0);
 
@@ -132,7 +192,7 @@ public class MainActivity extends AppCompatActivity
                     ft.commit();
                 }else if (strIntentMain.equalsIgnoreCase("Employee gate pass list")) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
+                    ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
                     ft.commit();
                 }else if (strIntentMain.equalsIgnoreCase("Material gate pass")) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

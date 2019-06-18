@@ -361,7 +361,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                             Log.e("EMP GATE PASS : ", " ------------------------------EMP GATE PASS------------------------ " + response.body());
                             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
+                            ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
                             ft.commit();
 
                             commonDialog.dismiss();

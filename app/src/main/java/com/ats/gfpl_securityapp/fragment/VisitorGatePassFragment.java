@@ -209,36 +209,36 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                 purposeId = purposeIdList.get(position);
                 Log.e("CUST ID","--------------------------------"+purposeId);
-                if(purposeList!=null) {
-                    for (int j = 0; j < purposeList.size(); j++) {
-
-                        if (purposeList.get(j).getPurposeId() == purposeId) {
-
-                            purposeType=purposeList.get(j).getPurposeType();
-                            Log.e("TYPE", "----------------"+purposeType);
-
-                            if(purposeList.get(j).getPurposeType()==1)
-                            {
-                                Log.e("hiii", "----------------"+purposeList.get(j).getPurposeType());
-                                tvPerson.setVisibility(View.VISIBLE);
-                                spPerson.setVisibility(View.VISIBLE);
-                                edEmployee.setVisibility(View.GONE);
-                                textEmp.setVisibility(View.GONE);
-                                
-                            }else if(purposeList.get(j).getPurposeType()==2) {
-                                Log.e("hiii111", "----------------"+purposeList.get(j).getPurposeType());
-                                tvPerson.setVisibility(View.GONE);
-                                spPerson.setVisibility(View.GONE);
-                                edEmployee.setVisibility(View.VISIBLE);
-                                textEmp.setVisibility(View.VISIBLE);
-                                edEmployee.setText(purposeList.get(j).getAssignEmpName());
-                                empIds= purposeList.get(j).getEmpId();
-
-                            }
-
-                        }
-                    }
-                }
+//                if(purposeList!=null) {
+//                    for (int j = 0; j < purposeList.size(); j++) {
+//
+//                        if (purposeList.get(j).getPurposeId() == purposeId) {
+//
+//                            purposeType=purposeList.get(j).getPurposeType();
+//                            Log.e("TYPE", "----------------"+purposeType);
+//
+//                            if(purposeList.get(j).getPurposeType()==1)
+//                            {
+//                                Log.e("hiii", "----------------"+purposeList.get(j).getPurposeType());
+//                                tvPerson.setVisibility(View.VISIBLE);
+//                                spPerson.setVisibility(View.VISIBLE);
+//                                edEmployee.setVisibility(View.GONE);
+//                                textEmp.setVisibility(View.GONE);
+//
+//                            }else if(purposeList.get(j).getPurposeType()==2) {
+//                                Log.e("hiii111", "----------------"+purposeList.get(j).getPurposeType());
+//                                tvPerson.setVisibility(View.GONE);
+//                                spPerson.setVisibility(View.GONE);
+//                                edEmployee.setVisibility(View.VISIBLE);
+//                                textEmp.setVisibility(View.VISIBLE);
+//                                edEmployee.setText(purposeList.get(j).getAssignEmpName());
+//                                empIds= purposeList.get(j).getEmpId();
+//
+//                            }
+//
+//                        }
+//                    }
+//                }
 
             }
 
@@ -397,7 +397,10 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.allPurposes();
+            ArrayList<Integer> getTypeList = new ArrayList<>();
+            getTypeList.add(1);
+
+            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.getAllPurposesByType(getTypeList);
             listCall.enqueue(new Callback<ArrayList<PurposeList>>() {
                 @Override
                 public void onResponse(Call<ArrayList<PurposeList>> call, Response<ArrayList<PurposeList>> response) {
@@ -490,12 +493,37 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             final int purposeId = purposeIdList.get(spPurpose.getSelectedItemPosition());
             final String purposeHeading = purposeHeadingList.get(spPurpose.getSelectedItemPosition());
 
-            if(purposeType==1) {
+//            if(purposeType==1) {
                 empIds = String.valueOf(empIdList.get(spPerson.getSelectedItemPosition()));
+               int empId = empIdList.get(spPerson.getSelectedItemPosition());
                 strEmpName = String.valueOf(empNameList.get(spPerson.getSelectedItemPosition()));
-            }
+            //}
             Log.e("EMP","------------------"+empIds);
             int gateID = getIdList.get(spGate.getSelectedItemPosition());
+
+//            if (gateID == 0) {
+//                TextView viewProj = (TextView) spGate.getSelectedView();
+//                viewProj.setError("required");
+//            } else {
+//                TextView viewProj = (TextView) spGate.getSelectedView();
+//                viewProj.setError(null);
+//            }
+
+            if (purposeId == 0) {
+                TextView viewProj = (TextView) spPurpose.getSelectedView();
+                viewProj.setError("required");
+            } else {
+                TextView viewProj = (TextView) spPurpose.getSelectedView();
+                viewProj.setError(null);
+            }
+
+            if (empId==0) {
+                TextView viewProj = (TextView) spPerson.getSelectedView();
+                viewProj.setError("required");
+            } else {
+                TextView viewProj = (TextView) spPerson.getSelectedView();
+                viewProj.setError(null);
+            }
 
             if (strVisitorName.isEmpty()) {
                 edName.setError("required");
@@ -521,14 +549,12 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 edNoOfPer.setError(null);
                 isValidNoOfPerson = true;
             }
-            if (strRemark.isEmpty()) {
-                edRemark.setError("required");
-            } else {
-                edRemark.setError(null);
-                isValidRemark = true;
-            }
-
-
+//            if (strRemark.isEmpty()) {
+//                edRemark.setError("required");
+//            } else {
+//                edRemark.setError(null);
+//                isValidRemark = true;
+//            }
             //int
             visitorType = 1;
             if (rbAppointment.isChecked()) {
@@ -537,7 +563,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 visitorType = 2;
             }
 
-            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && isValidRemark ) {
+            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && empId!=0 && purposeId!=0) {
                 //get Time
                 Calendar cal = Calendar.getInstance();
                 Date date = cal.getTime();

@@ -203,25 +203,28 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
 
                             purposeType=purposeList.get(j).getPurposeType();
                             Log.e("TYPE", "----------------"+purposeType);
-
-                            if(purposeList.get(j).getPurposeType()==1)
-                            {
-                                Log.e("hiii", "----------------"+purposeList.get(j).getPurposeType());
-                                tvPerson.setVisibility(View.VISIBLE);
-                                spPerson.setVisibility(View.VISIBLE);
-                                edEmployee.setVisibility(View.GONE);
-                                textEmp.setVisibility(View.GONE);
-
-                            }else if(purposeList.get(j).getPurposeType()==2) {
-                                Log.e("hiii111", "----------------"+purposeList.get(j).getPurposeType());
-                                tvPerson.setVisibility(View.GONE);
-                                spPerson.setVisibility(View.GONE);
-                                edEmployee.setVisibility(View.VISIBLE);
-                                textEmp.setVisibility(View.VISIBLE);
-                                edEmployee.setText(purposeList.get(j).getAssignEmpName());
-                                empIds= purposeList.get(j).getEmpId();
-
-                            }
+                            edEmployee.setText(purposeList.get(j).getAssignEmpName());
+                            Log.e("EMP NAME", "----------------"+purposeList.get(j).getAssignEmpName());
+                            empIds= purposeList.get(j).getEmpId();
+                            Log.e("EMP ID", "----------------"+empIds);
+//                            if(purposeList.get(j).getPurposeType()==1)
+//                            {
+//                                Log.e("hiii", "----------------"+purposeList.get(j).getPurposeType());
+//                                tvPerson.setVisibility(View.VISIBLE);
+//                                spPerson.setVisibility(View.VISIBLE);
+//                                edEmployee.setVisibility(View.GONE);
+//                                textEmp.setVisibility(View.GONE);
+//
+//                            }else if(purposeList.get(j).getPurposeType()==2) {
+//                                Log.e("hiii111", "----------------"+purposeList.get(j).getPurposeType());
+//                                tvPerson.setVisibility(View.GONE);
+//                                spPerson.setVisibility(View.GONE);
+//                                edEmployee.setVisibility(View.VISIBLE);
+//                                textEmp.setVisibility(View.VISIBLE);
+//                                edEmployee.setText(purposeList.get(j).getAssignEmpName());
+//                                empIds= purposeList.get(j).getEmpId();
+//
+//                            }
 
                         }
                     }
@@ -480,12 +483,29 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
             final int purposeId = purposeIdList.get(spPurpose.getSelectedItemPosition());
             final String purposeHeading = purposeHeadingList.get(spPurpose.getSelectedItemPosition());
 
-            if(purposeType==1) {
-                empIds = String.valueOf(empIdList.get(spPerson.getSelectedItemPosition()));
-                strEmpName = String.valueOf(empNameList.get(spPerson.getSelectedItemPosition()));
-            }
-            Log.e("EMP","------------------"+empIds);
+//            if(purposeType==1) {
+//                empIds = String.valueOf(empIdList.get(spPerson.getSelectedItemPosition()));
+//                strEmpName = String.valueOf(empNameList.get(spPerson.getSelectedItemPosition()));
+//            }
+            Log.e("EMP SUB","------------------"+empIds);
+            Log.e("EMP NAE SUB","------------------"+strEmpName);
             int gateID = getIdList.get(spGate.getSelectedItemPosition());
+
+//            if (gateID == 0) {
+//                TextView viewProj = (TextView) spGate.getSelectedView();
+//                viewProj.setError("required");
+//            } else {
+//                TextView viewProj = (TextView) spGate.getSelectedView();
+//                viewProj.setError(null);
+//            }
+
+            if (purposeId == 0) {
+                TextView viewProj = (TextView) spPurpose.getSelectedView();
+                viewProj.setError("required");
+            } else {
+                TextView viewProj = (TextView) spPurpose.getSelectedView();
+                viewProj.setError(null);
+            }
 
             if (strVisitorName.isEmpty()) {
                 edName.setError("required");
@@ -511,12 +531,12 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                 edNoOfPer.setError(null);
                 isValidNoOfPerson = true;
             }
-            if (strRemark.isEmpty()) {
-                edRemark.setError("required");
-            } else {
-                edRemark.setError(null);
-                isValidRemark = true;
-            }
+//            if (strRemark.isEmpty()) {
+//                edRemark.setError("required");
+//            } else {
+//                edRemark.setError(null);
+//                isValidRemark = true;
+//            }
 
             //int
             visitorType = 1;
@@ -526,7 +546,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                 visitorType = 2;
             }
 
-            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && isValidRemark) {
+            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && purposeId!=0) {
                 //get Time
                 Calendar cal = Calendar.getInstance();
                 Date date = cal.getTime();

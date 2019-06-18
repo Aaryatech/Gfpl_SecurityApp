@@ -85,7 +85,7 @@ public class VisitorList {
     private String visitOutTime;
     @SerializedName("totalTimeDifference")
     @Expose
-    private Integer totalTimeDifference;
+    private float totalTimeDifference;
     @SerializedName("securityIdOut")
     @Expose
     private Integer securityIdOut;
@@ -389,11 +389,11 @@ public class VisitorList {
         this.visitOutTime = visitOutTime;
     }
 
-    public Integer getTotalTimeDifference() {
+    public float getTotalTimeDifference() {
         return totalTimeDifference;
     }
 
-    public void setTotalTimeDifference(Integer totalTimeDifference) {
+    public void setTotalTimeDifference(float totalTimeDifference) {
         this.totalTimeDifference = totalTimeDifference;
     }
 

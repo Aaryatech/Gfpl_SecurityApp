@@ -22,11 +22,13 @@ import android.widget.Toast;
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.fragment.EmployeeFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassDetailFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassFragment;
-import com.ats.gfpl_securityapp.fragment.EmployeeGatePassListFragment;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Info;
+import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
 
@@ -42,10 +44,20 @@ import retrofit2.Response;
 public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeGatePassListAdapter.MyViewHolder> {
     private ArrayList<EmpGatePass> empList;
     private Context context;
+    ArrayList<Sync> syncArray = new ArrayList<>();
+    Login loginUser;
 
-    public EmployeeGatePassListAdapter(ArrayList<EmpGatePass> empList, Context context) {
+//    public EmployeeGatePassListAdapter(ArrayList<EmpGatePass> empList, Context context) {
+//        this.empList = empList;
+//        this.context = context;
+//    }
+
+
+    public EmployeeGatePassListAdapter(ArrayList<EmpGatePass> empList, Context context, ArrayList<Sync> syncArray, Login loginUser) {
         this.empList = empList;
         this.context = context;
+        this.syncArray = syncArray;
+        this.loginUser = loginUser;
     }
 
     @NonNull
@@ -68,6 +80,50 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         myViewHolder.tvTotalHrs.setText(""+model.getActualTimeDifference());
         SimpleDateFormat f1 = new SimpleDateFormat("HH:mm:ss"); //HH for hour of the day (0 - 23)
         SimpleDateFormat f2 = new SimpleDateFormat("hh:mm");
+
+//        if(model.getGatePassStatus()==0)
+//        {
+//            myViewHolder.tvOut.setVisibility(View.VISIBLE);
+//        }
+
+        for(int j=0;j<syncArray.size();j++)
+        {
+            if(syncArray.get(j).getSettingKey().equals("Security"))
+            {
+                if(syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
+                {
+                   myViewHolder.ivEdit.setVisibility(View.GONE);
+
+                    if(model.getGatePassStatus()==0)
+                    {
+                        myViewHolder.tvOut.setVisibility(View.VISIBLE);
+
+                    } else if(model.getGatePassSubType()==1 && model.getGatePassStatus()==1) {
+
+                       myViewHolder.tvIn.setVisibility(View.VISIBLE);
+                   }
+                }
+            }else  if(syncArray.get(j).getSettingKey().equals("Supervisor")) {
+
+                if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                    Log.e("Hiiiii","----------------");
+
+                    if(model.getGatePassStatus()==0)
+                    {
+                        myViewHolder.ivEdit.setVisibility(View.VISIBLE);
+                        Log.e("Hiiiii2222222222","----------------");
+                    }else{
+                        myViewHolder.ivEdit.setVisibility(View.GONE);
+                    }
+                }
+            } else if(syncArray.get(j).getSettingKey().equals("Admin")) {
+
+                if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                    myViewHolder.ivEdit.setVisibility(View.VISIBLE);
+                }
+            }
+        }
 
         Date fromTime=null;
         try {
@@ -149,14 +205,21 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         myViewHolder.tvOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUpdateStatus(model.getGatepassEmpId(),model.getSecurityIdIn(),1,model.getGatePassSubType());
+
+                if(model.getGatePassSubType()==2)
+                {
+                    getUpdateStatus(model.getGatepassEmpId(),model.getSecurityIdIn(),2,model.getGatePassSubType(),model);
+                }else{
+                    getUpdateStatus(model.getGatepassEmpId(),model.getSecurityIdIn(),1,model.getGatePassSubType(),model);
+                }
+
             }
         });
 
         myViewHolder.tvIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUpdateStatus(model.getGatepassEmpId(),model.getSecurityIdIn(),2,model.getGatePassSubType());
+                getUpdateStatus(model.getGatepassEmpId(),model.getSecurityIdIn(),2,model.getGatePassSubType(),model);
             }
         });
 
@@ -225,7 +288,7 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
 
     }
 
-    private void getUpdateStatus(int gatepassEmpId, int securityIdIn, int status, int gatePassSubType) {
+    private void getUpdateStatus(int gatepassEmpId, int securityIdIn, int status, int gatePassSubType, final EmpGatePass model) {
         Log.e("PARAMETER","                 EMP GATE PASS ID     "+gatepassEmpId +"       SATAUS      "+status +"      SECURITY ID    "+securityIdIn+"             GATE PASS TYPE     "+gatePassSubType);
 
         if (Constants.isOnline(context)) {
@@ -247,8 +310,65 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
 
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
+                                sendNotification(model.getGatepassEmpId(),model.getUserId());
+
+
+
+                            } else {
+                                Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                            Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Info> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendNotification(Integer gatepassEmpId, Integer empId) {
+        Log.e("PARAMETER","               GATE PASS EMP ID              "+gatepassEmpId +"             EMP ID      "+empId);
+        if (Constants.isOnline(context)) {
+            final CommonDialog commonDialog = new CommonDialog(context, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Info> listCall = Constants.myInterface.sendNotification(gatepassEmpId,empId);
+            listCall.enqueue(new Callback<Info>() {
+                @Override
+                public void onResponse(Call<Info> call, Response<Info> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("NOTIFI SEND EMP : ", " - " + response.body());
+
+                            if (!response.body().getError()) {
+
+                                MainActivity activity = (MainActivity) context;
+
+                                Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+
                                 FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
+                                ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
                                 ft.commit();
 
                             } else {
@@ -304,7 +424,7 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
                                 FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
+                                ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
                                 ft.commit();
 
                             } else {

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,16 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
-import com.ats.gfpl_securityapp.adapter.InwardGatePassAdapter;
+import com.ats.gfpl_securityapp.adapter.EmployeeGatePassListAdapter;
 import com.ats.gfpl_securityapp.adapter.VisitorEmployeeAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
-import com.ats.gfpl_securityapp.model.Department;
+import com.ats.gfpl_securityapp.interfaces.CloseEmpInterface;
+import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
-import com.ats.gfpl_securityapp.model.Login;
-import com.ats.gfpl_securityapp.model.MaterialDetail;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
-import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
-import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,58 +48,87 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.loginUser;
+import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.syncArray;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InwardgatePassListFragment extends Fragment implements View.OnClickListener {
-
+public class EmployeeCloseGatePassFragment extends Fragment implements CloseEmpInterface,View.OnClickListener {
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+//    Login loginUser,loginUserMain;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
 
+    // ArrayList<Sync> syncArray = new ArrayList<>();
+
     String stringId;
-    ArrayList<Employee> empList = new ArrayList<>();
+    ArrayList<Employee> empList1 = new ArrayList<>();
     RecyclerView recyclerViewFilter;
-    public static ArrayList<Employee> assignInwardEmpStaticList = new ArrayList<>();
+    public static ArrayList<Employee> assignEmpCloseStaticList = new ArrayList<>();
 
-    Login loginUser;
+    ArrayList<EmpGatePass> empList = new ArrayList<>();
 
-    ArrayList<MaterialDetail> inwardList = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_inwardgate_pass_list, container, false);
-        getActivity().setTitle("Material List");
+        View view= inflater.inflate(R.layout.fragment_employee_close_gate_pass, container, false);
+
+        //getActivity().setTitle("Employee Pending");
+
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);
+
         fab.setOnClickListener(this);
 
-        try {
-            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
-            Gson gson = new Gson();
-            loginUser = gson.fromJson(userStr, Login.class);
-            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        //getEmployee();
+        getEmployee();
 
         ArrayList<Integer> statusList = new ArrayList<>();
-        statusList.add(0);
+        statusList.add(2);
 
-        ArrayList<Integer> getDeptId = new ArrayList<>();
-        getDeptId.add(-1);
+        ArrayList<Integer> deptList = new ArrayList<>();
+        deptList.add(-1);
 
-        ArrayList<Integer> getEmpId = new ArrayList<>();
-        getEmpId.add(-1);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        getInwardGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getDeptId,getEmpId,statusList);
+        if(syncArray!=null) {
+            for (int j = 0; j < syncArray.size(); j++) {
+                if (syncArray.get(j).getSettingKey().equals("Security")) {
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
 
+
+                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                        getPassTypeList.add(1);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
+                    }
+                } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                        getPassTypeList.add(1);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList, String.valueOf(loginUser.getEmpId()),statusList);
+
+                    }
+                }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                        getPassTypeList.add(1);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
+                    }
+                }
+            }
+        }
         return view;
     }
 
@@ -118,32 +145,20 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                         if (response.body() != null) {
 
                             Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
-                            empList.clear();
+                            empList1.clear();
 //                            empIdList.clear();
-                            empList = response.body();
+                            empList1 = response.body();
 
-                            assignInwardEmpStaticList.clear();
-                            assignInwardEmpStaticList = empList;
+                            assignEmpCloseStaticList.clear();
+                            assignEmpCloseStaticList = empList1;
 
-                            for (int i = 0; i < assignInwardEmpStaticList.size(); i++) {
-                                assignInwardEmpStaticList.get(i).setChecked(false);
+                            for (int i = 0; i < assignEmpCloseStaticList.size(); i++) {
+                                assignEmpCloseStaticList.get(i).setChecked(false);
                             }
 
-
-//                            empNameList.add("All");
-//                            empIdList.add(-1);
-//
-//                            if (response.body().size() > 0) {
-//                                for (int i = 0; i < response.body().size(); i++) {
-//                                    empIdList.add(response.body().get(i).getEmpDeptId());
-//                                    empNameList.add(response.body().get(i).getEmpFname()+" "+response.body().get(i).getEmpMname()+" "+response.body().get(i).getEmpSname());
-//                                }
-//
-//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
-//                                spEmp.setAdapter(projectAdapter);
                             getAssignUser();
 
-                            VisitorEmployeeAdapter adapter = new VisitorEmployeeAdapter(assignInwardEmpStaticList, getContext());
+                            VisitorEmployeeAdapter adapter = new VisitorEmployeeAdapter(assignEmpCloseStaticList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerViewFilter.setLayoutManager(mLayoutManager);
                             recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
@@ -180,53 +195,56 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
         ArrayList<Integer> assignedEmpIdArray = new ArrayList<>();
         ArrayList<String> assignedEmpNameArray = new ArrayList<>();
 
-        if (assignInwardEmpStaticList != null) {
-            if (assignInwardEmpStaticList.size() > 0) {
+        if (assignEmpCloseStaticList != null) {
+            if (assignEmpCloseStaticList.size() > 0) {
                 assignedEmpArray.clear();
-                for (int i = 0; i < assignInwardEmpStaticList.size(); i++) {
-                    if (assignInwardEmpStaticList.get(i).getChecked()) {
-                        assignedEmpArray.add(assignInwardEmpStaticList.get(i));
-                        assignedEmpIdArray.add(assignInwardEmpStaticList.get(i).getEmpId());
-                        assignedEmpNameArray.add(assignInwardEmpStaticList.get(i).getEmpFname() + " " + assignInwardEmpStaticList.get(i).getEmpMname() + " " + assignInwardEmpStaticList.get(i).getEmpSname());
+                for (int i = 0; i < assignEmpCloseStaticList.size(); i++) {
+                    if (assignEmpCloseStaticList.get(i).getChecked()) {
+                        assignedEmpArray.add(assignEmpCloseStaticList.get(i));
+                        assignedEmpIdArray.add(assignEmpCloseStaticList.get(i).getEmpId());
+                        assignedEmpNameArray.add(assignEmpCloseStaticList.get(i).getEmpFname() + " " + assignEmpCloseStaticList.get(i).getEmpMname() + " " + assignEmpCloseStaticList.get(i).getEmpSname());
                     }
                 }
             }
             Log.e("ASSIGN EMP", "---------------------------------" + assignedEmpArray);
             Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedEmpArray.size());
+
             String empIds = assignedEmpIdArray.toString().trim();
             Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
 
-            try {
-                 stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
 
             Log.e("ASSIGN EMP ID STRING", "---------------------------------" + stringId);
 
+//            String empName=assignedEmpNameArray.toString().trim();
+////            Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
+////
+////            stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+////
+////            Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+////            edEmployee.setText(stringName);
         }
     }
 
-    private void getInwardGetPassList(String fromDate, String toDate, ArrayList<Integer> getDeptId,ArrayList<Integer> getEmpId, ArrayList<Integer> statusList) {
-        Log.e("PARAMETER","            FROM DATE       "+ fromDate        +"          TO DATE     " +   toDate  +"       DEPT ID   " +  getDeptId   + "         EMP ID    "+getEmpId+"             STATUS"  +statusList);
+    private void getEmployeeGetPassList(String formatDate, String toDate,  ArrayList<Integer> deptList, String emp, ArrayList<Integer> statusList) {
+        Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       Dept   " +  deptList  +"            EMP ID   "+   emp  +"             STATUS"  +statusList);
 
         if (Constants.isOnline(getContext())) {
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<MaterialDetail>> listCall = Constants.myInterface.getMaterialTrackGatepassListWithDateFilter(fromDate,toDate,getDeptId,getEmpId,statusList);
-            listCall.enqueue(new Callback<ArrayList<MaterialDetail>>() {
+            Call<ArrayList<EmpGatePass>> listCall = Constants.myInterface.getEmpGatepassListWithDateFilter(formatDate,toDate,deptList,emp,statusList);
+            listCall.enqueue(new Callback<ArrayList<EmpGatePass>>() {
                 @Override
-                public void onResponse(Call<ArrayList<MaterialDetail>> call, Response<ArrayList<MaterialDetail>> response) {
+                public void onResponse(Call<ArrayList<EmpGatePass>> call, Response<ArrayList<EmpGatePass>> response) {
                     try {
                         if (response.body() != null) {
 
-                            Log.e("INWARD  LIST : ", " - " + response.body());
-                            inwardList.clear();
-                            inwardList = response.body();
+                            Log.e("EMPLOYEE LIST : ", " - " + response.body());
+                            empList.clear();
+                            empList = response.body();
 
-                            InwardGatePassAdapter adapter = new InwardGatePassAdapter(inwardList, getContext());
+                            EmployeeGatePassListAdapter adapter = new EmployeeGatePassListAdapter(empList, getContext(),syncArray,loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -246,7 +264,7 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                 }
 
                 @Override
-                public void onFailure(Call<ArrayList<MaterialDetail>> call, Throwable t) {
+                public void onFailure(Call<ArrayList<EmpGatePass>> call, Throwable t) {
                     commonDialog.dismiss();
                     Log.e("onFailure : ", "-----------" + t.getMessage());
                     t.printStackTrace();
@@ -255,9 +273,7 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
         } else {
             Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
-
     }
-
 
     @Override
     public void onClick(View v) {
@@ -266,19 +282,23 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
         }
     }
 
+    @Override
+    public void fragmentBecameVisible() {
+
+    }
+
+
     public class FilterDialog extends Dialog {
 
         EditText edFromDate, edToDate;
-        TextView tvFromDate, tvToDate, tvType, tvEmp;
+        TextView tvFromDate, tvToDate;
+        Spinner spDept, spType;
         ImageView ivClose;
+        LinearLayout llSup;
         String DateTo;
-        Spinner spDept,spEmp;
+        CardView cardViewDept,cardViewEmp;
         private VisitorEmployeeAdapter mAdapter;
-        ArrayList<String> deptNameList = new ArrayList<>();
-        ArrayList<Integer> deptIdList = new ArrayList<>();
 
-        ArrayList<String> empNameList = new ArrayList<>();
-        ArrayList<Integer> empIdList = new ArrayList<>();
 
         public FilterDialog(@NonNull Context context) {
             super(context);
@@ -289,8 +309,9 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
             super.onCreate(savedInstanceState);
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             setTitle("Filter");
-            setContentView(R.layout.dialog_inwared_gate_pass_filter);
-            //dialog_inwared_gate_pass_filter
+            setContentView(R.layout.dialog_emp_gatepass);
+            // dialog_employee_gate_pass_filter
+            //dialog_visitor_gate_pass_filter
             setCancelable(false);
 
             Window window = getWindow();
@@ -306,35 +327,55 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
             tvFromDate = findViewById(R.id.tvFromDate);
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
-             spDept = findViewById(R.id.spDept);
-             spEmp = findViewById(R.id.spEmp);
-            LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
-            tvType = findViewById(R.id.tvType);
-            tvEmp = findViewById(R.id.tvEmp);
+            spDept = findViewById(R.id.spDept);
+            llSup = findViewById(R.id.llSup);
+            cardViewDept = findViewById(R.id.cardViewDept);
+            cardViewEmp = findViewById(R.id.cardViewEmp);
             recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
 
-            getDepartment();
-            getEmployee();
+            if(syncArray!=null) {
+                for (int j = 0; j < syncArray.size(); j++) {
+                    if(syncArray.get(j).getSettingKey().equals("Admin")){
+                        if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                            cardViewEmp.setVisibility(View.VISIBLE);
+                            cardViewDept.setVisibility(View.VISIBLE);
+                        }else{
+                            cardViewEmp.setVisibility(View.GONE);
+                            cardViewDept.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
 
-//            try {
-//                mAdapter = new VisitorEmployeeAdapter(assignInwardEmpStaticList, getActivity());
-//                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-//                recyclerViewFilter.setLayoutManager(mLayoutManager);
-//                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
-//                recyclerViewFilter.setAdapter(mAdapter);
-//            }catch (Exception e)
-//            {
-//                e.printStackTrace();
-//            }
+            ArrayList<String> typeArray = new ArrayList<>();
+            final ArrayList<Integer> typeIdArray = new ArrayList<>();
+            typeArray.add("All");
+            typeArray.add("Visitor");
+            typeArray.add("Maintenance");
 
+            typeIdArray.add(-1);
+            typeIdArray.add(1);
+            typeIdArray.add(2);
 
+            ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
+            spDept.setAdapter(spTypeAdapter);
+
+            try {
+                mAdapter = new VisitorEmployeeAdapter(assignEmpCloseStaticList, getActivity());
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerViewFilter.setLayoutManager(mLayoutManager);
+                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewFilter.setAdapter(mAdapter);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             String currentDate = formatter.format(todayDate);
             Log.e("Mytag","todayString"+currentDate);
-
 
             edToDate.setText(currentDate);
 
@@ -436,6 +477,8 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
             btnFilter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    final int getDept = typeIdArray.get(spDept.getSelectedItemPosition());
+
                     if (edFromDate.getText().toString().isEmpty()) {
                         edFromDate.setError("Select From Date");
                         edFromDate.requestFocus();
@@ -443,27 +486,66 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                         edToDate.setError("Select To Date");
                         edToDate.requestFocus();
                     } else {
-                        dismiss();
+
+//                        TextView viewType = (TextView) spDept.getSelectedView();
+//                        viewType.setError(null);
                         getAssignUser();
-
-                        final int getDeptType = deptIdList.get(spDept.getSelectedItemPosition());
-                        final int getEmpType = empIdList.get(spEmp.getSelectedItemPosition());
-
-
-                        ArrayList<Integer> getDeptList = new ArrayList<>();
-                        getDeptList.add(getDeptType);
-
-                        ArrayList<Integer> getEmpList = new ArrayList<>();
-                        getEmpList.add(getEmpType);
-
-                        ArrayList<Integer> statusList = new ArrayList<>();
-                        statusList.add(0);
-
-                        String fromDate = tvFromDate.getText().toString();
-                        String toDate = tvToDate.getText().toString();
-
-                        getInwardGetPassList(fromDate, toDate, getDeptList, getEmpList, statusList);
                         dismiss();
+
+                        ArrayList<Integer> getPassDeptList = new ArrayList<>();
+                        getPassDeptList.add(getDept);
+
+                        if(syncArray!=null) {
+                            for (int j = 0; j < syncArray.size(); j++) {
+                                if (syncArray.get(j).getSettingKey().equals("Security")) {
+                                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                                        ArrayList<Integer> statusList = new ArrayList<>();
+                                        statusList.add(2);
+
+                                        ArrayList<Integer> getPassDeptList1 = new ArrayList<>();
+                                        getPassDeptList1.add(-1);
+
+                                        String fromDate = tvFromDate.getText().toString();
+                                        String toDate = tvToDate.getText().toString();
+
+                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList1, "-1", statusList);
+                                    }
+                                } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+                                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                                        ArrayList<Integer> statusList = new ArrayList<>();
+                                        statusList.add(2);
+
+                                        ArrayList<Integer> getPassDeptList2 = new ArrayList<>();
+                                        getPassDeptList2.add(-1);
+
+                                        String fromDate = tvFromDate.getText().toString();
+                                        String toDate = tvToDate.getText().toString();
+
+                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList2, String.valueOf(loginUser.getEmpId()), statusList);
+                                    }
+                                }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+                                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                                        ArrayList<Integer> statusList = new ArrayList<>();
+                                        statusList.add(2);
+
+                                        String fromDate = tvFromDate.getText().toString();
+                                        String toDate = tvToDate.getText().toString();
+
+                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, stringId, statusList);
+                                    }
+                                }
+                            }
+                        }
+
+//                        ArrayList<Integer> statusList = new ArrayList<>();
+//                        statusList.add(0);
+//
+//                        String fromDate = tvFromDate.getText().toString();
+//                        String toDate = tvToDate.getText().toString();
+//
+//                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, stringId, statusList);
 
                     }
                 }
@@ -476,131 +558,6 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                 }
             });
 
-        }
-
-        private void getEmployee() {
-            if (Constants.isOnline(getActivity())) {
-                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
-                commonDialog.show();
-
-                Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
-                listCall.enqueue(new Callback<ArrayList<Employee>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
-                        try {
-                            if (response.body() != null) {
-
-                                Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
-                                empNameList.clear();
-                                empIdList.clear();
-
-                                empNameList.add("All");
-                                empIdList.add(-1);
-
-                                if (response.body().size() > 0) {
-                                    for (int i = 0; i < response.body().size(); i++) {
-                                        empIdList.add(response.body().get(i).getEmpDeptId());
-                                        empNameList.add(response.body().get(i).getEmpFname()+" "+response.body().get(i).getEmpMname()+" "+response.body().get(i).getEmpSname());
-                                    }
-
-                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
-                                    spEmp.setAdapter(projectAdapter);
-
-                                }
-
-                                commonDialog.dismiss();
-
-                            } else {
-                                commonDialog.dismiss();
-                                Log.e("Data Null : ", "-----------");
-                            }
-                        } catch (Exception e) {
-                            commonDialog.dismiss();
-                            Log.e("Exception : ", "-----------" + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
-                        commonDialog.dismiss();
-                        Log.e("onFailure : ", "-----------" + t.getMessage());
-                        t.printStackTrace();
-                    }
-                });
-            } else {
-                Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private void getDepartment() {
-
-            if (Constants.isOnline(getContext())) {
-                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
-                commonDialog.show();
-
-                Call<ArrayList<Department>> listCall = Constants.myInterface.allEmployeeDepartment();
-                listCall.enqueue(new Callback<ArrayList<Department>>() {
-                    @Override
-                    public void onResponse(Call<ArrayList<Department>> call, Response<ArrayList<Department>> response) {
-                        try {
-                            if (response.body() != null) {
-
-                                Log.e("DEPT LIST : ", " - " + response.body());
-
-                                deptNameList.clear();
-                                deptIdList.clear();
-
-                                deptNameList.add("All");
-                                deptIdList.add(-1);
-
-                                if (response.body().size() > 0) {
-                                    for (int i = 0; i < response.body().size(); i++) {
-                                        deptIdList.add(response.body().get(i).getEmpDeptId());
-                                        deptNameList.add(response.body().get(i).getEmpDeptName());
-                                    }
-
-                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
-                                    spDept.setAdapter(projectAdapter);
-
-                                }
-
-//                                if (model != null) {
-//                                    int position = 0;
-//                                    if (purposeIdList.size() > 0) {
-//                                        for (int i = 0; i < purposeIdList.size(); i++) {
-//                                            if (model.getPurposeId() == purposeIdList.get(i)) {
-//                                                position = i;
-//                                                break;
-//                                            }
-//                                        }
-//                                        spPurpose.setSelection(position);
-//
-//                                    }
-//                                }
-                                commonDialog.dismiss();
-
-                            } else {
-                                commonDialog.dismiss();
-                                Log.e("Data Null : ", "-----------");
-                            }
-                        } catch (Exception e) {
-                            commonDialog.dismiss();
-                            Log.e("Exception : ", "-----------" + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ArrayList<Department>> call, Throwable t) {
-                        commonDialog.dismiss();
-                        Log.e("onFailure : ", "-----------" + t.getMessage());
-                        t.printStackTrace();
-                    }
-                });
-            } else {
-                Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
-            }
         }
 
         DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {

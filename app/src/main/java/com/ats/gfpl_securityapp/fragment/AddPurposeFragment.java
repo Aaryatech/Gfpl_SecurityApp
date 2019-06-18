@@ -74,7 +74,6 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_purpose, container, false);
 
-
         edPurHeading=(EditText)view.findViewById(R.id.edPurposHeading);
         edDescription=(EditText)view.findViewById(R.id.edDescription);
         edRemark=(EditText)view.findViewById(R.id.edRemark);
@@ -355,8 +354,6 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                        AlertDialog dialog = builder.create();
                        dialog.show();
                    }
-
-
                 }
             }
             if(type.equalsIgnoreCase("Type 2"))

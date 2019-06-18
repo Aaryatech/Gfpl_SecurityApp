@@ -40,6 +40,7 @@ import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
+import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.model.VisitorList;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
@@ -56,11 +57,20 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     private ArrayList<VisitorList> visitorList;
     private Context context;
     private Login login;
+    ArrayList<Sync> syncArray = new ArrayList<>();
 
-    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context,Login login) {
+
+//    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context,Login login) {
+//        this.visitorList = visitorList;
+//        this.context = context;
+//        this.login = login;
+//    }
+
+    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context, Login login, ArrayList<Sync> syncArray) {
         this.visitorList = visitorList;
         this.context = context;
         this.login = login;
+        this.syncArray = syncArray;
     }
 
     @NonNull
@@ -77,6 +87,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         final VisitorList model=visitorList.get(i);
 
         Log.e("LOGIN USER","---------------------------"+login);
+        Log.e("LOGIN USER MODEL","---------------------------"+model);
 
         myViewHolder.tvGPNo.setText(model.getExVar1());
         myViewHolder.tvName.setText(model.getPersonName());
@@ -91,12 +102,133 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
         }
 
+        if(syncArray!=null) {
+            for (int j = 0; j < syncArray.size(); j++) {
+                if (syncArray.get(j).getSettingKey().equals("Security")) {
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
+//                        myViewHolder.ivApprove.setVisibility(View.GONE);
+//                        myViewHolder.ivReject.setVisibility(View.GONE);
+//                        myViewHolder.ivClose.setVisibility(View.GONE);
+//                        myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        if(model.getVisitStatus()==1)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==4)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }
+
+                    }
+                } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
+//                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivClose.setVisibility(View.GONE);
+//                        myViewHolder.ivInfo.setVisibility(View.GONE);
+//                        myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        if(model.getVisitStatus()==0)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==3)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }
+
+
+                    }
+                }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+                    if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
+
+//                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivClose.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
+//                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        if(model.getVisitStatus()==0)
+                        {
+                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                        myViewHolder.ivClose.setVisibility(View.GONE);
+                        myViewHolder.ivInfo.setVisibility(View.GONE);
+                        myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        }else if(model.getVisitStatus()==3)
+                        {
+                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                        myViewHolder.ivClose.setVisibility(View.VISIBLE);
+                        myViewHolder.ivInfo.setVisibility(View.GONE);
+                        myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        }else if(model.getVisitStatus()==1)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+
+                        }else if(model.getVisitStatus()==4)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
+                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+                            myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }
+
+
+                    }
+                }
+            }
+        }
+
         if(model.getVisitType()==1) {
             myViewHolder.tvType.setText("Appointment");
         }else if(model.getVisitType()==2)
         {
             myViewHolder.tvType.setText("Random");
         }
+
         if(model.getVisitStatus()==0)
         {
             myViewHolder.tvStatus.setText("Pending");
@@ -106,6 +238,15 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         }else if(model.getVisitStatus()==2)
         {
             myViewHolder.tvStatus.setText("Rejected");
+        }else if(model.getVisitStatus()==3)
+        {
+            myViewHolder.tvStatus.setText("Allow to Enter");
+        }else if(model.getVisitStatus()==4)
+        {
+            myViewHolder.tvStatus.setText("Close Metting");
+        }else if(model.getVisitStatus()==5)
+        {
+            myViewHolder.tvStatus.setText("Out From Factory");
         }
 
         myViewHolder.tvRemark.setText(model.getPurposeRemark());
@@ -282,7 +423,6 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             } else {
                                 Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
                             }
-
                             commonDialog.dismiss();
 
                         } else {
@@ -433,8 +573,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo;
-        public ImageView ivReject, ivApprove, ivClose, ivInfo, ivOutSide,ivOutFactory,ivEdit;
+        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory;
+        public ImageView ivReject, ivApprove, ivClose, ivOutSide,ivEdit;
         public CircleImageView ivPhoto;
         public LinearLayout linearLayout;
 
@@ -522,14 +662,13 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                         TextView viewProj = (TextView) spGate.getSelectedView();
                         viewProj.setError(null);
 
-                        getUpdateStatus(visitorList.getGatepassVisitorId(),login.getEmpId(),1,gateId);
+                        getUpdateStatus(visitorList.getGatepassVisitorId(), Integer.valueOf(visitorList.getEmpIds()),1,gateId);
                         dismiss();
 
                     }
 
                 }
             });
-
 
         }
 

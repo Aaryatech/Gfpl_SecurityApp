@@ -1,5 +1,6 @@
 package com.ats.gfpl_securityapp.interfaces;
 
+import com.ats.gfpl_securityapp.model.Dashboard;
 import com.ats.gfpl_securityapp.model.Department;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
@@ -13,6 +14,7 @@ import com.ats.gfpl_securityapp.model.Notification;
 import com.ats.gfpl_securityapp.model.Party;
 import com.ats.gfpl_securityapp.model.Purpose;
 import com.ats.gfpl_securityapp.model.PurposeList;
+import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.model.VisitCard;
 import com.ats.gfpl_securityapp.model.Visitor;
 import com.ats.gfpl_securityapp.model.VisitorList;
@@ -37,6 +39,9 @@ public interface InterfaceAPI {
     @GET("master/allEmployees")
     Call<ArrayList<Employee>> allEmployees();
 
+    @POST("master/getAllPurposesByType")
+    Call<ArrayList<PurposeList>> getAllPurposesByType( @Query("typeList") ArrayList<Integer> typeList);
+
     @POST("master/savePurpose")
     Call<Purpose> savePurpose(@Body Purpose purpose);
 
@@ -48,6 +53,11 @@ public interface InterfaceAPI {
 
     @POST("master/login")
     Call<Login> doLogin(@Query("dscNumber") String dscNumber);
+
+
+    @GET("master/allSettings")
+    Call<ArrayList<Sync>> allSettings();
+
 
     @POST("master/updateToken")
     Call<Info> updateUserToken(@Query("empId") int empId, @Query("token") String token);
@@ -122,5 +132,10 @@ public interface InterfaceAPI {
     @POST("master/getNotificationByGatepassId")
     Call<ArrayList<Notification>> getNotificationByGatepassId(@Query("gatepassVisitorId") int gatepassVisitorId);
 
+    @POST("transaction/sendNotification")
+    Call<Info> sendNotification(@Query("gatepassVisitorId") int gatepassVisitorId,@Query("empId") int empId);
+
+    @POST("transaction/dashboardCount")
+    Call<Dashboard> dashboardCount(@Query("fromDate") String fromDate, @Query("toDate") String todate, @Query("empId") int empId);
 
 }
