@@ -390,7 +390,10 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.allPurposes();
+            ArrayList<Integer> getTypeList = new ArrayList<>();
+            getTypeList.add(2);
+
+            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.getAllPurposesByType(getTypeList);
             listCall.enqueue(new Callback<ArrayList<PurposeList>>() {
                 @Override
                 public void onResponse(Call<ArrayList<PurposeList>> call, Response<ArrayList<PurposeList>> response) {
@@ -556,7 +559,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                 if (model == null) {
-                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, 2, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
+                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, 1, 2, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
                     if(imagePath1!=null) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                         builder.setTitle("Confirmation");
@@ -573,8 +576,8 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
 
                                 String photo1 = "", photo2 = "", photo3 = "";
 
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
+                               // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                                 if (imagePath1 != null) {
 
                                     pathArray.add(imagePath1);
@@ -582,7 +585,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                                     File imgFile1 = new File(imagePath1);
                                     int pos = imgFile1.getName().lastIndexOf(".");
                                     String ext = imgFile1.getName().substring(pos + 1);
-                                    photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                    photo1 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p1." + ext;
                                     fileNameArray.add(photo1);
                                 }
                                 visitor.setPersonPhoto(photo1);
@@ -599,6 +602,8 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                    }else{
+                        Toast.makeText(getActivity(), "Please Select Person Photo", Toast.LENGTH_SHORT).show();
                     }
                 }else {
                     final Visitor visitor = new Visitor(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), strVisitorName, strCompany, model.getPersonPhoto(), strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, model.getInTime(), model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
@@ -791,7 +796,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" +  Calendar.getInstance().getTimeInMillis()+ "_p1.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -803,7 +808,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
 
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis() + "_p1.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 102);

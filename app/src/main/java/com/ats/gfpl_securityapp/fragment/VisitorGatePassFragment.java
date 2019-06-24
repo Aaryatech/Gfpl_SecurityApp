@@ -282,8 +282,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                                 spGate.setAdapter(projectAdapter);
 
                             }
-
-
                             if (model != null) {
                                 int position = 0;
                                 if (getIdList.size() > 0) {
@@ -294,7 +292,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                                         }
                                     }
                                     spGate.setSelection(position);
-
                                 }
                             }
 
@@ -353,7 +350,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                                 spPerson.setAdapter(projectAdapter);
 
                             }
-
                             if (model != null) {
                                 int position = 0;
                                 if (empIdList.size() > 0) {
@@ -473,8 +469,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
         } else if (v.getId() == R.id.btnSubmit) {
 
-            String strVisitorName, strCompany, strMob, strNoOfPerson, strEmpName, strRemark;
-            boolean isValidVisitorName = false, isValidCompany = false, isValidMob = false, isValidNoOfPerson = false, isValidRemark = false;
+            String strVisitorName, strCompany, strMob, strNoOfPerson, strEmpName, strRemark,strPhoto;
+            boolean isValidVisitorName = false, isValidCompany = false, isValidMob = false, isValidNoOfPerson = false, isValidPhoto = false;
 
             strVisitorName = edName.getText().toString();
             strCompany = edCompany.getText().toString();
@@ -482,6 +478,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             strNoOfPerson = edNoOfPer.getText().toString();
             strEmpName = edEmployee.getText().toString();
             strRemark = edRemark.getText().toString();
+            strPhoto=tvPhoto1.getText().toString();
             int noOfper = 0;
             try {
                 noOfper = Integer.parseInt(strNoOfPerson);
@@ -549,13 +546,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 edNoOfPer.setError(null);
                 isValidNoOfPerson = true;
             }
-//            if (strRemark.isEmpty()) {
-//                edRemark.setError("required");
-//            } else {
-//                edRemark.setError(null);
-//                isValidRemark = true;
-//            }
-            //int
+
             visitorType = 1;
             if (rbAppointment.isChecked()) {
                 visitorType = 1;
@@ -573,7 +564,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                 if (model == null) {
-                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
+                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, 1, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
 
                     if (imagePath1 != null)
                     {
@@ -592,8 +583,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                             String photo1 = "";
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
+                           // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                             if (imagePath1 != null) {
 
                                 pathArray.add(imagePath1);
@@ -601,7 +592,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                                 File imgFile1 = new File(imagePath1);
                                 int pos = imgFile1.getName().lastIndexOf(".");
                                 String ext = imgFile1.getName().substring(pos + 1);
-                                photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                photo1 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p1." + ext;
                                 fileNameArray.add(photo1);
                             }
 
@@ -618,7 +609,31 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }
+                }else{
+                        Toast.makeText(getActivity(), "Please Select Person Photo", Toast.LENGTH_SHORT).show();
+                    }
+//                else{
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+//                        builder.setTitle("Confirmation");
+//                        builder.setMessage("Do you want visitor gate pass ?");
+//                        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                                saveVisitor(visitor);
+//                                Log.e("Image Not Upload", "-----------------------" + visitor);
+//
+//                            }
+//                        });
+//                        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        AlertDialog dialog = builder.create();
+//                        dialog.show();
+//                    }
                 }else {
                     final Visitor visitor = new Visitor(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), strVisitorName, strCompany, model.getPersonPhoto(), strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, model.getInTime(), model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
@@ -629,7 +644,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                         public void onClick(DialogInterface dialog, int which) {
 
                                 saveVisitor(visitor);
-                                Log.e("Image Not Upload", "-----------------------" + visitor);
+                                Log.e("Edit Visitor", "-----------------------" + visitor);
 
                         }
                     });
@@ -811,7 +826,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p1.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -823,7 +838,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p1.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 102);

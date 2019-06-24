@@ -1,9 +1,9 @@
 package com.ats.gfpl_securityapp.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,25 +19,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.AddPurposeFragment;
+import com.ats.gfpl_securityapp.fragment.AddVisitingCardFragment;
 import com.ats.gfpl_securityapp.fragment.DashboardFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassDetailFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassListFragment;
+import com.ats.gfpl_securityapp.fragment.InwardGatePassDetailFragment;
 import com.ats.gfpl_securityapp.fragment.InwardGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.InwardgatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.MaterialFragment;
+import com.ats.gfpl_securityapp.fragment.MaterialTrackingDetailFragment;
 import com.ats.gfpl_securityapp.fragment.PendingInwardFragment;
 import com.ats.gfpl_securityapp.fragment.PurposeListFragment;
 import com.ats.gfpl_securityapp.fragment.TabFragment;
+import com.ats.gfpl_securityapp.fragment.VisitingCardListFragment;
+import com.ats.gfpl_securityapp.fragment.VisitorDetailFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Login;
@@ -56,7 +61,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     boolean doubleBackToExitPressedOnce = false;
-    public String strIntentMain;
+    public String strIntentMain,strMeeting;
     Login loginUser;
     Sync sync;
     ArrayList<Sync> syncArray = new ArrayList<>();
@@ -106,39 +111,87 @@ public class MainActivity extends AppCompatActivity
 
         for(int i=0;i<syncArray.size();i++)
         {
+            Log.e("MY TAG","-----syncArray-------");
            if(syncArray.get(i).getSettingKey().equals("Security"))
            {
+               Log.e("MY TAG1","-----Security-------");
                 if(syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
                 {
+                    navigationView.getMenu().findItem(R.id.nav_dash).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp_list).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(false);
-                }
-           }else{
-               navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(true);
-           }
-            if(syncArray.get(i).getSettingKey().equals("Admin"))
-            {
-                if(syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
-                {
-                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(true);
-                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(true);
-                } else {
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_tracking).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
+                    Log.e("MY TAG","-----Security-------");
                 }
+           }
+//           else{
+//               navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(true);
+//               navigationView.getMenu().findItem(R.id.nav_material_gp).setVisible(false);
+//           }
+            if(syncArray.get(i).getSettingKey().equals("Admin"))
+            {
+                Log.e("MY TAG1","-----Admin-------");
+                if(syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId())))
+                {
+                    navigationView.getMenu().findItem(R.id.nav_dash).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_tracking).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(true);
+                    Log.e("MY TAG","-----Admin-------");
+                }
+//                else {
+//                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(false);
+//                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
+//                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(false);
+//                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
+//                }
             }
             if(syncArray.get(i).getSettingKey().equals("Supervisor")) {
+                Log.e("MY TAG1","------Supervisor------");
                 if (syncArray.get(i).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_dash).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(false);
-                } else {
-                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(true);
-                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_visitor_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_emp_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_material_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_material_tracking).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
+                    Log.e("MY TAG","------Supervisor------");
                 }
+//                else {
+//                    navigationView.getMenu().findItem(R.id.nav_maintenance_gp).setVisible(true);
+//                    navigationView.getMenu().findItem(R.id.nav_visitor_gp).setVisible(true);
+//                }
             }
 
         }
-
-
         View header = navigationView.getHeaderView(0);
 
         TextView tvNavHeadName = header.findViewById(R.id.tvNavHeadName);
@@ -150,7 +203,7 @@ public class MainActivity extends AppCompatActivity
             tvNavHeadDesg.setText("" + loginUser.getEmpEmail());
 
             try {
-                Picasso.with(MainActivity.this).load(Constants.IMAGE_URL + "" + loginUser.getEmpPhoto()).placeholder(getResources().getDrawable(R.drawable.profile)).into(ivNavHeadPhoto);
+                Picasso.with(MainActivity.this).load(Constants.IMAGE_URL+loginUser.getEmpPhoto()).placeholder(getResources().getDrawable(R.drawable.profile)).into(ivNavHeadPhoto);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -158,7 +211,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         try {
-            //strIntentMain = getIntent().getStringExtra("model");
             Intent intent = getIntent();
             strIntentMain = intent.getExtras().getString("model");
             Log.e("StringMain","--------------------------"+strIntentMain);
@@ -214,16 +266,35 @@ public class MainActivity extends AppCompatActivity
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
                     ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Close Meeting Visitor")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Close Meeting Maintenance")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Visit Card")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new AddVisitingCardFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Visit Card List")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
+                    ft.commit();
                 }
                 else {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new DashboardFragment(), "Exit");
                     ft.commit();
                 }
-            }else{
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, new DashboardFragment(), "Exit");
-                ft.commit();
+            }
+        else{
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new DashboardFragment(), "Exit");
+            ft.commit();
+
             }
 
     }
@@ -238,36 +309,43 @@ public class MainActivity extends AppCompatActivity
         Fragment employeeGPListFragment = getSupportFragmentManager().findFragmentByTag("EmployeeGPListFragment");
         Fragment inwardGPListFragment = getSupportFragmentManager().findFragmentByTag("InwardGPListFragment");
         Fragment materialTrackingListFragment = getSupportFragmentManager().findFragmentByTag("MaterialTrackingListFragment");
+        Fragment visitCardListFragment = getSupportFragmentManager().findFragmentByTag("VisitCardListFragment");
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (exit instanceof DashboardFragment && exit.isVisible()) {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-
-            doubleBackToExitPressedOnce = true;
-            Toast.makeText(MainActivity.this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-            new Handler().postDelayed(new Runnable() {
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder.setMessage("Exit Application ?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
                 }
-            }, 2000);
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
         } else if (dashFragment instanceof VisitorGatePassFragment && dashFragment.isVisible() ||
                 dashFragment instanceof VisitorGatePassListFragment && dashFragment.isVisible() ||
+                dashFragment instanceof VisitorDetailFragment && dashFragment.isVisible() ||
                 dashFragment instanceof EmployeeGatePassFragment && dashFragment.isVisible() ||
                 dashFragment instanceof MaintenanceGatePassFragment && dashFragment.isVisible() ||
                 dashFragment instanceof MaintenanceGatePassListFragment && dashFragment.isVisible() ||
-                dashFragment instanceof EmployeeGatePassFragment && dashFragment.isVisible() ||
                 dashFragment instanceof EmployeeGatePassListFragment && dashFragment.isVisible() ||
+                dashFragment instanceof EmployeeGatePassDetailFragment && dashFragment.isVisible() ||
                 dashFragment instanceof InwardGatePassFragment && dashFragment.isVisible() ||
+                dashFragment instanceof InwardgatePassListFragment && dashFragment.isVisible() ||
+                dashFragment instanceof VisitingCardListFragment && dashFragment.isVisible() ||
+                dashFragment instanceof AddVisitingCardFragment && dashFragment.isVisible() ||
+                dashFragment instanceof InwardGatePassDetailFragment && dashFragment.isVisible() ||
                 dashFragment instanceof PendingInwardFragment && dashFragment.isVisible()) {
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -297,12 +375,23 @@ public class MainActivity extends AppCompatActivity
             ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
             ft.commit();
 
-        }else if (inwardGPListFragment instanceof InwardGatePassFragment && inwardGPListFragment.isVisible()) {
+        }else if (inwardGPListFragment instanceof InwardGatePassFragment && inwardGPListFragment.isVisible() ||
+                inwardGPListFragment instanceof InwardGatePassDetailFragment && inwardGPListFragment.isVisible()) {
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
             ft.commit();
 
+        }else if (materialTrackingListFragment instanceof MaterialTrackingDetailFragment && materialTrackingListFragment.isVisible()) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+            ft.commit();
+        }else if (visitCardListFragment instanceof AddVisitingCardFragment && visitCardListFragment.isVisible()) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
+            ft.commit();
         }
 
         else {
@@ -353,20 +442,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_visitor_gp_list) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
-//            ft.commit();
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Add visitor getPass list");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
         } else if (id == R.id.nav_maintenance_gp) {
-
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new MaintenanceGatePassFragment(), "DashFragment");
-//            ft.commit();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Add Maintenance getPass");
@@ -375,10 +456,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_maintenance_gp_list) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
-//            ft.commit();
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Add Maintenance getPass list");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -386,20 +463,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_emp_gp) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new EmployeeGatePassFragment(), "DashFragment");
-//            ft.commit();
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Employee gate pass");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
         } else if (id == R.id.nav_emp_gp_list) {
-
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
-//            ft.commit();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Employee gate pass list");
@@ -409,20 +478,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_material_gp) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new InwardGatePassFragment(), "DashFragment");
-//            ft.commit();
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Material gate pass");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
         } else if (id == R.id.nav_material_gp_list) {
-
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
-//            ft.commit();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Material gate pass list");
@@ -432,43 +493,46 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_purpose_gp) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new AddPurposeFragment(), "DashFragment");
-//            ft.commit();
-
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Purpose");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
-
         }else if (id == R.id.nav_purpose_list_gp) {
-
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new PurposeListFragment(), "DashFragment");
-//            ft.commit();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Purpose list");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-
-
-
         }
         else if (id == R.id.nav_material_tracking) {
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
-//            ft.commit();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Material Tracking");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
+        } else if (id == R.id.nav_add_card) {
 
-        } else if (id == R.id.nav_logout) {
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new AddVisitingCardFragment(), "DashFragment");
+//            ft.commit();
 
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Visit Card");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+        }else if (id == R.id.nav_card_list) {
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
+//            ft.commit();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Visit Card List");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

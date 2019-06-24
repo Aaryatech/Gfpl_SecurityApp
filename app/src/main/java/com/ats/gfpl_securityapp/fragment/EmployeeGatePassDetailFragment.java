@@ -7,11 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +24,7 @@ import java.util.Date;
  */
 public class EmployeeGatePassDetailFragment extends Fragment {
 EmpGatePass model;
+public ImageView ivPhoto;
     public TextView tvName, tvMobile, tvType, tvRemark,tvGPNo,tvOutTime,tvInTime,tvPurposeText,tvgEmpName,tvNewOutTime,tvNewInTime;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +43,16 @@ EmpGatePass model;
         tvNewInTime = view.findViewById(R.id.tvNewInTime);
         tvPurposeText = view.findViewById(R.id.tvPurposeText);
         tvgEmpName = view.findViewById(R.id.tvgEmpName);
+        ivPhoto=view.findViewById(R.id.ivPhoto);
+
+        try {
+            String imageUri = String.valueOf(model.getExVar2());
+            Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+ " " +imageUri);
+            Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+
+        } catch (Exception e) {
+
+        }
 
         try {
             String quoteStr = getArguments().getString("model");

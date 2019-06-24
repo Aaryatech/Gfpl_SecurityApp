@@ -401,8 +401,8 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                                 String photo1 = "", photo2 = "";
 
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
+                               // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                                 if (imagePath1 != null) {
 
                                     pathArray.add(imagePath1);
@@ -440,6 +440,8 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
+                    }else{
+                        Toast.makeText(getActivity(), "Please Select Photo", Toast.LENGTH_SHORT).show();
                     }
                 }else {
                      final Material material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, partyName, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "","","");
@@ -499,8 +501,6 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                
                 Log.e("Response : ", "--" + response.body());
                 saveMaterial(material);
-                
-
             }
 
             @Override

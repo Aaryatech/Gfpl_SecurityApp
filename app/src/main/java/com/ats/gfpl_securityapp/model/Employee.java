@@ -72,7 +72,7 @@ public class Employee {
     private String empEmergencyNo2;
     @SerializedName("empRatePerhr")
     @Expose
-    private Integer empRatePerhr;
+    private float empRatePerhr;
     @SerializedName("empJoiningDate")
     @Expose
     private String empJoiningDate;
@@ -306,11 +306,11 @@ public class Employee {
         this.empEmergencyNo2 = empEmergencyNo2;
     }
 
-    public Integer getEmpRatePerhr() {
+    public float getEmpRatePerhr() {
         return empRatePerhr;
     }
 
-    public void setEmpRatePerhr(Integer empRatePerhr) {
+    public void setEmpRatePerhr(float empRatePerhr) {
         this.empRatePerhr = empRatePerhr;
     }
 

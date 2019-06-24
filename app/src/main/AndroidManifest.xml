@@ -21,8 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.CloseMeetingActivity" />
-        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.CloseMeetingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -36,7 +38,8 @@
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
 
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>

@@ -33,6 +33,18 @@ public class VisitCard {
     @Expose
     private String exVar2;
 
+    public VisitCard(Integer cardId, String cardNumber, String cardDesc, Integer delStatus, Integer isActive, Integer exInt1, Integer exInt2, String exVar1, String exVar2) {
+        this.cardId = cardId;
+        this.cardNumber = cardNumber;
+        this.cardDesc = cardDesc;
+        this.delStatus = delStatus;
+        this.isActive = isActive;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+    }
+
     public Integer getCardId() {
         return cardId;
     }

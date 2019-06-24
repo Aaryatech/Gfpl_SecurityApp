@@ -21,6 +21,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -92,12 +94,10 @@ public class EmployeeCloseGatePassFragment extends Fragment implements CloseEmpI
         ArrayList<Integer> deptList = new ArrayList<>();
         deptList.add(-1);
 
-
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(1);
@@ -296,6 +296,7 @@ public class EmployeeCloseGatePassFragment extends Fragment implements CloseEmpI
         ImageView ivClose;
         LinearLayout llSup;
         String DateTo;
+        CheckBox cbAll;
         CardView cardViewDept,cardViewEmp;
         private VisitorEmployeeAdapter mAdapter;
 
@@ -333,6 +334,7 @@ public class EmployeeCloseGatePassFragment extends Fragment implements CloseEmpI
             cardViewDept = findViewById(R.id.cardViewDept);
             cardViewEmp = findViewById(R.id.cardViewEmp);
             recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
+            cbAll = findViewById(R.id.cbAll);
 
             if(syncArray!=null) {
                 for (int j = 0; j < syncArray.size(); j++) {
@@ -371,6 +373,37 @@ public class EmployeeCloseGatePassFragment extends Fragment implements CloseEmpI
             {
                 e.printStackTrace();
             }
+
+            cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked)
+                    {
+                        Log.e("LIST","------------------------"+assignEmpCloseStaticList);
+                        for(int k=0;k<assignEmpCloseStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmpCloseStaticList.get(k));
+                            assignEmpCloseStaticList.get(k).setChecked(true);
+
+                        }
+
+                    }else{
+                        for(int k=0;k<assignEmpCloseStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmpCloseStaticList.get(k));
+                            assignEmpCloseStaticList.get(k).setChecked(false);
+
+                        }
+                    }
+
+                    mAdapter = new VisitorEmployeeAdapter(assignEmpCloseStaticList, getActivity());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                    recyclerViewFilter.setLayoutManager(mLayoutManager);
+                    recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewFilter.setAdapter(mAdapter);
+                }
+            });
+
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

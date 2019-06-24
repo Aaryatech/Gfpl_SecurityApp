@@ -93,15 +93,17 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         myViewHolder.tvName.setText(model.getPersonName());
         myViewHolder.tvCompany.setText(model.getPersonCompany());
         myViewHolder.tvMobile.setText(model.getMobileNo());
+        myViewHolder.tvDate.setText(model.getVisitDateIn());
+        myViewHolder.tvEmpName.setText(model.getEmpName());
 
-        String imageUri = String.valueOf(model.getPersonPhoto());
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
+            String imageUri = String.valueOf(model.getPersonPhoto());
+            Log.e("Image Path","---------------------"+Constants.IMAGE_URL+imageUri);
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
 
         } catch (Exception e) {
 
         }
-
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
@@ -151,8 +153,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==3)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.VISIBLE);
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -182,8 +184,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
                         }else if(model.getVisitStatus()==3)
                         {
-                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                        myViewHolder.ivApprove.setVisibility(View.GONE);
+                        myViewHolder.ivReject.setVisibility(View.GONE);
                         myViewHolder.ivClose.setVisibility(View.VISIBLE);
                         myViewHolder.ivInfo.setVisibility(View.GONE);
                         myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -191,8 +193,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
                         }else if(model.getVisitStatus()==1)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.GONE);
                             myViewHolder.ivInfo.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -200,10 +202,10 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
                         }else if(model.getVisitStatus()==4)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
-                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==2)
@@ -243,7 +245,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             myViewHolder.tvStatus.setText("Allow to Enter");
         }else if(model.getVisitStatus()==4)
         {
-            myViewHolder.tvStatus.setText("Close Metting");
+            myViewHolder.tvStatus.setText("Close Meeting");
         }else if(model.getVisitStatus()==5)
         {
             myViewHolder.tvStatus.setText("Out From Factory");
@@ -278,6 +280,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                 AddInfoFragment adf = new AddInfoFragment();
                 Bundle args = new Bundle();
                 args.putString("model",json);
+                args.putString("type","Visitor List");
                 adf.setArguments(args);
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
 
@@ -371,6 +374,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                 Bundle args = new Bundle();
                 args.putString("model", json);
                 intent.putExtra("model", json);
+                intent.putExtra("meeting", "Close Meeting Visitor");
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
 
@@ -573,8 +577,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory;
-        public ImageView ivReject, ivApprove, ivClose, ivOutSide,ivEdit;
+        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory,ivClose,tvDate,tvEmpName;
+        public ImageView ivReject, ivApprove, ivOutSide,ivEdit;
         public CircleImageView ivPhoto;
         public LinearLayout linearLayout;
 
@@ -587,6 +591,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             tvType = itemView.findViewById(R.id.tvType);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvRemark = itemView.findViewById(R.id.tvRemark);
+            tvEmpName = itemView.findViewById(R.id.tvEmpName);
             linearLayout = itemView.findViewById(R.id.linearLayout);
 
             ivReject = itemView.findViewById(R.id.ivReject);
@@ -598,6 +603,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             ivPhoto = itemView.findViewById(R.id.ivPhoto);
 
             ivEdit=itemView.findViewById(R.id.ivEdit);
+            tvDate=itemView.findViewById(R.id.tvDate);
 
         }
     }
@@ -629,7 +635,8 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
 
             Window window = getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+          //  wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER_VERTICAL;
             wlp.x = 5;
             wlp.y = 5;
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;

@@ -36,8 +36,10 @@ import retrofit2.http.Query;
 
 public interface InterfaceAPI {
 
-    @GET("master/allEmployees")
+    @GET("master/allEmployeesByDesg")
     Call<ArrayList<Employee>> allEmployees();
+
+//    master/allEmployees
 
     @POST("master/getAllPurposesByType")
     Call<ArrayList<PurposeList>> getAllPurposesByType( @Query("typeList") ArrayList<Integer> typeList);
@@ -54,10 +56,8 @@ public interface InterfaceAPI {
     @POST("master/login")
     Call<Login> doLogin(@Query("dscNumber") String dscNumber);
 
-
     @GET("master/allSettings")
     Call<ArrayList<Sync>> allSettings();
-
 
     @POST("master/updateToken")
     Call<Info> updateUserToken(@Query("empId") int empId, @Query("token") String token);
@@ -77,9 +77,9 @@ public interface InterfaceAPI {
     @POST("transaction/updateGatepassStatus")
     Call<Info> updateGatepassStatus(@Query("gatepassVisitorId") int gatepassVisitorId, @Query("empId") int empId,@Query("status") int status,@Query("gateId") int gateId);
 
-    @GET("master/allVisitCard")
+    @GET("master/allAvailableVisitCard")
     Call<ArrayList<VisitCard>> allVisitCard();
-
+//    master/allVisitCard
     @Multipart
     @POST("photoUpload")
     Call<JSONObject> imageUpload(@Part MultipartBody.Part[] filePath, @Part("imageName") ArrayList<String> name, @Part("type") RequestBody type);
@@ -137,5 +137,12 @@ public interface InterfaceAPI {
 
     @POST("transaction/dashboardCount")
     Call<Dashboard> dashboardCount(@Query("fromDate") String fromDate, @Query("toDate") String todate, @Query("empId") int empId);
+
+    @POST("master/saveVisitCard")
+    Call<VisitCard> saveVisitCard(@Body VisitCard visitCard);
+
+    @POST("master/deleteVisitCard")
+    Call<Info> deleteVisitCard(@Query("cardId") int cardId);
+
 
 }

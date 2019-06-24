@@ -21,6 +21,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -247,8 +249,8 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             String empIds = assignedEmpIdArray.toString().trim();
             Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
 
-            stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
-
+            String a1 = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
+            stringId = a1.replaceAll("\\s","");
             Log.e("ASSIGN EMP ID STRING", "---------------------------------" + stringId);
 
 //            String empName=assignedEmpNameArray.toString().trim();
@@ -331,6 +333,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
         ImageView ivClose;
         LinearLayout llSup;
         String DateTo;
+        CheckBox cbAll;
         CardView cardViewDept,cardViewEmp;
         private VisitorEmployeeAdapter mAdapter;
 
@@ -368,6 +371,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             cardViewDept = findViewById(R.id.cardViewDept);
             cardViewEmp = findViewById(R.id.cardViewEmp);
             recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
+            cbAll = findViewById(R.id.cbAll);
 
             if(syncArray!=null) {
                 for (int j = 0; j < syncArray.size(); j++) {
@@ -406,6 +410,38 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             {
                 e.printStackTrace();
             }
+
+
+            cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked)
+                    {
+                        Log.e("LIST","------------------------"+assignEmployeeStaticList);
+                        for(int k=0;k<assignEmployeeStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmployeeStaticList.get(k));
+                            assignEmployeeStaticList.get(k).setChecked(true);
+
+                        }
+
+                    }else{
+                        for(int k=0;k<assignEmployeeStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmployeeStaticList.get(k));
+                            assignEmployeeStaticList.get(k).setChecked(false);
+
+                        }
+                    }
+
+                    mAdapter = new VisitorEmployeeAdapter(assignEmployeeStaticList, getActivity());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                    recyclerViewFilter.setLayoutManager(mLayoutManager);
+                    recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewFilter.setAdapter(mAdapter);
+                }
+            });
+
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

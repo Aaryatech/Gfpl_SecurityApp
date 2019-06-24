@@ -37,7 +37,6 @@ import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.TabFragment;
-import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
@@ -93,10 +92,13 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
         myViewHolder.tvName.setText(model.getPersonName());
         myViewHolder.tvCompany.setText(model.getPersonCompany());
         myViewHolder.tvMobile.setText(model.getMobileNo());
+        myViewHolder.tvDate.setText(model.getVisitDateIn());
+        myViewHolder.tvEmpName.setText(model.getEmpName());
 
-        String imageUri = String.valueOf(model.getPersonPhoto());
+
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
+            String imageUri = String.valueOf(model.getPersonPhoto());
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
 
         } catch (Exception e) {
 
@@ -105,13 +107,6 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
-//                        myViewHolder.ivApprove.setVisibility(View.GONE);
-//                        myViewHolder.ivReject.setVisibility(View.GONE);
-//                        myViewHolder.ivClose.setVisibility(View.GONE);
-//                        myViewHolder.ivInfo.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-
                         if(model.getVisitStatus()==1)
                         {
                             myViewHolder.ivApprove.setVisibility(View.GONE);
@@ -149,8 +144,8 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==3)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.VISIBLE);
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -168,6 +163,51 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 //                        myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
 //                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
 
+//                        if(model.getVisitStatus()==0)
+//                        {
+//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivClose.setVisibility(View.GONE);
+//                            myViewHolder.ivInfo.setVisibility(View.GONE);
+//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//
+//                        }else if(model.getVisitStatus()==3)
+//                        {
+//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivInfo.setVisibility(View.GONE);
+//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//
+//                        }else if(model.getVisitStatus()==1)
+//                        {
+//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivClose.setVisibility(View.GONE);
+//                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//
+//                        }else if(model.getVisitStatus()==4)
+//                        {
+//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
+//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//                        }else if(model.getVisitStatus()==2)
+//                        {
+//                            myViewHolder.ivApprove.setVisibility(View.GONE);
+//                            myViewHolder.ivReject.setVisibility(View.GONE);
+//                            myViewHolder.ivClose.setVisibility(View.GONE);
+//                            myViewHolder.ivInfo.setVisibility(View.GONE);
+//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//                        }
+
                         if(model.getVisitStatus()==0)
                         {
                             myViewHolder.ivApprove.setVisibility(View.VISIBLE);
@@ -179,8 +219,8 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 
                         }else if(model.getVisitStatus()==3)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.VISIBLE);
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -188,8 +228,8 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 
                         }else if(model.getVisitStatus()==1)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.GONE);
                             myViewHolder.ivInfo.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
@@ -197,10 +237,10 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 
                         }else if(model.getVisitStatus()==4)
                         {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
-                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==2)
@@ -238,7 +278,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             myViewHolder.tvStatus.setText("Allow to Enter");
         }else if(model.getVisitStatus()==4)
         {
-            myViewHolder.tvStatus.setText("Close Metting");
+            myViewHolder.tvStatus.setText("Close Meeting");
         }else if(model.getVisitStatus()==5)
         {
             myViewHolder.tvStatus.setText("Out From Factory");
@@ -279,6 +319,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                 AddInfoFragment adf = new AddInfoFragment();
                 Bundle args = new Bundle();
                 args.putString("model",json);
+                args.putString("type","Maintenance List");
                 adf.setArguments(args);
                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
 
@@ -365,6 +406,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                 Bundle args = new Bundle();
                 args.putString("model", json);
                 intent.putExtra("model", json);
+                intent.putExtra("meeting", "Close Meeting Maintenance");
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
 
@@ -466,7 +508,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
                                 FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                                ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
                                 ft.commit();
 
                             } else {
@@ -528,7 +570,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 
             Window window = getWindow();
             WindowManager.LayoutParams wlp = window.getAttributes();
-            wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER_VERTICAL;
             wlp.x = 5;
             wlp.y = 5;
             wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -561,7 +603,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                         TextView viewProj = (TextView) spGate.getSelectedView();
                         viewProj.setError(null);
 //                        login.getEmpId()
-                        getUpdateStatus(visitorList.getGatepassVisitorId(), Integer.valueOf(visitorList.getEmpIds()),1,gateId);
+                        getUpdateStatus(visitorList.getGatepassVisitorId(), login.getEmpId(),1,gateId);
                         dismiss();
 
                     }
@@ -692,8 +734,8 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory;
-        public ImageView ivReject, ivApprove, ivClose,ivEdit,ivOutSide;
+        public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory,ivClose,tvDate,tvEmpName;
+        public ImageView ivReject, ivApprove,ivEdit,ivOutSide;
         public LinearLayout linearLayout;
         public CircleImageView ivPhoto;
         public MyViewHolder(@NonNull View itemView) {
@@ -705,6 +747,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             tvType = itemView.findViewById(R.id.tvType);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvRemark = itemView.findViewById(R.id.tvRemark);
+            tvEmpName = itemView.findViewById(R.id.tvEmpName);
             linearLayout = itemView.findViewById(R.id.linearLayout);
 
             ivReject = itemView.findViewById(R.id.ivReject);
@@ -716,6 +759,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             ivOutFactory = itemView.findViewById(R.id.ivOutFactory);
 
             ivEdit=itemView.findViewById(R.id.ivEdit);
+            tvDate=itemView.findViewById(R.id.tvDate);
         }
     }
 }

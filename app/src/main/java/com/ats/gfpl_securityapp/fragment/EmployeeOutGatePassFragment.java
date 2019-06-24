@@ -21,6 +21,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -329,6 +331,7 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
         ImageView ivClose;
         LinearLayout llSup;
         String DateTo;
+        CheckBox cbAll;
         CardView cardViewDept,cardViewEmp;
         private VisitorEmployeeAdapter mAdapter;
 
@@ -366,6 +369,7 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
             cardViewDept = findViewById(R.id.cardViewDept);
             cardViewEmp = findViewById(R.id.cardViewEmp);
             recyclerViewFilter = findViewById(R.id.recyclerViewFilter);
+            cbAll = findViewById(R.id.cbAll);
 
             if(syncArray!=null) {
                 for (int j = 0; j < syncArray.size(); j++) {
@@ -404,6 +408,39 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
             {
                 e.printStackTrace();
             }
+
+            cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked)
+                    {
+                        Log.e("LIST","------------------------"+assignEmpOutStaticList);
+                        for(int k=0;k<assignEmpOutStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmpOutStaticList.get(k));
+                            assignEmpOutStaticList.get(k).setChecked(true);
+
+                        }
+
+                    }else{
+                        for(int k=0;k<assignEmpOutStaticList.size();k++)
+                        {
+                            Log.e("LIST SET","------------------------"+assignEmpOutStaticList.get(k));
+                            assignEmpOutStaticList.get(k).setChecked(false);
+
+                        }
+                    }
+
+                    mAdapter = new VisitorEmployeeAdapter(assignEmpOutStaticList, getActivity());
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                    recyclerViewFilter.setLayoutManager(mLayoutManager);
+                    recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+                    recyclerViewFilter.setAdapter(mAdapter);
+                }
+            });
+
+
+
 
             Date todayDate = Calendar.getInstance().getTime();
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

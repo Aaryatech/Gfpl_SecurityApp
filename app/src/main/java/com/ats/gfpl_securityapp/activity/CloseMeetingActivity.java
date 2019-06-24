@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -47,11 +48,12 @@ import retrofit2.Response;
 
 public class CloseMeetingActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView tvVisitor, tvPurpose, tvType, tvOutCome, tvPhoto1, tvPhoto2;
+    private TextView tvVisitor, tvPurpose, tvType, tvComp, tvPhoto1, tvPhoto2;
     private ImageView ivCamera1, ivCamera2, ivPhoto1, ivPhoto2;
     private Button btnCloseMeeting;
     private EditText edRemark;
     VisitorList model;
+    String strMeeting;
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
      VisitorList visitorList;
@@ -68,7 +70,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
         tvVisitor = findViewById(R.id.tvVisitor);
         tvPurpose = findViewById(R.id.tvPurpose);
         tvType = findViewById(R.id.tvType);
-        tvOutCome = findViewById(R.id.tvOutCome);
+        tvComp = findViewById(R.id.tvComp);
         tvPhoto1 = findViewById(R.id.tvPhoto1);
         tvPhoto2 = findViewById(R.id.tvPhoto2);
         ivCamera1 = findViewById(R.id.ivCamera1);
@@ -94,6 +96,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
             Log.e("Close metting", "-----------------------" + model);
             tvVisitor.setText(model.getPersonName());
             tvPurpose.setText(model.getPurposeHeading());
+            tvComp.setText(model.getPersonCompany());
            // tvOutCome.setText(model.getMeetingDiscussion());
             if(model.getVisitType()==1) {
                 tvType.setText("Appointment");
@@ -103,6 +106,17 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
             }
 
         }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            Intent intent = getIntent();
+            strMeeting = intent.getExtras().getString("meeting");
+            Log.e("StringMeeting","--------------------------"+strMeeting);
+
+
+        }catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -124,21 +138,21 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
 
             strRemark=edRemark.getText().toString();
 
-            if (strRemark.isEmpty()) {
-                edRemark.setError("required");
-            } else {
-                edRemark.setError(null);
-                isValidRemark = true;
-            }
+//            if (strRemark.isEmpty()) {
+//                edRemark.setError("required");
+//            } else {
+//                edRemark.setError(null);
+//                isValidRemark = true;
+//            }
 
-            if(isValidRemark)
-            {
+           // if(isValidRemark)
+           // {
                 visitorList = new VisitorList(model.getGatepassVisitorId(),model.getVisitDateIn(),model.getSecurityIdIn(),model.getPersonName(),model.getPersonCompany(),model.getPersonPhoto(),model.getMobileNo(),model.getIdProof(),model.getIdProof1(),model.getOtherPhoto(),model.getPurposeId(),model.getPurposeHeading(),model.getPurposeRemark(),model.getEmpIds(),model.getEmpName(),model.getGateId(),model.getGatePasstype(),4,model.getVisitType(),model.getInTime(),model.getVisitCardId(),model.getVisitCardNo(),model.getTakeMobile(),strRemark,model.getUploadPhoto(),model.getVisitOutTime(), (int) model.getTotalTimeDifference(),model.getSecurityIdOut(),model.getVisitDateOut(),model.getUserSignImage(),model.getDelStatus(),model.getIsUsed(),model.getExInt1(),model.getExInt2(),model.getExInt3(),model.getExVar1(),model.getExVar2(),model.getExVar3(),model.getSecurityInName(),model.getSecurityOutName(),model.getPurposeHeading(),model.getGateName(),model.getAssignEmpName());
                 if (imagePath1 == null && imagePath2 == null) {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
-                    builder.setMessage("Do you want to close visitor ?");
+                    builder.setMessage("Do you want to close meeting ?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -163,15 +177,15 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(CloseMeetingActivity.this, R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
-                    builder.setMessage("Do you want to close visitor ?");
+                    builder.setMessage("Do you want to close meeting ?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
                     String photo1 = "", photo2 = "";
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
+                    //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     if (imagePath1 != null) {
 
                         pathArray.add(imagePath1);
@@ -179,7 +193,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
                         File imgFile1 = new File(imagePath1);
                         int pos = imgFile1.getName().lastIndexOf(".");
                         String ext = imgFile1.getName().substring(pos + 1);
-                        photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                        photo1 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p1." + ext;
                         fileNameArray.add(photo1);
                         visitorList.setUploadPhoto(photo1);
                     }
@@ -191,7 +205,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
                         File imgFile2 = new File(imagePath2);
                         int pos2 = imgFile2.getName().lastIndexOf(".");
                         String ext2 = imgFile2.getName().substring(pos2 + 1);
-                        photo2 = sdf.format(System.currentTimeMillis()) + "_p2." + ext2;
+                        photo2 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p2." + ext2;
                         fileNameArray.add(photo2);
                         visitorList.setExVar2(photo2);
 
@@ -210,7 +224,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
-            }
+           // }
 
         }
     }
@@ -285,6 +299,13 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
 //                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                            ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
 //                            ft.commit();
+
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            //intent.putExtra("model", "Close Meeting");
+                            intent.putExtra("model", strMeeting);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+
                             commonDialog.dismiss();
                             finish();
 
@@ -390,7 +411,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p1.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(CloseMeetingActivity.this, authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -398,7 +419,7 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
                             startActivityForResult(intent, 102);
                         } else if (type.equalsIgnoreCase("Photo2")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p2.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis() + "_p2.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(CloseMeetingActivity.this, authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -410,13 +431,13 @@ public class CloseMeetingActivity extends AppCompatActivity implements View.OnCl
 
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" +Calendar.getInstance().getTimeInMillis() + "_p1.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 102);
                         } else if (type.equalsIgnoreCase("Photo2")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p2.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p2.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 202);

@@ -67,10 +67,20 @@ public class NotificationListFragment extends Fragment implements NotificationIn
         }else if(staticVisitorModel.getVisitStatus()==1)
         {
             tvStatus.setText("Approve");
-        }else  if(staticVisitorModel.getVisitStatus()==2)
+        }else if(staticVisitorModel.getVisitStatus()==2)
         {
             tvStatus.setText("Rejected");
+        }else if(staticVisitorModel.getVisitStatus()==3)
+        {
+            tvStatus.setText("Allow to Enter");
+        }else if(staticVisitorModel.getVisitStatus()==4)
+        {
+            tvStatus.setText("Close Meeting");
+        }else if(staticVisitorModel.getVisitStatus()==5)
+        {
+            tvStatus.setText("Out From Factory");
         }
+
 
         getNotifiaction(staticVisitorModel.getGatepassVisitorId());
 

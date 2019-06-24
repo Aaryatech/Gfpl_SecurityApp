@@ -6,6 +6,10 @@
     app:cardBackgroundColor="@color/colorWhite"
     app:cardUseCompatPadding="true">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -55,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:fontFamily="@font/sf_ui_bold"
-                android:text="Security Id : "
+                android:text="Date : "
                 android:gravity="right"
                 android:textSize="15sp" />
 
@@ -135,9 +139,7 @@
                     android:text="Appointment"
                     android:textSize="15sp" />
 
-
             </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -215,28 +217,26 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_gate_name"
                     android:drawablePadding="10dp"
                     android:text="Gate Name"
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center_vertical"
                     android:padding="5dp"
                     />
-
+                <!--android:drawableLeft="@drawable/ic_gate_name"-->
                 <TextView
                     android:id="@+id/tvgatePassType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:drawableLeft="@drawable/ic_gate_pass_type"
                     android:drawablePadding="10dp"
                     android:text="Gate Pass Type"
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center_vertical"
                     android:padding="5dp"
                     />
-
+                <!--android:drawableLeft="@drawable/ic_gate_pass_type"-->
             </LinearLayout>
         <!--</LinearLayout>-->
 
@@ -253,27 +253,27 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_status"
             android:drawablePadding="10dp"
             android:text="Status/Pending"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center_vertical"
             android:padding="5dp"
             />
+        <!--android:drawableLeft="@drawable/ic_status"-->
 
         <TextView
             android:id="@+id/tvMob"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_call"
+            android:layout_weight="1.3"
             android:drawablePadding="10dp"
             android:text="Take Mobile"
             android:fontFamily="@font/sf_ui_bold"
             android:gravity="center_vertical"
             android:padding="5dp"
             />
+        <!--android:drawableLeft="@drawable/ic_call"-->
 
     </LinearLayout>
 
@@ -290,13 +290,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_employee"
                 android:drawablePadding="10dp"
                 android:text="Purpose Heading"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 />
+            <!--android:drawableLeft="@drawable/ic_status"-->
 
             <TextView
                 android:id="@+id/tvVisiteCardNumber"
@@ -304,13 +304,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_visite_card"
                 android:drawablePadding="10dp"
                 android:text="Visite Card Number"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 />
+            <!--android:drawableLeft="@drawable/ic_visite_card"-->
 
         </LinearLayout>
 
@@ -328,18 +328,40 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_remark"
                 android:drawablePadding="10dp"
-                android:text="Purpose / Remark"
+                android:text="Remark"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 />
-
+            <!--android:drawableLeft="@drawable/ic_remark"-->
 
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSecurityName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:text="Security Name"
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                />
+            <!--android:drawableLeft="@drawable/ic_remark"-->
+
+
+        </LinearLayout>
 
 
         <LinearLayout
@@ -355,14 +377,13 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_employee"
                 android:drawablePadding="10dp"
                 android:text="Employee Name"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 />
-
+            <!--android:drawableLeft="@drawable/ic_employee"-->
         </LinearLayout>
 
         <LinearLayout
@@ -378,16 +399,152 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:drawableLeft="@drawable/ic_meeting_disc"
                 android:drawablePadding="10dp"
                 android:text="Meeting Disccustion"
                 android:fontFamily="@font/sf_ui_bold"
                 android:gravity="center_vertical"
                 android:padding="5dp"
                 />
+            <!--android:drawableLeft="@drawable/ic_meeting_disc"-->
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Photo ID"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivCamera1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_camera" />
+
+            <ImageView
+                android:id="@+id/ivPhoto1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPhoto1"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Photo of carrying"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivCamera2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_camera" />
+
+            <ImageView
+                android:id="@+id/ivPhoto2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPhoto2"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Other Photo"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivCamera3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_camera" />
+
+            <ImageView
+                android:id="@+id/ivPhoto3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvPhoto3"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+
+
     </LinearLayout>
+    </ScrollView>
 
 </android.support.v7.widget.CardView>

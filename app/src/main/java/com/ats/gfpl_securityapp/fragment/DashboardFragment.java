@@ -34,10 +34,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DashboardFragment extends Fragment {
-public LinearLayout linearLayoutVisitor1,linearLayoutVisitor2,LinearLayoutVisitor3,linearLayoutVisitorEmployee1,linearLayoutVisitorEmployee2,linearLayoutVisitorEmployee3,linearLayoutVisitorMaintenance1,linearLayoutMaintenanceEmployee2,linearLayoutGP1,linearLayoutGP2,linearLayoutGP3,linearLayoutDepartment1,linearLayoutEmployee1,linearLayoutEmployee2,linearLayoutSuperGP1,linearLayoutSuperGP2;
+public LinearLayout linearLayoutVisitor1,linearLayoutVisitor2,LinearLayoutVisitor3,linearLayoutVisitorEmployee1,linearLayoutVisitorEmployee2,linearLayoutVisitorEmployee3,linearLayoutVisitorMaintenance1,linearLayoutMaintenanceEmployee2,linearLayoutGP1,linearLayoutGP2,linearLayoutGP3,linearLayoutDepartment1,linearLayoutEmployee1,linearLayoutEmployee2,linearLayoutSuperGP1,linearLayoutSuperGP2,linearLayoutMainTotal,linearLayoutDeptRejected;
 public CardView cardViewMaintenancePending,cardViewEmployeeMeetingCompleted,cardViewParcel,cardViewMeetingCompletedForAdmin,cardViewMaintenancePendingEmp,cardViewDeptpending;
 Login loginUserMain,loginUser;
-public TextView tvTotalVisitor,tvCurrVisitorComp,tvVisitorMeetingCompleted,tvVisitorRejected,tvVisitorPending,tvCurrMeetingGoingOn,tvEmpTotalVisitor,tvEmpCurrEmployeeMeetingGoingOn,tvEmpWiseRejected,tvEmpWisePending,tvEmpwisemeetingcompleted,tvMaintenanceWisePending,tvMaintenanceWiseApprove,tvMaintenanceWiseRejected,tvMaintenanceWiseWorkCompleted,tvMaintenanceTotal,tvTotalTempGP,tvTotalDayGP,tvNoOfEmpOutsideFactory,tvTotalNoOfInward,tvTotalNoOfParcel,tvDeptWiseTotalPending,tvDeptWiseTotalApprove,tvDeptWiseTotalRejected,tvEmpWiseTotalPending,tvEmpWiseTotalApprove,tvEmpWiseTotalRejected,tvMaintenancePending1,tvSuptotalTempGP,tvSuptotalDayGP,tvNoOfEmpOutSide,tvEmpWiseMeetingCopmleted1,tvDeptWiseTotalPending1;
+public TextView tvTotalVisitor,tvCurrVisitorComp,tvVisitorMeetingCompleted,tvVisitorRejected,tvVisitorPending,tvCurrMeetingGoingOn,tvEmpTotalVisitor,tvEmpCurrEmployeeMeetingGoingOn,tvEmpWiseRejected,tvEmpWisePending,tvEmpwisemeetingcompleted,tvMaintenanceWisePending,tvMaintenanceWiseApprove,tvMaintenanceWiseRejected,tvMaintenanceWiseWorkCompleted,tvMaintenanceTotal,tvTotalTempGP,tvTotalDayGP,tvNoOfEmpOutsideFactory,tvTotalNoOfInward,tvTotalNoOfParcel,tvDeptWiseTotalPending,tvDeptWiseTotalApprove,tvDeptWiseTotalRejected,tvEmpWiseTotalPending,tvEmpWiseTotalApprove,tvEmpWiseTotalRejected,tvSuptotalTempGP,tvSuptotalDayGP,tvNoOfEmpOutSide;
+public TextView tvLabVisitorCount,tvLabEmpVisitorCount,tvLabMaintenanceCount,tvLabEmpGatePassCount,tvlabMaterialCount,tvLabEmpMaterialCount,tvLabSuperWiserCount;
 ArrayList<Sync> syncArray = new ArrayList<>();
 private RecyclerView recyclerView;
 
@@ -74,12 +75,18 @@ private RecyclerView recyclerView;
         tvEmpWiseTotalPending=(TextView) view.findViewById(R.id.tvEmpWiseTotalPending);
         tvEmpWiseTotalApprove=(TextView) view.findViewById(R.id.tvEmpWiseTotalApprove);
         tvEmpWiseTotalRejected=(TextView) view.findViewById(R.id.tvEmpWiseTotalRejected);
-        tvMaintenancePending1=(TextView) view.findViewById(R.id.tvMaintenanceWisePending1);
         tvSuptotalTempGP=(TextView) view.findViewById(R.id.tvSupTotalTempGP);
         tvSuptotalDayGP=(TextView) view.findViewById(R.id.tvSupTotalDayGP);
         tvNoOfEmpOutSide=(TextView) view.findViewById(R.id.tvNoOfEmpOutside);
-        tvEmpWiseMeetingCopmleted1=(TextView) view.findViewById(R.id.tvEmpWiseMeetingCompleted1);
-        tvDeptWiseTotalPending1=(TextView) view.findViewById(R.id.tvDeptWiseTotalPending1);
+
+
+        tvLabVisitorCount=(TextView) view.findViewById(R.id.tvLabVisitorCount);
+        tvLabEmpVisitorCount=(TextView) view.findViewById(R.id.tvLabEmpVisitorCount);
+        tvLabMaintenanceCount=(TextView) view.findViewById(R.id.tvLabMaintenanceCount);
+        tvLabEmpGatePassCount=(TextView) view.findViewById(R.id.tvLabEmpgatePassCount);
+        tvlabMaterialCount=(TextView) view.findViewById(R.id.tvLabMaterialCount);
+        tvLabEmpMaterialCount=(TextView) view.findViewById(R.id.tvLabEmpMaterialCount);
+        tvLabSuperWiserCount=(TextView) view.findViewById(R.id.tvLabSuperWiserCount);
 
 
         linearLayoutVisitor1=(LinearLayout)view.findViewById(R.id.linearLayoutVisitor1);
@@ -90,22 +97,22 @@ private RecyclerView recyclerView;
         linearLayoutVisitorEmployee3=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorEmployee3) ;
         linearLayoutVisitorMaintenance1=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorMaintenance1);
         linearLayoutMaintenanceEmployee2=(LinearLayout)view.findViewById(R.id.linearLayoutMaintenanceEmployee2);
+        linearLayoutMainTotal=(LinearLayout)view.findViewById(R.id.linearLayoutMainTotal);
         linearLayoutGP1=(LinearLayout)view.findViewById(R.id.linearLayoutGP1);
         linearLayoutGP2=(LinearLayout)view.findViewById(R.id.linearLayoutGP2);
         linearLayoutGP3=(LinearLayout)view.findViewById(R.id.linearLayoutGP3);
         linearLayoutDepartment1=(LinearLayout)view.findViewById(R.id.linearLayoutDepartment1);
+        linearLayoutDeptRejected=(LinearLayout)view.findViewById(R.id.linearLayoutDeptRejected);
         linearLayoutEmployee1=(LinearLayout)view.findViewById(R.id.linearLayoutEmployee1);
         linearLayoutEmployee2=(LinearLayout)view.findViewById(R.id.linearLayoutEmployee2);
         linearLayoutSuperGP1=(LinearLayout)view.findViewById(R.id.linearLayoutSuperGP1);
         linearLayoutSuperGP2=(LinearLayout)view.findViewById(R.id.linearLayoutSuperGP2);
+
         cardViewMaintenancePending=(CardView)view.findViewById(R.id.cardViewMaintenancePending);
         cardViewEmployeeMeetingCompleted=(CardView)view.findViewById(R.id.cardViewEmployeeMeetingCompleted);
         cardViewParcel=(CardView)view.findViewById(R.id.cardViewParcel);
         cardViewMeetingCompletedForAdmin=(CardView)view.findViewById(R.id.cardViewMeetingCompletedForAdmin);
         cardViewMaintenancePendingEmp=(CardView)view.findViewById(R.id.cardViewMaintenancePendingEmp);
-        cardViewDeptpending=(CardView)view.findViewById(R.id.cardViewDeptpending);
-
-//        recyclerView = view.findViewById(R.id.recyclerView);
 
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.MAIN_KEY_USER);
@@ -131,7 +138,6 @@ private RecyclerView recyclerView;
             e.printStackTrace();
         }
 
-
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
             Gson gson = new Gson();
@@ -143,8 +149,11 @@ private RecyclerView recyclerView;
         }
 
         if(syncArray!=null) {
+
             for (int j = 0; j < syncArray.size(); j++) {
+
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
+
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUserMain.getEmpCatId()))) {
 
                         linearLayoutVisitor1.setVisibility(View.VISIBLE);
@@ -152,19 +161,27 @@ private RecyclerView recyclerView;
                         LinearLayoutVisitor3.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee1.setVisibility(View.GONE);
                         linearLayoutVisitorEmployee2.setVisibility(View.GONE);
-                        linearLayoutVisitorEmployee3.setVisibility(View.VISIBLE);
-                        cardViewEmployeeMeetingCompleted.setVisibility(View.GONE);
-                        //cardViewMaintenancePending.setVisibility(View.VISIBLE);
+                        linearLayoutVisitorEmployee3.setVisibility(View.GONE);
                         linearLayoutVisitorMaintenance1.setVisibility(View.VISIBLE);
                         linearLayoutMaintenanceEmployee2.setVisibility(View.VISIBLE);
-                        cardViewMaintenancePendingEmp.setVisibility(View.VISIBLE);
-                        cardViewParcel.setVisibility(View.VISIBLE);
+                        linearLayoutMainTotal.setVisibility(View.VISIBLE);
                         linearLayoutGP1.setVisibility(View.VISIBLE);
                         linearLayoutGP2.setVisibility(View.VISIBLE);
                         linearLayoutGP3.setVisibility(View.VISIBLE);
                         linearLayoutDepartment1.setVisibility(View.VISIBLE);
+                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
+                        linearLayoutSuperGP1.setVisibility(View.GONE);
+                        linearLayoutSuperGP2.setVisibility(View.GONE);
+
+                        tvLabVisitorCount.setVisibility(View.VISIBLE);
+                        tvLabEmpVisitorCount.setVisibility(View.GONE);
+                        tvLabMaintenanceCount.setVisibility(View.VISIBLE);
+                        tvLabEmpGatePassCount.setVisibility(View.VISIBLE);
+                        tvlabMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabEmpMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabSuperWiserCount.setVisibility(View.GONE);
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUserMain.getEmpCatId()))) {
@@ -174,19 +191,26 @@ private RecyclerView recyclerView;
                         linearLayoutVisitorEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee3.setVisibility(View.VISIBLE);
-                        cardViewEmployeeMeetingCompleted.setVisibility(View.VISIBLE);
-                        cardViewMaintenancePending.setVisibility(View.GONE);
                         linearLayoutVisitorMaintenance1.setVisibility(View.GONE);
                         linearLayoutMaintenanceEmployee2.setVisibility(View.GONE);
-                        linearLayoutSuperGP1.setVisibility(View.VISIBLE);
-                        linearLayoutSuperGP2.setVisibility(View.VISIBLE);
+                        linearLayoutMainTotal.setVisibility(View.GONE);
                         linearLayoutGP1.setVisibility(View.GONE);
                         linearLayoutGP2.setVisibility(View.GONE);
                         linearLayoutGP3.setVisibility(View.GONE);
-                        cardViewDeptpending.setVisibility(View.VISIBLE);
                         linearLayoutDepartment1.setVisibility(View.VISIBLE);
+                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
+                        linearLayoutSuperGP1.setVisibility(View.VISIBLE);
+                        linearLayoutSuperGP2.setVisibility(View.VISIBLE);
+
+                        tvLabVisitorCount.setVisibility(View.GONE);
+                        tvLabEmpVisitorCount.setVisibility(View.VISIBLE);
+                        tvLabMaintenanceCount.setVisibility(View.GONE);
+                        tvLabEmpGatePassCount.setVisibility(View.GONE);
+                        tvlabMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabEmpMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabSuperWiserCount.setVisibility(View.VISIBLE);
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUserMain.getEmpCatId()))) {
@@ -197,19 +221,26 @@ private RecyclerView recyclerView;
                         linearLayoutVisitorEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee3.setVisibility(View.VISIBLE);
-                        cardViewMeetingCompletedForAdmin.setVisibility(View.VISIBLE);
-                        cardViewEmployeeMeetingCompleted.setVisibility(View.VISIBLE);
-                        cardViewMaintenancePending.setVisibility(View.VISIBLE);
-                        cardViewParcel.setVisibility(View.VISIBLE);
                         linearLayoutVisitorMaintenance1.setVisibility(View.VISIBLE);
                         linearLayoutMaintenanceEmployee2.setVisibility(View.VISIBLE);
+                        linearLayoutMainTotal.setVisibility(View.VISIBLE);
                         linearLayoutGP1.setVisibility(View.VISIBLE);
                         linearLayoutGP2.setVisibility(View.VISIBLE);
                         linearLayoutGP3.setVisibility(View.VISIBLE);
                         linearLayoutDepartment1.setVisibility(View.VISIBLE);
+                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
+                        linearLayoutSuperGP1.setVisibility(View.GONE);
+                        linearLayoutSuperGP2.setVisibility(View.GONE);
 
+                        tvLabVisitorCount.setVisibility(View.VISIBLE);
+                        tvLabEmpVisitorCount.setVisibility(View.VISIBLE);
+                        tvLabMaintenanceCount.setVisibility(View.VISIBLE);
+                        tvLabEmpGatePassCount.setVisibility(View.VISIBLE);
+                        tvlabMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabEmpMaterialCount.setVisibility(View.VISIBLE);
+                        tvLabSuperWiserCount.setVisibility(View.GONE);
 
                     }
                 }
@@ -218,7 +249,7 @@ private RecyclerView recyclerView;
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         // sdf.format(System.currentTimeMillis())
-        getDashboard("2019-05-01","2019-06-01",loginUserMain.getEmpId());
+        getDashboard(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),loginUserMain.getEmpId());
 
         return view;
     }
@@ -269,12 +300,12 @@ private RecyclerView recyclerView;
                             tvEmpWiseTotalPending.setText(""+dashboard.getMatGatepassEmpWiseCount().getEmpPendingCount());
                             tvEmpWiseTotalApprove.setText(""+dashboard.getMatGatepassEmpWiseCount().getEmpApprovedCount());
                             tvEmpWiseTotalRejected.setText(""+dashboard.getMatGatepassEmpWiseCount().getEmpRejectedCount());
-                            tvMaintenancePending1.setText(""+dashboard.getVisAndMaintGatepassCount().getMaintPending());
+                            //tvMaintenancePending1.setText(""+dashboard.getVisAndMaintGatepassCount().getMaintPending());
                             tvSuptotalTempGP.setText(""+dashboard.getSupGatepassCount().getSupTempCount());
                             tvSuptotalDayGP.setText(""+dashboard.getSupGatepassCount().getSupDayCount());
                             tvNoOfEmpOutSide.setText(""+dashboard.getSupGatepassCount().getSupOutEmpCount());
-                            tvEmpWiseMeetingCopmleted1.setText(""+dashboard.getVisAndMaintGatepassCount().getEmpVisitorCompleted());
-                            tvDeptWiseTotalPending1.setText(""+dashboard.getMatGatepassCount().getDeptPendingCount());
+                           // tvEmpWiseMeetingCopmleted1.setText(""+dashboard.getVisAndMaintGatepassCount().getEmpVisitorCompleted());
+                            //tvDeptWiseTotalPending1.setText(""+dashboard.getMatGatepassCount().getDeptPendingCount());
                             commonDialog.dismiss();
 
                         } else {

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.fragment.InwardGatePassDetailFragment;
 import com.ats.gfpl_securityapp.fragment.InwardGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.InwardgatePassListFragment;
 import com.ats.gfpl_securityapp.model.Info;
@@ -68,7 +70,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
 
         String imageUri = String.valueOf(model.getPersonPhoto());
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,11 +78,26 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
 
         String imageUri1 = String.valueOf(model.getInwardPhoto());
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        myViewHolder.linearLayoutInward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new Gson();
+                String json = gson.toJson(model);
+
+                MainActivity activity = (MainActivity) context;
+                Fragment adf = new InwardGatePassDetailFragment();
+                Bundle args = new Bundle();
+                args.putString("model", json);
+                adf.setArguments(args);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "InwardGPListFragment").commit();
+            }
+        });
 
         myViewHolder.ivEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,6 +212,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvLastDept, tvLastPerson;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3,ivEdit;
         public CheckBox checkBox;
+        public LinearLayout linearLayoutInward;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -210,6 +228,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);
             ivPhoto3 = itemView.findViewById(R.id.ivPhoto3);
             checkBox = itemView.findViewById(R.id.checkBox);
+            linearLayoutInward = itemView.findViewById(R.id.linearLayoutInward);
 
             ivEdit=itemView.findViewById(R.id.ivEdit);
         }

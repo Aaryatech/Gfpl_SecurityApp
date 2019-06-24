@@ -87,10 +87,12 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
         typeArray.add("Select Type");
         typeArray.add("Type 1");
         typeArray.add("Type 2");
+        typeArray.add("Type 3");
 
         typeIdArray.add(0);
         typeIdArray.add(1);
         typeIdArray.add(2);
+        typeIdArray.add(3);
 
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, typeArray);
         spType.setAdapter(typeAdapter);
@@ -356,6 +358,90 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                    }
                 }
             }
+            if(type.equalsIgnoreCase("Type 3")){
+                String strHeading, strDescription, strRemark, strPassDuration;
+                boolean isValidHeading = false, isValidDescription = false, isValidRemark = false, isValidPassDuration = false;
+                strHeading = edPurHeading.getText().toString();
+                strDescription = edDescription.getText().toString();
+                strRemark = edRemark.getText().toString();
+                strPassDuration = edPassDuration.getText().toString();
+
+                if (strHeading.isEmpty()) {
+                    edPurHeading.setError("required");
+                } else {
+                    edPurHeading.setError(null);
+                    isValidHeading = true;
+                }
+
+                if (strDescription.isEmpty()) {
+                    edDescription.setError("required");
+                } else {
+                    edDescription.setError(null);
+                    isValidDescription = true;
+                }
+
+                if (strRemark.isEmpty()) {
+                    edRemark.setError("required");
+                } else {
+                    edRemark.setError(null);
+                    isValidRemark = true;
+                }
+//                if (strPassDuration.isEmpty()) {
+//                    edPassDuration.setError("required");
+//                } else {
+//                    edPassDuration.setError(null);
+//                    isValidPassDuration = true;
+//                }
+                if (isValidHeading && isValidDescription && isValidRemark) {
+
+                    if(model!=null)
+                    {
+                        final Purpose purpose = new Purpose(model.getPurposeId(), strHeading, 3, strDescription, strRemark, model.getEmpId(), "NA", "NA", model.getDelStatus(), model.getIsUsed(), 0, 0, 0, null, null, null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                        builder.setTitle("Confirmation");
+                        builder.setMessage("Do you want to edit purpose ?");
+                        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                savePurpose(purpose);
+                                Log.e("PURPOSE EDIT TYPE1","-----------------------"+purpose);
+
+                            }
+                        });
+                        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else {
+                        final Purpose purpose = new Purpose(0, strHeading, 3, strDescription, strRemark, "0", "NA", "NA", 1, 1, 0, 0, 0, null, null, null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                        builder.setTitle("Confirmation");
+                        builder.setMessage("Do you want to add purpose ?");
+                        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                savePurpose(purpose);
+                                Log.e("PURPOSE ADD TYPE1","-----------------------"+purpose);
+
+                            }
+                        });
+                        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            }
             if(type.equalsIgnoreCase("Type 2"))
             {
                 String strHeading, strDescription, strRemark, strPassDuration;
@@ -615,16 +701,21 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
             String empIds=assignedEmpIdArray.toString().trim();
             Log.e("ASSIGN EMP ID","---------------------------------"+empIds);
 
-             stringId = ""+empIds.substring(1, empIds.length()-1).replace("][", ",")+"";
+            String a1 = ""+empIds.substring(1, empIds.length()-1).replace("][", ",")+"";
+            stringId = a1.replaceAll("\\s","");
 
             Log.e("ASSIGN EMP ID STRING","---------------------------------"+stringId);
+            Log.e("ASSIGN EMP ID STRING1","---------------------------------"+a1);
 
             String empName=assignedEmpNameArray.toString().trim();
             Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
 
-             stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+            String a = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+
+            stringName = a.replaceAll("\\s","");
 
             Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+            Log.e("ASSIGN EMP NAME STRING1","---------------------------------"+a);
             edEmployee.setText(stringName);
         }
 //        try {

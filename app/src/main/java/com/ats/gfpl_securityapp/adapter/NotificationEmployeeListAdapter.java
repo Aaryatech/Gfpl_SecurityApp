@@ -63,7 +63,7 @@ public class NotificationEmployeeListAdapter  extends RecyclerView.Adapter<Notif
             myViewHolder.tvStatus.setText("Allow to Enter");
         }else if(model.getStatus()==4)
         {
-            myViewHolder.tvStatus.setText("Close Metting");
+            myViewHolder.tvStatus.setText("Close Meeting");
         }else if(model.getStatus()==5)
         {
             myViewHolder.tvStatus.setText("Out From Factory");
@@ -105,7 +105,6 @@ public class NotificationEmployeeListAdapter  extends RecyclerView.Adapter<Notif
                             } else {
                                 Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
                             }
-
                             commonDialog.dismiss();
 
                         } else {

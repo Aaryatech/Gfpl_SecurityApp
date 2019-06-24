@@ -31,6 +31,7 @@ import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,13 +79,18 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         myViewHolder.tvHrs.setText(""+model.getNoOfHr()+"("+model.getOutTime()+" to "+model.getInTime()+")");
         myViewHolder.tvSupName.setText(""+model.getUserName());
         myViewHolder.tvTotalHrs.setText(""+model.getActualTimeDifference());
+        myViewHolder.tvDate.setText(""+model.getEmpDateOut());
         SimpleDateFormat f1 = new SimpleDateFormat("HH:mm:ss"); //HH for hour of the day (0 - 23)
         SimpleDateFormat f2 = new SimpleDateFormat("hh:mm");
 
-//        if(model.getGatePassStatus()==0)
-//        {
-//            myViewHolder.tvOut.setVisibility(View.VISIBLE);
-//        }
+        String imageUri = String.valueOf(model.getExVar2());
+        Log.e("Image Path","---------------------"+Constants.IMAGE_URL+imageUri);
+        try {
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
+
+        } catch (Exception e) {
+
+        }
 
         for(int j=0;j<syncArray.size();j++)
         {
@@ -310,9 +316,11 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
 
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
-                                sendNotification(model.getGatepassEmpId(),model.getUserId());
+                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
+                                ft.commit();
 
-
+                                //sendNotification(model.getGatepassEmpId(),model.getUserId());
 
                             } else {
                                 Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
@@ -465,7 +473,7 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvEmp, tvEmpMobile, tvSupMobile,tvSupName, tvOutTime, tvInTime, tvGatePass,tvOut,tvIn,tvHrs,tvTotalHrs,tvGPNo;
+        public TextView tvEmp, tvEmpMobile, tvSupMobile,tvSupName, tvOutTime, tvInTime, tvGatePass,tvOut,tvIn,tvHrs,tvTotalHrs,tvGPNo,tvDate;
         public CircleImageView ivPhoto;
         public ImageView ivEdit;
         public CardView cardView;
@@ -488,6 +496,7 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
             ivPhoto = itemView.findViewById(R.id.ivPhoto);
 
             ivEdit=itemView.findViewById(R.id.ivEdit);
+            tvDate=itemView.findViewById(R.id.tvDate);
             cardView=itemView.findViewById(R.id.cardView);
 
         }

@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -63,6 +64,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
     private TextView tvPhoto1, tvPhoto2, tvPhoto3;
     VisitorList model;
     int submitMob;
+    String type;
 
     ArrayList<String> cardNumberList = new ArrayList<>();
     ArrayList<Integer> cardIdList = new ArrayList<>();
@@ -101,10 +103,24 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
         rbYes.setChecked(true);
 
-        String quoteStr = getArguments().getString("model");
-        Gson gson = new Gson();
-        model = gson.fromJson(quoteStr, VisitorList.class);
-        Log.e("MODEL INFO","-----------------------------------"+model);
+        try {
+            String quoteStr = getArguments().getString("model");
+            Gson gson = new Gson();
+            model = gson.fromJson(quoteStr, VisitorList.class);
+            Log.e("MODEL INFO", "-----------------------------------" + model);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+       try {
+            type = getArguments().getString("type");
+           Log.e("TYPE INFO", "-----------------------------------" + type);
+       }catch (Exception e)
+       {
+           e.printStackTrace();
+       }
 
         if (PermissionsUtil.checkAndRequestPermissions(getActivity())) {
         }
@@ -131,7 +147,6 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                             cardNumberList.clear();
                             cardIdList.clear();
 
-
                             cardNumberList.add("Select Card Number");
                             cardIdList.add(0);
 
@@ -145,7 +160,6 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                                 spCard.setAdapter(projectAdapter);
 
                             }
-
                             commonDialog.dismiss();
 
                         } else {
@@ -186,31 +200,62 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
             showCameraDialog("Photo3");
 
         } else if (v.getId() == R.id.btnSubmit) {
-            if (imagePath1 != null && imagePath2 != null && imagePath3 != null) {
 
+            submitMob = 1;
+            if (rbYes.isChecked()) {
                 submitMob = 1;
-                if (rbYes.isChecked()) {
-                    submitMob = 1;
-                } else if (rbNo.isChecked()) {
-                    submitMob = 2;
-                }
-                int cardID = 0;
-                String cardNumber = null;
-                try {
-                     cardID = cardIdList.get(spCard.getSelectedItemPosition());
-                     cardNumber = cardNumberList.get(spCard.getSelectedItemPosition());
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+            } else if (rbNo.isChecked()) {
+                submitMob = 2;
+            }
+            int cardID = 0;
+            String cardNumber = null;
+            try {
+                cardID = cardIdList.get(spCard.getSelectedItemPosition());
+                cardNumber = cardNumberList.get(spCard.getSelectedItemPosition());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (cardID == 0) {
+                TextView viewProj = (TextView) spCard.getSelectedView();
+                viewProj.setError("required");
+            } else {
+                TextView viewProj = (TextView) spCard.getSelectedView();
+                viewProj.setError(null);
+            }
+            if (cardID != 0)
+            {
+                final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), "", "", "", model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), cardID, cardNumber, submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3(), model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
+
+            if (imagePath1 == null && imagePath2 == null && imagePath3 == null) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                builder.setTitle("Confirmation");
+                builder.setMessage("Do you want to add info ?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        saveVisitor(visitor);
+
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }else{
 
                 final ArrayList<String> pathArray = new ArrayList<>();
                 final ArrayList<String> fileNameArray = new ArrayList<>();
 
                 String photo1 = "", photo2 = "", photo3 = "";
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-
+                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 if (imagePath1 != null) {
 
                     pathArray.add(imagePath1);
@@ -218,7 +263,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                     File imgFile1 = new File(imagePath1);
                     int pos = imgFile1.getName().lastIndexOf(".");
                     String ext = imgFile1.getName().substring(pos + 1);
-                    photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                    photo1 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p1." + ext;
                     fileNameArray.add(photo1);
                 }
 
@@ -229,7 +274,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                     File imgFile2 = new File(imagePath2);
                     int pos2 = imgFile2.getName().lastIndexOf(".");
                     String ext2 = imgFile2.getName().substring(pos2 + 1);
-                    photo2 = sdf.format(System.currentTimeMillis()) + "_p2." + ext2;
+                    photo2 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p2." + ext2;
                     fileNameArray.add(photo2);
 
                 }
@@ -241,7 +286,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                     File imgFile3 = new File(imagePath3);
                     int pos3 = imgFile3.getName().lastIndexOf(".");
                     String ext3 = imgFile3.getName().substring(pos3 + 1);
-                    photo3 = sdf.format(System.currentTimeMillis()) + "_p3." + ext3;
+                    photo3 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p3." + ext3;
                     fileNameArray.add(photo3);
 
                 }
@@ -249,17 +294,17 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 final String currDate = sdf1.format(System.currentTimeMillis());
 
-                 final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(),model.getVisitDateIn(),model.getSecurityIdIn(),model.getPersonName(),model.getPersonCompany(),model.getPersonPhoto(),model.getMobileNo(),photo1,photo2,photo3,model.getPurposeId(),model.getPurposeHeading(),model.getPurposeRemark(),model.getEmpIds(),model.getEmpName(),model.getGateId(),model.getGatePasstype(),3,model.getVisitType(),model.getInTime(),cardID,cardNumber,submitMob,model.getMeetingDiscussion(),"",model.getVisitOutTime(), (int) model.getTotalTimeDifference(),model.getSecurityIdOut(),model.getVisitDateOut(),model.getUserSignImage(),model.getDelStatus(),model.getIsUsed(),model.getExInt1(),model.getExInt2(),model.getExInt3(),model.getExVar1(),model.getExVar2(),model.getExVar3(),model.getSecurityInName(),model.getSecurityOutName(),model.getPurposeHeading(),model.getGateName(),model.getAssignEmpName());
+                final VisitorList visitor1 = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), photo1, photo2, photo3, model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), cardID, cardNumber, submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3(), model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Confirmation");
-                builder.setMessage("Do you want to add info of visitor ?");
+                builder.setMessage("Do you want to add info ?");
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                       // saveVisitor(visitor);
-                       // Log.e("VISITOR", "-----------------------" + visitor);
-                        sendImage(pathArray, fileNameArray, visitor);
+                        // saveVisitor(visitor);
+                        // Log.e("VISITOR", "-----------------------" + visitor);
+                        sendImage(pathArray, fileNameArray, visitor1);
 
                     }
                 });
@@ -273,6 +318,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 dialog.show();
 
 
+            }
             }
         }
     }
@@ -339,9 +385,16 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
                             Log.e("SAVE VISITOR INFO : ", " ------------------------------SAVE VISITOR INFO------------------------- " + response.body());
                             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
-                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
-                            ft.commit();
+                            if(type.equalsIgnoreCase("Visitor List")) {
+                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                                ft.commit();
+                            }else if(type.equalsIgnoreCase("Maintenance List"))
+                            {
+                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+                                ft.commit();
+                            }
 
                             commonDialog.dismiss();
 
@@ -448,7 +501,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p1.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -456,7 +509,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                             startActivityForResult(intent, 102);
                         } else if (type.equalsIgnoreCase("Photo2")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p2.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p2.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -464,7 +517,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                             startActivityForResult(intent, 202);
                         } else if (type.equalsIgnoreCase("Photo3")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p3.jpg");
+                            f = new File(folder + File.separator, "" +Calendar.getInstance().getTimeInMillis()+ "_p3.jpg");
                             String authorities = BuildConfig.APPLICATION_ID + ".provider";
                             Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, f);
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -476,19 +529,19 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
                         if (type.equalsIgnoreCase("Photo1")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p1.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis() + "_p1.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 102);
                         } else if (type.equalsIgnoreCase("Photo2")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p2.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p2.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 202);
                         } else if (type.equalsIgnoreCase("Photo3")) {
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            f = new File(folder + File.separator, "" + System.currentTimeMillis() + "_p3.jpg");
+                            f = new File(folder + File.separator, "" + Calendar.getInstance().getTimeInMillis()+ "_p3.jpg");
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             startActivityForResult(intent, 302);

@@ -18,6 +18,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabVisitorCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Visitor Count :"
+                android:visibility="gone"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
+
     <LinearLayout
         android:id="@+id/linearLayoutVisitor1"
         android:visibility="gone"
@@ -87,7 +102,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:padding="10dp"
                     android:gravity="center"
-                    android:text="Currently Visitor in Comp"
+                    android:text="Currently Visitor in Company"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -290,6 +305,22 @@
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabEmpVisitorCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="Employee Wise Visitor Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
 
         <LinearLayout
             android:id="@+id/linearLayoutVisitorEmployee1"
@@ -363,7 +394,7 @@
                         android:fontFamily="@font/sf_ui_bold"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Employee Current Employee Meeting Going On(Approve)"
+                        android:text="Current Employee Meeting Going On(Approve)"
                         android:textColor="@color/colorWhite"
                         android:textSize="14sp" />
 
@@ -485,11 +516,10 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/cardViewMeetingCompletedForAdmin"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="190dp"
             android:layout_height="150dp"
             android:layout_margin="3dp"
-            android:layout_weight="1"
             app:cardBackgroundColor="@color/colorTwo"
             app:cardElevation="3dp"
             app:cardUseCompatPadding="true">
@@ -529,10 +559,35 @@
 
         </android.support.v7.widget.CardView>
 
+    </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabMaintenanceCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="Maintenance Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutVisitorMaintenance1"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <android.support.v7.widget.CardView
             android:id="@+id/cardViewMaintenancePending"
-            android:visibility="gone"
-            android:layout_width="190dp"
+            android:visibility="visible"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_margin="3dp"
             android:layout_weight="1"
@@ -570,14 +625,6 @@
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/linearLayoutVisitorMaintenance1"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -623,6 +670,15 @@
 
         </android.support.v7.widget.CardView>
 
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayoutMaintenanceEmployee2"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="150dp"
@@ -662,14 +718,6 @@
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/linearLayoutMaintenanceEmployee2"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -715,48 +763,73 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            app:cardBackgroundColor="@color/colorTwo"
-            app:cardElevation="3dp"
-            app:cardUseCompatPadding="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sf_ui_bold"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="Maintenance Total"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tvMaintenanceTotal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sf_ui_bold"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="0"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="22sp" />
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
 
     </LinearLayout>
-    <LinearLayout
+
+        <LinearLayout
+            android:id="@+id/linearLayoutMainTotal"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="190dp"
+                android:layout_height="150dp"
+                android:layout_margin="3dp"
+                app:cardBackgroundColor="@color/colorTwo"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_ui_bold"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Maintenance Total"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvMaintenanceTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_ui_bold"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="0"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="22sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabEmpgatePassCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="Employee Gate Pass Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
+
+        <LinearLayout
         android:id="@+id/linearLayoutGP1"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -856,10 +929,9 @@
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
+                android:layout_width="190dp"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 app:cardBackgroundColor="@color/colorTwo"
                 app:cardElevation="3dp"
                 app:cardUseCompatPadding="true">
@@ -898,6 +970,32 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabMaterialCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="Material Gate Pass Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutGP3"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -939,18 +1037,9 @@
 
             </android.support.v7.widget.CardView>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayoutGP3"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <android.support.v7.widget.CardView
                 android:id="@+id/cardViewParcel"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
@@ -994,6 +1083,16 @@
 
             </android.support.v7.widget.CardView>
 
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayoutDepartment1"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -1034,13 +1133,6 @@
 
             </android.support.v7.widget.CardView>
 
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/linearLayoutDepartment1"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -1086,11 +1178,19 @@
 
             </android.support.v7.widget.CardView>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayoutDeptRejected"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
+                android:layout_width="190dp"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
-                android:layout_weight="1"
                 app:cardBackgroundColor="@color/colorTwo"
                 app:cardElevation="3dp"
                 app:cardUseCompatPadding="true">
@@ -1125,9 +1225,24 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
-
         </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabEmpMaterialCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="Employee Wise Material Gate Pass Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
+            <LinearLayout
             android:id="@+id/linearLayoutEmployee1"
             android:visibility="gone"
             android:layout_width="match_parent"
@@ -1269,95 +1384,24 @@
 
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardViewMaintenancePendingEmp"
-                android:visibility="gone"
-                android:layout_width="190dp"
-                android:layout_height="150dp"
-                android:layout_margin="3dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/colorTwo"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Maintenance Wise pending"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvMaintenanceWisePending1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="0"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="22sp" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardViewDeptpending"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_margin="3dp"
-                android:visibility="gone"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/colorTwo"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Department Wise Total Pending"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvDeptWiseTotalPending1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="0"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="22sp" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-
         </LinearLayout>
-
+        </LinearLayout>
         <!--SuperWiser Screen-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvLabSuperWiserCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="SuperWiser Gate Pass Count :"
+                android:fontFamily="@font/sf_ui_bold"
+                android:textSize="18sp"
+                android:textColor="@color/colorTwo"/>
 
         <LinearLayout
             android:id="@+id/linearLayoutSuperGP1"
@@ -1453,7 +1497,7 @@
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linearLayoutSuperGP2"
-            android:layout_width="match_parent"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:orientation="horizontal">
@@ -1501,53 +1545,7 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardViewEmployeeMeetingCompleted"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_weight="1"
-                android:layout_margin="3dp"
-                app:cardBackgroundColor="@color/colorTwo"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="Employee Wise Meeting Completed"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvEmpWiseMeetingCompleted1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sf_ui_bold"
-                        android:gravity="center"
-                        android:padding="10dp"
-                        android:text="0"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="22sp" />
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
+        </LinearLayout>
         </LinearLayout>
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->

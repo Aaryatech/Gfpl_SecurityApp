@@ -59,7 +59,7 @@
                 <TextView
                 android:id="@+id/tvGPNo"
                 android:textSize="15sp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
                 android:fontFamily="@font/sf_ui_bold"
@@ -67,22 +67,27 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_margin="3dp"
+                android:fontFamily="@font/sf_ui_bold"
+                android:gravity="right"
+                android:layout_weight="2"
+                android:text="125"
+                android:textSize="15sp" />
 
-                <ImageView
-                    android:id="@+id/ivEdit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    android:layout_gravity="end"
-                    android:src="@drawable/ic_menu" />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/ivEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:padding="5dp"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_menu" />
+
+
 
         </LinearLayout>
 

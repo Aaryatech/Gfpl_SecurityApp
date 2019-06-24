@@ -23,7 +23,10 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                intent.putExtra("Splash", "Splash scrren");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 finish();
             }
         }, 3000);

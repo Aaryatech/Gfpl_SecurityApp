@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText edDSCCode;
     private Button btnSubmit,btnSync;
-    public String strIntent;
+    public String strIntent,strIntentSplash;
     ArrayList<Sync> syncArray = new ArrayList<>();
     Sync syncData;
     @Override
@@ -61,6 +61,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         try {
+            //strIntent = getIntent().getStringExtra("model");
+            Intent intent = getIntent();
+            strIntentSplash = intent.getExtras().getString("Splash");
+            Log.e("String", "--------------------------" + strIntent);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             Gson gson = new Gson();
             String json = prefs.getString("Sync", null);
@@ -76,8 +86,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-        //getSynch();
+    }
 
+    @Override
+    public void onBackPressed() {
+        try {
+            if (strIntentSplash.equalsIgnoreCase("Splash scrren")) {
+                finish();
+            } else {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -255,8 +279,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 String json = gson.toJson(data);
 
                                 if(strIntent==null) {
+                                    Log.e("Main User","-----------------------");
                                     CustomSharedPreference.putString(LoginActivity.this, CustomSharedPreference.MAIN_KEY_USER, json);
                                 }else{
+                                    Log.e("User","-----------------------");
                                     CustomSharedPreference.putString(LoginActivity.this, CustomSharedPreference.KEY_USER, json);
                                 }
                                 String token = SharedPrefManager.getmInstance(LoginActivity.this).getDeviceToken();
@@ -350,14 +376,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("model", strIntent);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
                             } else {
 
                                 commonDialog.dismiss();
-
                                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
                                 intent.putExtra("model", strIntent);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
                             }
@@ -366,9 +393,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.e("Data Null : ", "-----------");
 
                                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
-//                                Bundle args = new Bundle();
-//                                args.putString("model",strIntent);
                                 intent.putExtra("model", strIntent);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                                 finish();
 

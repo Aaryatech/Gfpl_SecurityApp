@@ -1,6 +1,8 @@
 package com.ats.gfpl_securityapp.adapter;
 
+import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,11 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.fragment.MaterialTrackingDetailFragment;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,7 +55,7 @@ public class RejectedInwardAdapter extends RecyclerView.Adapter<RejectedInwardAd
 
         String imageUri = String.valueOf(model.getPersonPhoto());
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
 
         } catch (Exception e) {
 
@@ -57,11 +63,26 @@ public class RejectedInwardAdapter extends RecyclerView.Adapter<RejectedInwardAd
 
         String imageUri1 = String.valueOf(model.getInwardPhoto());
         try {
-            Picasso.with(context).load(Constants.IMAGE_URL+ " " +imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
 
         } catch (Exception e) {
 
         }
+
+        myViewHolder.linearLayoutReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new Gson();
+                String json = gson.toJson(model);
+
+                MainActivity activity = (MainActivity) context;
+                Fragment adf = new MaterialTrackingDetailFragment();
+                Bundle args = new Bundle();
+                args.putString("model", json);
+                adf.setArguments(args);
+                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaterialTrackingListFragment").commit();
+            }
+        });
 
     }
 
@@ -74,6 +95,7 @@ public class RejectedInwardAdapter extends RecyclerView.Adapter<RejectedInwardAd
         public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvLastDept, tvLastPerson;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3;
         public CheckBox checkBox;
+        public LinearLayout linearLayoutReject;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGPNo = itemView.findViewById(R.id.tvGPNo);
@@ -88,6 +110,7 @@ public class RejectedInwardAdapter extends RecyclerView.Adapter<RejectedInwardAd
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);
             ivPhoto3 = itemView.findViewById(R.id.ivPhoto3);
             checkBox = itemView.findViewById(R.id.checkBox);
+            linearLayoutReject = itemView.findViewById(R.id.linearLayoutReject);
         }
     }
 }

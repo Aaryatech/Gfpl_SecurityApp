@@ -129,7 +129,10 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
                         statusList.add(0);
                         statusList.add(1);
+                        statusList.add(2);
                         statusList.add(3);
+                        statusList.add(4);
+                        statusList.add(5);
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(1);
@@ -143,6 +146,9 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                         statusList.add(0);
                         statusList.add(1);
                         statusList.add(2);
+                        statusList.add(3);
+                        statusList.add(4);
+                        statusList.add(5);
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(1);
@@ -486,7 +492,10 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
                                         statusList1.add(0);
                                         statusList1.add(1);
+                                        statusList1.add(2);
                                         statusList1.add(3);
+                                        statusList1.add(4);
+                                        statusList1.add(5);
 
                                         ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
                                         getPassTypeList2.add(1);
@@ -501,6 +510,9 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                                         statusList1.add(0);
                                         statusList1.add(1);
                                         statusList1.add(2);
+                                        statusList1.add(3);
+                                        statusList1.add(4);
+                                        statusList1.add(5);
 
                                         ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
                                         getPassTypeList1.add(1);
@@ -621,8 +633,8 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             String empIds = assignedEmpIdArray.toString().trim();
             Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
 
-            stringId = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
-
+            String a1 = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
+            stringId = a1.replaceAll("\\s","");
             Log.e("ASSIGN EMP ID STRING", "---------------------------------" + stringId);
 
 //            String empName=assignedEmpNameArray.toString().trim();

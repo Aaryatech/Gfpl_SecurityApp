@@ -1,6 +1,7 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -46,7 +48,7 @@ import retrofit2.Response;
 
 public class EmployeeGatePassFragment extends Fragment implements View.OnClickListener {
 
-    private EditText edRemark, edFrom, edTo, edTotalHrs;
+    private EditText edRemark, edFrom, edTo, edTotalHrs,edFromDate;
     private Spinner spEmployee, spReason;
     private RadioButton rbTemp, rbDay;
     private RadioGroup rg;
@@ -58,9 +60,13 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     Login loginUser;
     EmpGatePass model;
 
+    long fromDateMillis, toDateMillis;
+    int yyyy, mm, dd;
+
     ArrayList<String> empNameList = new ArrayList<>();
     ArrayList<String> empImageList = new ArrayList<>();
     ArrayList<Integer> empIdList = new ArrayList<>();
+    ArrayList<String> deptNameList = new ArrayList<>();
 
     ArrayList<String> purposeHeadingList = new ArrayList<>();
     ArrayList<Integer> purposeIdList = new ArrayList<>();
@@ -84,10 +90,22 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         ivPhoto = view.findViewById(R.id.ivPhoto);
         tvName = view.findViewById(R.id.tvName);
         tvLabelTotalHrs = view.findViewById(R.id.tvLabelTotalHrs);
+        edFromDate = view.findViewById(R.id.edFromDate);
 
         edFrom.setOnClickListener(this);
+        edFromDate.setOnClickListener(this);
         edTo.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+
+        Date todayDate = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String currentDate = formatter.format(todayDate);
+
+        fromDateMillis = todayDate.getTime();
+        toDateMillis = todayDate.getTime();
+
+        //  Log.e("Mytag", "todayString" + currentDate);
+        edFromDate.setText(currentDate);
 
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
@@ -143,19 +161,19 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         spEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                 employeeName = empNameList.get(position);
+                 employeeName = deptNameList.get(position);
                 employeeImage = empImageList.get(position);
                 Log.e("EMP Name","---------------------"+employeeName);
                 Log.e("EMP Image","---------------------"+employeeImage);
+                Log.e("EMP Image","---------------------"+Constants.IMAGE_URL+employeeImage);
                 tvName.setText(employeeName);
 
                 try {
-                    Picasso.with(getActivity()).load(Constants.IMAGE_URL+ " " +employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+                    Picasso.with(getActivity()).load(Constants.IMAGE_URL+employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
 
                 } catch (Exception e) {
 
                 }
-
 
             }
             @Override
@@ -198,16 +216,30 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             Calendar mcurrentTime = Calendar.getInstance();
             int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
             int minute = mcurrentTime.get(Calendar.MINUTE);
-            TimePickerDialog mTimePicker;
+            final int am_pm = mcurrentTime.get(Calendar.AM_PM);
+                    TimePickerDialog mTimePicker;
             mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                    edFrom.setText(selectedHour + ":" + selectedMinute);
+
+                    if(selectedHour>12) {
+                        edFrom.setText(String.valueOf(selectedHour-12)+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                        //edFrom.setText(selectedHour + ":" + selectedMinute);
+                    } else if(selectedHour==12) {
+                        edFrom.setText("12"+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                    } else if(selectedHour<12) {
+                        if(selectedHour!=0) {
+                            edFrom.setText(String.valueOf(selectedHour) + ":" + (String.valueOf(selectedMinute) + " am"));
+                        } else {
+                            edFrom.setText("12" + ":" + (String.valueOf(selectedMinute) + " am"));
+                        }
+                    }
+
                     String strTo=edTo.getText().toString();
                     String strFrom=edFrom.getText().toString();
-                    calculateTimeDiff(strFrom,strTo);
+                   calculateTimeDiff(strFrom,strTo);
                 }
-            }, hour, minute, true);//Yes 24 hour time
+            }, hour, minute,false);//Yes 24 hour time
             mTimePicker.setTitle("Select Time");
             mTimePicker.show();
 
@@ -220,24 +252,102 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                    edTo.setText(selectedHour + ":" + selectedMinute);
+                    //edTo.setText(selectedHour + ":" + selectedMinute);
+
+                    if(selectedHour>12) {
+                        edTo.setText(String.valueOf(selectedHour-12)+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                        //edFrom.setText(selectedHour + ":" + selectedMinute);
+                    } else if(selectedHour==12) {
+                        edTo.setText("12"+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                    } else if(selectedHour<12) {
+                        if(selectedHour!=0) {
+                            edTo.setText(String.valueOf(selectedHour) + ":" + (String.valueOf(selectedMinute) + " am"));
+                        } else {
+                            edTo.setText("12" + ":" + (String.valueOf(selectedMinute) + " am"));
+                        }
+                    }
+
                     String strTo=edTo.getText().toString();
                     String strFrom=edFrom.getText().toString();
                     calculateTimeDiff(strFrom,strTo);
+
                 }
-            }, hour, minute, true);//Yes 24 hour time
+            }, hour, minute, false);//Yes 24 hour time
             mTimePicker.setTitle("Select Time");
             mTimePicker.show();
 
-        } else if (v.getId() == R.id.btnSubmit) {
-            String strRemark, strFromTime, strToTime, strTotalHrs;
-            boolean isValidRemark = false, isValidFromTime = false, isValidToTime = false;
+        }else if(v.getId()==R.id.edFromDate)
+        {
+                int yr, mn, dy;
 
+                Calendar purchaseCal;
+
+                long minDate = 0;
+
+                purchaseCal = Calendar.getInstance();
+                //purchaseCal.add(Calendar.DAY_OF_MONTH, -7);
+                minDate = purchaseCal.getTime().getTime();
+                purchaseCal.setTimeInMillis(fromDateMillis);
+
+                yr = purchaseCal.get(Calendar.YEAR);
+                mn = purchaseCal.get(Calendar.MONTH);
+                dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), fromDateListener, yr, mn, dy);
+                dialog.getDatePicker().setMinDate(minDate);
+                dialog.show();
+        }
+        else if (v.getId() == R.id.btnSubmit) {
+            String strRemark, strFromTime, strToTime, strTotalHrs,strFromDate;
+            boolean isValidTime = false, isValidFromTime = false, isValidToTime = false;
+
+            strFromDate = edFromDate.getText().toString();
             strRemark = edRemark.getText().toString();
             strFromTime = edFrom.getText().toString();
             strToTime = edTo.getText().toString();
             strTotalHrs = edTotalHrs.getText().toString();
             Log.e("Total Hrs String", "---------------------" + strTotalHrs);
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat("hh:mm");
+            Date outTime = null,inTime = null;
+            try {
+                 inTime = sdf1.parse(strToTime);
+                Log.e("In Time","--------------------"+inTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            try {
+                 outTime = sdf1.parse(strFromTime);
+                Log.e("Out Time","--------------------"+outTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (inTime.before(outTime))
+            //if(inTime.compareTo(outTime) > 0)
+            {
+                edTo.setError("To time should be greater than from time");
+                Toast.makeText(getActivity(), "To Time Should Be Greater Than From Time", Toast.LENGTH_SHORT).show();
+                Log.e("Hiiiiiiiiiiiiiiiiiii","--------------------");
+            }else{
+                edTo.setError(null);
+                isValidTime =true;
+                Log.e("Hiii","--------------------");
+            }
+
+            SimpleDateFormat formatter3 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+            Date ToDate = null;
+            try {
+                ToDate = formatter1.parse(strFromDate);//catch exception
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            final String DateFrom = formatter3.format(ToDate);
+            Log.e("Date Formate","--------------------"+DateFrom);
+
 
             float totalHrs = 0;
             try {
@@ -247,12 +357,12 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            if (strRemark.isEmpty()) {
-                edRemark.setError("required");
-            } else {
-                edRemark.setError(null);
-                isValidRemark = true;
-            }
+//            if (strRemark.isEmpty()) {
+//                edRemark.setError("required");
+//            } else {
+//                edRemark.setError(null);
+//                isValidRemark = true;
+//            }
             if (strFromTime.isEmpty()) {
                 edFrom.setError("required");
             } else {
@@ -290,10 +400,10 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 viewType.setError(null);
             }
 
-            if (isValidRemark && isValidFromTime && isValidToTime) {
+            if (isValidFromTime && isValidToTime && employeeID!=0 && purposeID!=0 && isValidTime) {
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final EmpGatePass empGatePass = new EmpGatePass(0, sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), employeeID, employeeName, 1, gatePassType, purposeID, purposeHeading, strRemark, loginUser.getEmpId(), loginUser.getEmpId(), totalHrs, strFromTime, strToTime, "NA", "NA", "NA", 0, 1, 1, 0, 0, 0, "NA", "NA", "NA");
+                    final EmpGatePass empGatePass = new EmpGatePass(0, DateFrom, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), employeeID, employeeName, 1, gatePassType, purposeID, purposeHeading, strRemark, loginUser.getEmpId(), loginUser.getEmpId(), totalHrs, strFromTime, strToTime, "NA", "NA", "NA", 0, 1, 1, 0, 0, 0, "NA",employeeImage, "NA");
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
@@ -343,6 +453,27 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
         }
     }
+
+    DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            yyyy = year;
+            mm = month + 1;
+            dd = dayOfMonth;
+            edFromDate.setText(dd + "-" + mm + "-" + yyyy);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, -7);
+            calendar.set(yyyy, mm - 1, dd);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR, 0);
+            fromDateMillis = calendar.getTimeInMillis();
+
+
+        }
+    };
 
     private void saveEmployeeGatePass(EmpGatePass empGatePass) {
         Log.e("PARAMETER","---------------------------------------EMPLOYEE GATE PASS--------------------------"+empGatePass);
@@ -430,12 +561,11 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         }
     }
 
-
     public String calculateTimeDiff(String time1, String time2) {
         Log.e("PARAMETER","             TIME 1    "+time1 +"           TIME 2             "+time2);
         String diff = "";
 
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("hh:mm");
         Date date1 = null, date2 = null;
         try {
             date1 = format.parse(time1);
@@ -449,13 +579,32 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
         long difference = date2.getTime() - date1.getTime();
 
-       int hours = (int) (difference/(1000 * 60 * 60));
-       int mins = (int) ((difference/(1000*60)) % 60);
+//       int hours = (int) (difference/(1000 * 60 * 60));
+//       int mins = (int) ((difference/(1000*60)) % 60);
 
-       // diff=DurationFormatUtils.formatDuration(difference, "HH:mm");
-       diff=hours + "."+mins;
+        int days = (int) (difference / (1000*60*60*12));
+        int hours = (int) ((difference - (1000*60*60*12*days)) / (1000*60*60));
+        //int hours = (int) (difference / (60 * 60 * 1000*24) % 12);
+        int min = (int) (difference - (1000*60*60*12*days) - (1000*60*60*hours)) / (1000*60);
+        if(hours < 0){
+            hours+=12;
+        }if(min < 0){
+            float  newone = (float)min/60 ;
+            min +=60;
+            hours =(int) (hours +newone);}
+
+        diff=hours + "."+min;
+      // int diffInt= Integer.parseInt(diff);
        Log.e("Total Hrs","----------------------------------------"+diff);
-       edTotalHrs.setText(diff);
+     //  Log.e("Total Hrs Int","----------------------------------------"+diffInt);
+        edTotalHrs.setText(diff);
+
+//       if(hours <=0 && min <=0)
+//      {
+//           edTotalHrs.setText("0.0");
+//       }else {
+//           edTotalHrs.setText(diff);
+//       }
 
         return diff;
     }
@@ -478,7 +627,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                             empNameList.clear();
                             empIdList.clear();
 
-                            empNameList.add("Select Employee");
+                            deptNameList.add("Select Employee");
                             empIdList.add(0);
 
                             if (response.body().size() > 0) {
@@ -486,10 +635,14 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                                     empIdList.add(response.body().get(i).getEmpId());
                                     empImageList.add(response.body().get(i).getEmpPhoto());
                                     empNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+                                    if(response.body().get(i).getEmpDeptId()==loginUser.getEmpDeptId())
+                                    {
+                                        deptNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+                                    }
 
                                 }
 
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
 
                                 spEmployee.setAdapter(projectAdapter);
 
@@ -538,7 +691,10 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.allPurposes();
+            ArrayList<Integer> getTypeList = new ArrayList<>();
+            getTypeList.add(3);
+
+            Call<ArrayList<PurposeList>> listCall = Constants.myInterface.getAllPurposesByType(getTypeList);
             listCall.enqueue(new Callback<ArrayList<PurposeList>>() {
                 @Override
                 public void onResponse(Call<ArrayList<PurposeList>> call, Response<ArrayList<PurposeList>> response) {
