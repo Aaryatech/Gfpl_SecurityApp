@@ -65,8 +65,19 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         myViewHolder.tvParty.setText(""+model.getPartyName());
         myViewHolder.tvNugs.setText(""+model.getNoOfNugs());
         myViewHolder.tvTime.setText(""+model.getInTime());
-        myViewHolder.tvLastDept.setText(model.getToDeptName());
+        //myViewHolder.tvLastDept.setText(model.getToDeptName());
         myViewHolder.tvLastPerson.setText(model.getToEmpName());
+
+        if(model.getToStatus()==0)
+        {
+            myViewHolder.tvStatus.setText("Pending");
+        }else if(model.getToStatus()==1)
+        {
+            myViewHolder.tvStatus.setText("Approve");
+        }else if(model.getToStatus()==2)
+        {
+            myViewHolder.tvStatus.setText("Rejected");
+        }
 
         String imageUri = String.valueOf(model.getPersonPhoto());
         try {
@@ -209,7 +220,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvLastDept, tvLastPerson;
+        public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvStatus, tvLastPerson;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3,ivEdit;
         public CheckBox checkBox;
         public LinearLayout linearLayoutInward;
@@ -222,7 +233,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             tvParty = itemView.findViewById(R.id.tvParty);
             tvNugs = itemView.findViewById(R.id.tvNugs);
             tvTime = itemView.findViewById(R.id.tvTime);
-            tvLastDept = itemView.findViewById(R.id.tvLastDept);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             tvLastPerson = itemView.findViewById(R.id.tvLastPerson);
             ivPhoto1 = itemView.findViewById(R.id.ivPhoto1);
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);

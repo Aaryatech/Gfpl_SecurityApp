@@ -693,7 +693,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                 imagePath1 = null;
 
-
                 Log.e("Response : ", "--" + response.body());
                 saveVisitor(visitor);
                 commonDialog.dismiss();

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,6 +57,7 @@ import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.syncArray;
 public class EmployeeGatePassListFragment extends Fragment implements View.OnClickListener, PendingEmpInterface {
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab;
 //    Login loginUser,loginUserMain;
 
@@ -78,6 +80,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
        // getActivity().setTitle("Employee Pending");
 
         recyclerView = view.findViewById(R.id.recyclerView);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(this);
@@ -119,10 +122,10 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
 
         getEmployee();
 
-        ArrayList<Integer> statusList = new ArrayList<>();
+        final ArrayList<Integer> statusList = new ArrayList<>();
         statusList.add(0);
 
-        ArrayList<Integer> deptList = new ArrayList<>();
+        final ArrayList<Integer> deptList = new ArrayList<>();
         deptList.add(-1);
 
 
@@ -165,6 +168,56 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
             }
         }
 
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+
+                if(syncArray!=null) {
+                    for (int j = 0; j < syncArray.size(); j++) {
+                        if (syncArray.get(j).getSettingKey().equals("Security")) {
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
+
+                            }
+                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList, String.valueOf(loginUser.getEmpId()),statusList);
+
+                            }
+                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
+                            }
+                        }
+                    }
+                }
+
+
+
+
+            }
+        });
 
         return view;
     }

@@ -109,7 +109,6 @@ public class PendingInwardFragment extends Fragment implements View.OnClickListe
                        materialList.get(k).setChecked(true);
 
                    }
-
                 }else{
                     for(int k=0;k<materialList.size();k++)
                     {
@@ -156,14 +155,13 @@ public class PendingInwardFragment extends Fragment implements View.OnClickListe
                                 assignStaticMaterialList.get(i).setChecked(false);
                             }
 
-                             adapter = new InwardGatePassListAdapter(materialList, getContext());
+                            adapter = new InwardGatePassListAdapter(materialList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
                             recyclerView.setAdapter(adapter);
 
                             commonDialog.dismiss();
-
                         } else {
                             commonDialog.dismiss();
                             Log.e("Data Null : ", "-----------");
@@ -228,7 +226,6 @@ public class PendingInwardFragment extends Fragment implements View.OnClickListe
                     public void onClick(DialogInterface dialog, int which) {
 
                         saveAssigneMaterial(assignedMaterialIdArray,1);
-
 
                     }
                 });

@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +61,7 @@ import retrofit2.Response;
 public class VisitorGatePassListFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab;
 
     long fromDateMillis, toDateMillis;
@@ -84,6 +86,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         getActivity().setTitle("Visitors List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
@@ -177,6 +180,73 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                 }
             }
         }
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+
+                if(syncArray!=null) {
+                    for (int j = 0; j < syncArray.size(); j++) {
+                        if (syncArray.get(j).getSettingKey().equals("Security")) {
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+
+                            }
+                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList, String.valueOf(loginUser.getEmpId()),statusList);
+
+
+                            }
+                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+
+                            }
+                        }
+                    }
+                }
+
+
+
+            }
+        });
+
+
 
 //        ArrayList<Integer> getPassTypeList = new ArrayList<>();
 //        getPassTypeList.add(1);

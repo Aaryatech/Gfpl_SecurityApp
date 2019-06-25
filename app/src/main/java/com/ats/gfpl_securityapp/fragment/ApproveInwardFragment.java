@@ -117,7 +117,6 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
                         materialList.get(k).setChecked(true);
 
                     }
-
                 }else{
                     for(int k=0;k<materialList.size();k++)
                     {
@@ -134,7 +133,6 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
                 recyclerView.setAdapter(adapter);
             }
         });
-
 
         return view;
 

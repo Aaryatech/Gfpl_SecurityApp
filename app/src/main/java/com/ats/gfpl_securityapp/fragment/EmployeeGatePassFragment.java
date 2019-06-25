@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,6 +60,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     String selectedtext,employeeName,employeeImage;
     Login loginUser;
     EmpGatePass model;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
@@ -91,6 +93,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         tvName = view.findViewById(R.id.tvName);
         tvLabelTotalHrs = view.findViewById(R.id.tvLabelTotalHrs);
         edFromDate = view.findViewById(R.id.edFromDate);
+
 
         edFrom.setOnClickListener(this);
         edFromDate.setOnClickListener(this);
@@ -161,7 +164,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         spEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                 employeeName = deptNameList.get(position);
+                employeeName = deptNameList.get(position);
                 employeeImage = empImageList.get(position);
                 Log.e("EMP Name","---------------------"+employeeName);
                 Log.e("EMP Image","---------------------"+employeeImage);
@@ -308,29 +311,45 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             strTotalHrs = edTotalHrs.getText().toString();
             Log.e("Total Hrs String", "---------------------" + strTotalHrs);
 
-            SimpleDateFormat sdf1 = new SimpleDateFormat("hh:mm");
+           SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm a");
+
+            Log.e("in Time", "---------------------" + strToTime);
+            Log.e("out Time", "---------------------" + strFromTime);
+
             Date outTime = null,inTime = null;
             try {
-                 inTime = sdf1.parse(strToTime);
-                Log.e("In Time","--------------------"+inTime);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            try {
-                 outTime = sdf1.parse(strFromTime);
-                Log.e("Out Time","--------------------"+outTime);
+                 inTime = sdf2.parse(strToTime);
+                outTime = sdf2.parse(strFromTime);
+
+                Log.e("In Time","--------------------"+sdf1.format(inTime));
+                Log.e("Out Time","--------------------"+sdf1.format(outTime));
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
-            if (inTime.before(outTime))
+            String  strInTime=sdf1.format(inTime);
+            String  strOutTime=sdf1.format(outTime);
+
+            Date outTime1 = null,inTime1 = null;
+            try {
+                inTime1 = sdf1.parse(strInTime);
+                outTime1 = sdf1.parse(strOutTime);
+
+                Log.e("In Time1","--------------------"+inTime1);
+                Log.e("Out Time1","--------------------"+outTime1);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (inTime1.before(outTime1))
             //if(inTime.compareTo(outTime) > 0)
             {
-                edTo.setError("To time should be greater than from time");
                 Toast.makeText(getActivity(), "To Time Should Be Greater Than From Time", Toast.LENGTH_SHORT).show();
                 Log.e("Hiiiiiiiiiiiiiiiiiii","--------------------");
             }else{
-                edTo.setError(null);
                 isValidTime =true;
                 Log.e("Hiii","--------------------");
             }
@@ -357,12 +376,6 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 e.printStackTrace();
             }
 
-//            if (strRemark.isEmpty()) {
-//                edRemark.setError("required");
-//            } else {
-//                edRemark.setError(null);
-//                isValidRemark = true;
-//            }
             if (strFromTime.isEmpty()) {
                 edFrom.setError("required");
             } else {
@@ -609,7 +622,6 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         return diff;
     }
 
-
     private void getEmployee() {
         if (Constants.isOnline(getContext())) {
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
@@ -629,7 +641,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
                             deptNameList.add("Select Employee");
                             empIdList.add(0);
-
+                            empImageList.add("");
                             if (response.body().size() > 0) {
                                 for (int i = 0; i < response.body().size(); i++) {
                                     empIdList.add(response.body().get(i).getEmpId());

@@ -92,6 +92,8 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
 
         ArrayList<Integer> statusList = new ArrayList<>();
         statusList.add(0);
+        statusList.add(1);
+        statusList.add(2);
 
         ArrayList<Integer> getDeptId = new ArrayList<>();
         getDeptId.add(-1);
@@ -458,6 +460,8 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
 
                         ArrayList<Integer> statusList = new ArrayList<>();
                         statusList.add(0);
+                        statusList.add(1);
+                        statusList.add(2);
 
                         String fromDate = tvFromDate.getText().toString();
                         String toDate = tvToDate.getText().toString();

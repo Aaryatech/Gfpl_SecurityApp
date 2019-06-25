@@ -128,7 +128,6 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         if (PermissionsUtil.checkAndRequestPermissions(getActivity())) {
         }
 
-
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
             Gson gson = new Gson();
@@ -410,7 +409,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                                     File imgFile1 = new File(imagePath1);
                                     int pos = imgFile1.getName().lastIndexOf(".");
                                     String ext = imgFile1.getName().substring(pos + 1);
-                                    photo1 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                    photo1 = sdf.format(System.currentTimeMillis()) +"_ProfilePhoto"+ "_p1." + ext;
                                     fileNameArray.add(photo1);
                                 }
 
@@ -421,7 +420,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                                     File imgFile1 = new File(imagePath2);
                                     int pos = imgFile1.getName().lastIndexOf(".");
                                     String ext = imgFile1.getName().substring(pos + 1);
-                                    photo2 = sdf.format(System.currentTimeMillis()) + "_p1." + ext;
+                                    photo2 = sdf.format(System.currentTimeMillis()) +"_InwardPhoto"+"_p1." + ext;
                                     fileNameArray.add(photo2);
                                 }
 
