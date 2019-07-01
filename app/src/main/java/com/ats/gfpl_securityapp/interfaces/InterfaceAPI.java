@@ -1,5 +1,6 @@
 package com.ats.gfpl_securityapp.interfaces;
 
+import com.ats.gfpl_securityapp.model.Company;
 import com.ats.gfpl_securityapp.model.Dashboard;
 import com.ats.gfpl_securityapp.model.Department;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
@@ -11,6 +12,7 @@ import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Material;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
 import com.ats.gfpl_securityapp.model.Notification;
+import com.ats.gfpl_securityapp.model.Outward;
 import com.ats.gfpl_securityapp.model.Party;
 import com.ats.gfpl_securityapp.model.Purpose;
 import com.ats.gfpl_securityapp.model.PurposeList;
@@ -38,6 +40,12 @@ public interface InterfaceAPI {
 
     @GET("master/allEmployeesByDesg")
     Call<ArrayList<Employee>> allEmployees();
+
+    @GET("master/allEmployees")
+    Call<ArrayList<Employee>> allEmployee();
+
+    @GET("master/allCompany")
+    Call<ArrayList<Company>> allCompany();
 
 //    master/allEmployees
 
@@ -143,6 +151,18 @@ public interface InterfaceAPI {
 
     @POST("master/deleteVisitCard")
     Call<Info> deleteVisitCard(@Query("cardId") int cardId);
+
+    @POST("master/saveOutwardGatepass")
+    Call<Outward> saveOutwardGatepass(@Body Outward outward);
+
+    @POST("transaction/getOutwardGatepassList")
+    Call<ArrayList<Outward>> getOutwardGatepassList(@Query("empId") ArrayList<Integer> empId, @Query("status") List<Integer> status);
+
+    @POST("transaction/updateOutwardGatepassStatus")
+    Call<Info> updateOutwardGatepassStatus(@Query("gpOutwardId") int gpOutwardId, @Query("secId") int secId, @Query("status") int status,@Query("photo") String photo);
+
+    @POST("master/deleteOutwardGatepass")
+    Call<Info> deleteOutwardGatepass(@Query("gpOutwardId") int gpOutwardId);
 
 
 }

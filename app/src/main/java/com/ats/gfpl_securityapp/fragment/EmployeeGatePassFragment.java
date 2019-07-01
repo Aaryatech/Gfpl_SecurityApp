@@ -2,19 +2,29 @@ package com.ats.gfpl_securityapp.fragment;
 
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -26,6 +36,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.adapter.PersonListDialogAdapter;
+import com.ats.gfpl_securityapp.adapter.PurposeListDialogAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
@@ -54,10 +66,11 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     private RadioButton rbTemp, rbDay;
     private RadioGroup rg;
     private Button btnSubmit;
-    private TextView tvName,tvLabelTotalHrs;
+    private TextView tvName,tvLabelTotalHrs,tvPurpose,tvPurposeId,tvPersonName,tvPersonId;
     private CircleImageView ivPhoto;
     int gatePassType,employeeType;;
     String selectedtext,employeeName,employeeImage;
+    int empId;
     Login loginUser;
     EmpGatePass model;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -69,9 +82,17 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
     ArrayList<String> empImageList = new ArrayList<>();
     ArrayList<Integer> empIdList = new ArrayList<>();
     ArrayList<String> deptNameList = new ArrayList<>();
+    ArrayList<Employee> empList = new ArrayList<>();
 
     ArrayList<String> purposeHeadingList = new ArrayList<>();
     ArrayList<Integer> purposeIdList = new ArrayList<>();
+    ArrayList<PurposeList> purposeList = new ArrayList<>();
+
+    Dialog dialog;
+    private BroadcastReceiver mBroadcastReceiver;
+    PersonListDialogAdapter personAdapter;
+    PurposeListDialogAdapter purposeAdapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,12 +114,18 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         tvName = view.findViewById(R.id.tvName);
         tvLabelTotalHrs = view.findViewById(R.id.tvLabelTotalHrs);
         edFromDate = view.findViewById(R.id.edFromDate);
+        tvPurpose=(TextView)view.findViewById(R.id.tvPurpose);
+        tvPurposeId=(TextView)view.findViewById(R.id.tvPurposeId);
+        tvPersonName=(TextView)view.findViewById(R.id.tvPersonName);
+        tvPersonId=(TextView)view.findViewById(R.id.tvPersonId);
 
 
         edFrom.setOnClickListener(this);
         edFromDate.setOnClickListener(this);
         edTo.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        tvPurpose.setOnClickListener(this);
+        tvPersonName.setOnClickListener(this);
 
         Date todayDate = Calendar.getInstance().getTime();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -130,6 +157,18 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             edFrom.setText(model.getOutTime());
             edTo.setText(model.getInTime());
             edTotalHrs.setText(""+model.getNoOfHr());
+            tvPersonName.setText(model.getEmpName());
+            tvPurpose.setText(model.getPurposeText());
+            tvName.setText(model.getEmpName());
+
+            try {
+                String imageUri = String.valueOf(model.getExVar2());
+                Log.e("Image Path","---------------------"+Constants.IMAGE_URL+imageUri);
+                Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+
+            } catch (Exception e) {
+
+            }
 
         }catch (Exception e)
         {
@@ -161,29 +200,30 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
         getEmployee();
         getPurpose();
 
-        spEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                employeeName = deptNameList.get(position);
-                employeeImage = empImageList.get(position);
-                Log.e("EMP Name","---------------------"+employeeName);
-                Log.e("EMP Image","---------------------"+employeeImage);
-                Log.e("EMP Image","---------------------"+Constants.IMAGE_URL+employeeImage);
-                tvName.setText(employeeName);
-
-                try {
-                    Picasso.with(getActivity()).load(Constants.IMAGE_URL+employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
-
-                } catch (Exception e) {
-
-                }
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        spEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                employeeName = deptNameList.get(position);
+//                employeeImage = empImageList.get(position);
+//                empId = empIdList.get(position);
+//                Log.e("EMP Name","---------------------"+employeeName);
+//                Log.e("EMP Image","---------------------"+employeeImage);
+//                Log.e("EMP Image","---------------------"+Constants.IMAGE_URL+employeeImage);
+//                tvName.setText(employeeName);
+//
+//                try {
+//                    Picasso.with(getActivity()).load(Constants.IMAGE_URL+employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+//
+//                } catch (Exception e) {
+//
+//                }
+//
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -209,6 +249,21 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             }
         });
 
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Log.e("Broad cast data","---------------"+intent);
+                if (intent.getAction().equals("CUSTOMER_DATA")) {
+                    handlePushNotification(intent);
+
+                }else if(intent.getAction().equals("CUSTOMER_DATA1"))
+                {
+                    handlePushNotification1(intent);
+                }
+            }
+        };
+
         return view;
     }
 
@@ -224,6 +279,9 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                    Log.e("Selecte Hrs","------------------"+selectedHour);
+                    Log.e("Selecte Min","------------------"+selectedMinute);
 
                     if(selectedHour>12) {
                         edFrom.setText(String.valueOf(selectedHour-12)+ ":"+(String.valueOf(selectedMinute)+" pm"));
@@ -256,17 +314,33 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 @Override
                 public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                     //edTo.setText(selectedHour + ":" + selectedMinute);
+                    Log.e("Selecte Hrs","------------------"+selectedHour);
+                    Log.e("Selecte Min","------------------"+selectedMinute);
+                    Log.e("Selecte hrs Length","------------------"+String.valueOf(selectedHour).length());
 
+//                    if(String.valueOf(selectedHour).length()==1)
+//                    {
+//                        Log.e("Hiiiiiiiiiiiiiiii","---------------");
+//                        String newHrs="0"+selectedHour;
+//                        selectedHour=Integer.parseInt(newHrs);
+//                        Log.e("New Hrs1","---------------"+selectedHour);
+//                    }
+//                    Log.e("New Hrs","---------------"+selectedHour);
+                    String format = "%1$02d";
                     if(selectedHour>12) {
                         edTo.setText(String.valueOf(selectedHour-12)+ ":"+(String.valueOf(selectedMinute)+" pm"));
-                        //edFrom.setText(selectedHour + ":" + selectedMinute);
+                        //edTo.setText(String.valueOf(String.format("%02d:%02d",selectedHour,selectedMinute+" pm")));
+
                     } else if(selectedHour==12) {
-                        edTo.setText("12"+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                       edTo.setText("12"+ ":"+(String.valueOf(selectedMinute)+" pm"));
+                        //edTo.setText("12"+ ":"+(String.valueOf(String.format("%02d:%02d",selectedMinute)+" pm")));
                     } else if(selectedHour<12) {
                         if(selectedHour!=0) {
                             edTo.setText(String.valueOf(selectedHour) + ":" + (String.valueOf(selectedMinute) + " am"));
+                           // edTo.setText(String.valueOf(String.format("%02d:%02d",selectedHour,selectedMinute + " am")));
                         } else {
                             edTo.setText("12" + ":" + (String.valueOf(selectedMinute) + " am"));
+                            //edTo.setText("12" + ":" + (String.valueOf(String.format("%02d:%02d",selectedMinute) + " am")));
                         }
                     }
 
@@ -299,19 +373,39 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), fromDateListener, yr, mn, dy);
                 dialog.getDatePicker().setMinDate(minDate);
                 dialog.show();
+        }else if(v.getId()==R.id.tvPurpose)
+        {
+            showDialog1();
+        }else if(v.getId()==R.id.tvPersonName)
+        {
+            showDialog();
         }
         else if (v.getId() == R.id.btnSubmit) {
-            String strRemark, strFromTime, strToTime, strTotalHrs,strFromDate;
-            boolean isValidTime = false, isValidFromTime = false, isValidToTime = false;
+            String strRemark, strFromTime, strToTime, strTotalHrs,strFromDate,strPurose,strPurposeId,strPerson,strPersonId;
+            boolean isValidTime = false, isValidFromTime = false, isValidToTime = false,isValidPerson=false,isValidPurpose=false;
 
             strFromDate = edFromDate.getText().toString();
             strRemark = edRemark.getText().toString();
             strFromTime = edFrom.getText().toString();
             strToTime = edTo.getText().toString();
             strTotalHrs = edTotalHrs.getText().toString();
+            strPurose=tvPurpose.getText().toString();
+            strPurposeId=tvPurposeId.getText().toString();
+            strPerson=tvPersonName.getText().toString();
+            strPersonId=tvPersonId.getText().toString();
             Log.e("Total Hrs String", "---------------------" + strTotalHrs);
 
-           SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
+            int purpId = 0,perId = 0;
+            try {
+                purpId = Integer.parseInt(strPurposeId);
+                perId = Integer.parseInt(strPersonId);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+
+            SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
             SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm a");
 
             Log.e("in Time", "---------------------" + strToTime);
@@ -388,35 +482,49 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                 edTo.setError(null);
                 isValidToTime = true;
             }
+
+            if (strPerson.isEmpty()) {
+                tvPersonName.setError("required");
+            } else {
+                tvPersonName.setError(null);
+                isValidPerson = true;
+            }
+
+            if (strPurose.isEmpty()) {
+                tvPurpose.setError("required");
+            } else {
+                tvPurpose.setError(null);
+                isValidPurpose = true;
+            }
             gatePassType = 1;
             if (rbTemp.isChecked()) {
                 gatePassType = 1;
             } else if (rbDay.isChecked()) {
                 gatePassType = 2;
             }
-            int employeeID = empIdList.get(spEmployee.getSelectedItemPosition());
-            int purposeID = purposeIdList.get(spReason.getSelectedItemPosition());
-            String purposeHeading = purposeHeadingList.get(spReason.getSelectedItemPosition());
+//            int employeeID = empIdList.get(spEmployee.getSelectedItemPosition());
+//            int purposeID = purposeIdList.get(spReason.getSelectedItemPosition());
+//            String purposeHeading = purposeHeadingList.get(spReason.getSelectedItemPosition());
 
-            if (employeeID == 0) {
-                TextView viewType = (TextView) spEmployee.getSelectedView();
-                viewType.setError("required");
-            } else {
-                TextView viewType = (TextView) spEmployee.getSelectedView();
-                viewType.setError(null);
-            }
-            if (purposeID == 0) {
-                TextView viewType = (TextView) spReason.getSelectedView();
-                viewType.setError("required");
-            } else {
-                TextView viewType = (TextView) spReason.getSelectedView();
-                viewType.setError(null);
-            }
+//            if (employeeID == 0) {
+//                TextView viewType = (TextView) spEmployee.getSelectedView();
+//                viewType.setError("required");
+//            } else {
+//                TextView viewType = (TextView) spEmployee.getSelectedView();
+//                viewType.setError(null);
+//            }
+//            if (purposeID == 0) {
+//                TextView viewType = (TextView) spReason.getSelectedView();
+//                viewType.setError("required");
+//            } else {
+//                TextView viewType = (TextView) spReason.getSelectedView();
+//                viewType.setError(null);
+//            }
 
-            if (isValidFromTime && isValidToTime && employeeID!=0 && purposeID!=0 && isValidTime) {
+            if (isValidFromTime && isValidToTime && isValidPerson && isValidPurpose && isValidTime) {
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final EmpGatePass empGatePass = new EmpGatePass(0, DateFrom, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), employeeID, employeeName, 1, gatePassType, purposeID, purposeHeading, strRemark, loginUser.getEmpId(), loginUser.getEmpId(), totalHrs, strFromTime, strToTime, "NA", "NA", "NA", 0, 1, 1, 0, 0, 0, "NA",employeeImage, "NA");
+                    final EmpGatePass empGatePass = new EmpGatePass(0, DateFrom, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), perId, strPerson, 1, gatePassType, purpId, strPurose, strRemark, loginUser.getEmpId(), loginUser.getEmpId(), totalHrs, strFromTime, strToTime, "NA", "NA", "NA", 0, 1, 1, 0, 0, 0, "NA",employeeImage, "NA");
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
@@ -439,7 +547,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
                     AlertDialog dialog = builder.create();
                     dialog.show();
             } else {
-                final EmpGatePass empGatePass = new EmpGatePass(model.getGatepassEmpId(), model.getEmpDateOut(), model.getEmpDateIn(), model.getUserId(), model.getUserName(), employeeID, employeeName, model.getGatePassType(), gatePassType, purposeID, purposeHeading, strRemark, model.getSecurityIdOut(), model.getSecurityIdIn(), totalHrs, strFromTime, strToTime, model.getNewOutTime(), model.getNewInTime(), model.getActualTimeDifference(), model.getGatePassStatus(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
+                final EmpGatePass empGatePass = new EmpGatePass(model.getGatepassEmpId(), model.getEmpDateOut(), model.getEmpDateIn(), model.getUserId(), model.getUserName(), perId, strPerson, model.getGatePassType(), gatePassType, purpId, strPurose, strRemark, model.getSecurityIdOut(), model.getSecurityIdIn(), totalHrs, strFromTime, strToTime, model.getNewOutTime(), model.getNewInTime(), model.getActualTimeDifference(), model.getGatePassStatus(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Confirmation");
@@ -627,7 +735,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
             commonDialog.show();
 
-            Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
+            Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployee();
             listCall.enqueue(new Callback<ArrayList<Employee>>() {
                 @Override
                 public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
@@ -638,25 +746,30 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
                             empNameList.clear();
                             empIdList.clear();
+                            empList.clear();
 
                             deptNameList.add("Select Employee");
                             empIdList.add(0);
                             empImageList.add("");
+
                             if (response.body().size() > 0) {
                                 for (int i = 0; i < response.body().size(); i++) {
-                                    empIdList.add(response.body().get(i).getEmpId());
-                                    empImageList.add(response.body().get(i).getEmpPhoto());
+
                                     empNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
                                     if(response.body().get(i).getEmpDeptId()==loginUser.getEmpDeptId())
                                     {
-                                        deptNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+                                        Employee employee = new Employee(response.body().get(i).getEmpId(),response.body().get(i).getEmpDsc(),response.body().get(i).getEmpCode(),response.body().get(i).getCompanyId(),response.body().get(i).getEmpCatId(),response.body().get(i).getEmpTypeId(),response.body().get(i).getEmpDeptId(),response.body().get(i).getLocId(),response.body().get(i).getEmpFname(),response.body().get(i).getEmpMname(),response.body().get(i).getEmpSname(),response.body().get(i).getEmpPhoto(),response.body().get(i).getEmpMobile1(),response.body().get(i).getEmpMobile2(),response.body().get(i).getEmpEmail(),response.body().get(i).getEmpAddressTemp(),response.body().get(i).getEmpAddressPerm(),response.body().get(i).getEmpBloodgrp(),response.body().get(i).getEmpEmergencyPerson1(),response.body().get(i).getEmpEmergencyNo1(),response.body().get(i).getEmpEmergencyPerson2(),response.body().get(i).getEmpEmergencyNo2(),response.body().get(i).getEmpRatePerhr(),response.body().get(i).getEmpJoiningDate(),response.body().get(i).getEmpPrevExpYrs(),response.body().get(i).getEmpPrevExpMonths(),response.body().get(i).getEmpLeavingDate(),response.body().get(i).getEmpLeavingReason(),response.body().get(i).getLockPeriod(),response.body().get(i).getTermConditions(),response.body().get(i).getSalaryId(),response.body().get(i).getDelStatus(),response.body().get(i).getIsActive(),response.body().get(i).getMakerUserId(),response.body().get(i).getMakerEnterDatetime(),response.body().get(i).getExInt1(),response.body().get(i).getExInt2(),response.body().get(i).getExInt3(),response.body().get(i).getExVar1(),response.body().get(i).getExVar2(),response.body().get(i).getExVar3());
+                                      //  deptNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+                                      //  empImageList.add(response.body().get(i).getEmpPhoto());
+                                      //  empIdList.add(response.body().get(i).getEmpId());
+                                        empList.add(employee);
                                     }
 
                                 }
 
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
-
-                                spEmployee.setAdapter(projectAdapter);
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
+//
+//                                spEmployee.setAdapter(projectAdapter);
 
                             }
 
@@ -717,35 +830,35 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
                             purposeHeadingList.clear();
                             purposeIdList.clear();
+                            purposeList=response.body();
 
-
-                            purposeHeadingList.add("Select Purpose");
-                            purposeIdList.add(0);
-
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    purposeIdList.add(response.body().get(i).getPurposeId());
-                                    purposeHeadingList.add(response.body().get(i).getPurposeHeading());
-                                }
-
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, purposeHeadingList);
-                                spReason.setAdapter(projectAdapter);
-
-                            }
-
-                            if (model != null) {
-                                int position = 0;
-                                if (purposeIdList.size() > 0) {
-                                    for (int i = 0; i < purposeIdList.size(); i++) {
-                                        if (model.getPurposeId() == purposeIdList.get(i)) {
-                                            position = i;
-                                            break;
-                                        }
-                                    }
-                                    spReason.setSelection(position);
-
-                                }
-                            }
+//                            purposeHeadingList.add("Select Purpose");
+//                            purposeIdList.add(0);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    purposeIdList.add(response.body().get(i).getPurposeId());
+//                                    purposeHeadingList.add(response.body().get(i).getPurposeHeading());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, purposeHeadingList);
+//                                spReason.setAdapter(projectAdapter);
+//
+//                            }
+//
+//                            if (model != null) {
+//                                int position = 0;
+//                                if (purposeIdList.size() > 0) {
+//                                    for (int i = 0; i < purposeIdList.size(); i++) {
+//                                        if (model.getPurposeId() == purposeIdList.get(i)) {
+//                                            position = i;
+//                                            break;
+//                                        }
+//                                    }
+//                                    spReason.setSelection(position);
+//
+//                                }
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -770,5 +883,157 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
             Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void showDialog1() {
+
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        purposeAdapter = new PurposeListDialogAdapter(purposeList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(purposeAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (purposeAdapter != null) {
+                        filterCustomer1(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer1(String text) {
+        ArrayList<PurposeList> temp1 = new ArrayList();
+        for (PurposeList d : purposeList) {
+            if (d.getPurposeHeading().toLowerCase().contains(text.toLowerCase()) ) {
+                temp1.add(d);
+            }
+        }
+        //update recyclerview
+        purposeAdapter.updateList(temp1);
+    }
+
+    private void showDialog() {
+
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        personAdapter = new PersonListDialogAdapter(empList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(personAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (personAdapter != null) {
+                        filterCustomer(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer(String text) {
+        ArrayList<Employee> temp = new ArrayList();
+        for (Employee d : empList) {
+            if (d.getEmpFname().toLowerCase().contains(text.toLowerCase()) || d.getEmpMname().toLowerCase().contains(text.toLowerCase()) || d.getEmpSname().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        //update recyclerview
+        personAdapter.updateList(temp);
+    }
+
+    private void handlePushNotification(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String name = intent.getStringExtra("name");
+         employeeImage = intent.getStringExtra("image");
+        int custId = intent.getIntExtra("id", 0);
+        Log.e("CUSTOMER NAME : ", " " + name);
+        tvPersonName.setText("" + name);
+        tvPersonId.setText("" + custId);
+
+        tvName.setText(name);
+
+        try {
+            Picasso.with(getActivity()).load(Constants.IMAGE_URL+employeeImage).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+
+        } catch (Exception e) {
+
+        }
+
+
+
+    }
+
+    private void handlePushNotification1(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String purposeName = intent.getStringExtra("purposeName");
+        int purposeId = intent.getIntExtra("purposeId", 0);
+        Log.e("CUSTOMER NAME : ", " " + purposeName);
+        tvPurpose.setText("" + purposeName);
+        tvPurposeId.setText("" + purposeId);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA1"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver);
+    }
+
 
 }

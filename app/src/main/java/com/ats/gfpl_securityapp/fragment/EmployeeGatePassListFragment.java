@@ -134,18 +134,15 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
 
-
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(1);
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
 
-
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
                         getPassTypeList.add(1);
@@ -169,55 +166,55 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
         }
 
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-
-                if(syncArray!=null) {
-                    for (int j = 0; j < syncArray.size(); j++) {
-                        if (syncArray.get(j).getSettingKey().equals("Security")) {
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
-
-
-                            }
-                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList, String.valueOf(loginUser.getEmpId()),statusList);
-
-                            }
-                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
-
-                            }
-                        }
-                    }
-                }
-
-
-
-
-            }
-        });
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                swipeRefreshLayout.setRefreshing(false);
+//
+//                if(syncArray!=null) {
+//                    for (int j = 0; j < syncArray.size(); j++) {
+//                        if (syncArray.get(j).getSettingKey().equals("Security")) {
+//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+//
+//
+//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+//                                getPassTypeList.add(1);
+//
+//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+//
+//
+//                            }
+//                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
+//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+//
+//
+//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+//                                getPassTypeList.add(1);
+//
+//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList, String.valueOf(loginUser.getEmpId()),statusList);
+//
+//                            }
+//                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
+//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+//
+//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+//                                getPassTypeList.add(1);
+//
+//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                                getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+//
+//                            }
+//                        }
+//                    }
+//                }
+//
+//
+//
+//
+//            }
+//        });
 
         return view;
     }

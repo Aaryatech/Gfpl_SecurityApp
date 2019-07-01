@@ -8,15 +8,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,6 +73,9 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
 
     ArrayList<Sync> syncArray = new ArrayList<>();
     ArrayList<Integer> statusList = new ArrayList<>();
+
+    ArrayList<VisitorList> temp;
+    MaintenanceGatePassListAdapter adapter;
 
     String stringId;
     ArrayList<Employee> empList = new ArrayList<>();
@@ -314,7 +323,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
                             visitorList.clear();
                             visitorList = response.body();
 
-                            MaintenanceGatePassListAdapter adapter = new MaintenanceGatePassListAdapter(visitorList, getContext(),loginUser,syncArray);
+                             adapter = new MaintenanceGatePassListAdapter(visitorList, getContext(),loginUser,syncArray);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -771,6 +780,57 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             }
         };
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(true);
+
+        SearchView searchView = (SearchView) item.getActionView();
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+        ImageView v = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        v.setImageResource(R.drawable.ic_search_white); //Changing the image
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                FilterSearch(charSequence.toString());
+                // empAdapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        searchView.setQueryHint("search");
+    }
+
+    private void FilterSearch(String s) {
+        temp = new ArrayList();
+        for (VisitorList d : visitorList) {
+            if (d.getPersonName().toLowerCase().contains(s.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        adapter.updateList(temp);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
 
 
 }

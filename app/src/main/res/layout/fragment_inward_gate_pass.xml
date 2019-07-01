@@ -69,12 +69,50 @@
                 android:text="Party Name"
                 android:textSize="10sp" />
 
+            <TextView
+                android:id="@+id/tvPartyName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawablePadding="15dp"
+                android:gravity="center_vertical"
+                android:hint="Select Party"
+                android:padding="10dp"
+                android:textColor="@color/colorBlack"
+                android:textColorHint="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/common_google_signin_btn_text_light_default"/>
+
+            <TextView
+                android:id="@+id/tvPartyId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                android:fontFamily="@font/sf_ui_regular"
+                android:text="Party Name"
+                android:textSize="10sp" />
+
             <Spinner
                 android:id="@+id/spParty"
                 style="@style/Widget.AppCompat.Spinner.Underlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:visibility="gone"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp" />
 
@@ -85,7 +123,44 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
-                android:text="Item"
+                android:text="Item Name"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tvItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawablePadding="15dp"
+                android:gravity="center_vertical"
+                android:hint="Select Item"
+                android:padding="10dp"
+                android:textColor="@color/colorBlack"
+                android:textColorHint="@color/colorBlack"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/common_google_signin_btn_text_light_default"/>
+
+            <TextView
+                android:id="@+id/tvItemId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                android:fontFamily="@font/sf_ui_regular"
+                android:text="Item Name"
                 android:textSize="10sp" />
 
             <Spinner
@@ -94,6 +169,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:visibility="gone"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp" />
 
@@ -107,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sf_ui_regular"
-                    android:hint="No of Nug's"
+                    android:hint="Nug"
                     android:inputType="numberDecimal"
                     android:maxLines="1"
                     android:singleLine="true" />

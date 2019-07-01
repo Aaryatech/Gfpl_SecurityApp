@@ -61,13 +61,17 @@ public class PurposeListAdapter extends RecyclerView.Adapter<PurposeListAdapter.
 
 
         if(model.getPurposeType()==1) {
-            myViewHolder.tvPurType.setText("Type 1");
+            myViewHolder.tvPurType.setText("Visiter Purpose");
             myViewHolder.tvPurEmp.setVisibility(View.GONE);
         }else if(model.getPurposeType()==2)
         {
-            myViewHolder.tvPurType.setText("Type 2");
+            myViewHolder.tvPurType.setText("Maintenance Purpose");
             myViewHolder.tvPurEmp.setVisibility(View.VISIBLE);
             myViewHolder.tvPurEmp.setText(model.getAssignEmpName());
+        }else if(model.getPurposeType()==3)
+        {
+            myViewHolder.tvPurType.setText("Employee Purpose");
+            myViewHolder.tvPurEmp.setVisibility(View.GONE);
         }
 
         myViewHolder.ivEdit.setOnClickListener(new View.OnClickListener() {
@@ -178,6 +182,11 @@ public class PurposeListAdapter extends RecyclerView.Adapter<PurposeListAdapter.
     @Override
     public int getItemCount() {
         return purposeList.size();
+    }
+
+    public void updateList(ArrayList<PurposeList> temp) {
+        purposeList = temp;
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

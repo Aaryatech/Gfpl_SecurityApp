@@ -58,6 +58,18 @@
             android:title="Employee Gate Pass List" />
 
         <item
+            android:id="@+id/nav_outward_gp"
+            android:icon="@drawable/ic_material"
+            android:visible="true"
+            android:title="Outward Gate Pass" />
+
+        <item
+            android:id="@+id/nav_outward_gp_list"
+            android:icon="@drawable/ic_material"
+            android:visible="true"
+            android:title="Outward Gate Pass List" />
+
+        <item
             android:id="@+id/nav_material_gp"
             android:visible="false"
             android:icon="@drawable/ic_material"

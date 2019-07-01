@@ -219,6 +219,13 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         return materialList.size();
     }
 
+    public void updateList(ArrayList<MaterialDetail> temp) {
+        materialList = temp;
+            notifyDataSetChanged();
+        }
+
+
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvStatus, tvLastPerson;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3,ivEdit;

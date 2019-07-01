@@ -2,15 +2,23 @@ package com.ats.gfpl_securityapp.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
@@ -28,11 +36,13 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PurposeListFragment extends Fragment implements View.OnClickListener {
+public class PurposeListFragment extends Fragment {
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     ArrayList<PurposeList> purposeList = new ArrayList<>();
     PurposeListAdapter adapter;
+
+    ArrayList<PurposeList> temp;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
@@ -49,7 +59,7 @@ public class PurposeListFragment extends Fragment implements View.OnClickListene
         
         getPurposeList();
 
-        fab.setOnClickListener(this);
+       // fab.setOnClickListener(this);
 
         return view;
     }
@@ -102,13 +112,56 @@ public class PurposeListFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
     @Override
-    public void onClick(View v) {
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(true);
 
+        SearchView searchView = (SearchView) item.getActionView();
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+        ImageView v = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        v.setImageResource(R.drawable.ic_search_white); //Changing the image
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                FilterSearch(charSequence.toString());
+                // empAdapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        searchView.setQueryHint("search");
     }
+
+    private void FilterSearch(String s) {
+        temp = new ArrayList();
+        for (PurposeList d : purposeList) {
+            if (d.getPurposeHeading().toLowerCase().contains(s.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        adapter.updateList(temp);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
+
 }

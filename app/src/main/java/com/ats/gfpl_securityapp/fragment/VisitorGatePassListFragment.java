@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,9 +16,14 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -78,6 +84,8 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
 
     ArrayList<VisitorList> visitorList = new ArrayList<>();
     ArrayList<Integer> statusList = new ArrayList<>();
+    ArrayList<VisitorList> temp;
+    VisitorGatePassListAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,7 +94,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         getActivity().setTitle("Visitors List");
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+       // swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
@@ -181,78 +189,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             }
         }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(false);
-
-                if(syncArray!=null) {
-                    for (int j = 0; j < syncArray.size(); j++) {
-                        if (syncArray.get(j).getSettingKey().equals("Security")) {
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                statusList.add(0);
-                                statusList.add(1);
-                                statusList.add(2);
-                                statusList.add(3);
-                                statusList.add(4);
-                                statusList.add(5);
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
-
-                            }
-                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                statusList.add(0);
-                                statusList.add(1);
-                                statusList.add(2);
-                                statusList.add(3);
-                                statusList.add(4);
-                                statusList.add(5);
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList, String.valueOf(loginUser.getEmpId()),statusList);
-
-
-                            }
-                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
-                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                statusList.add(0);
-                                statusList.add(1);
-                                statusList.add(2);
-                                statusList.add(3);
-                                statusList.add(4);
-                                statusList.add(5);
-
-                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                                getPassTypeList.add(1);
-
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
-
-                            }
-                        }
-                    }
-                }
-
-
-
-            }
-        });
-
-
-
-//        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-//        getPassTypeList.add(1);
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
 
         return view;
     }
@@ -275,7 +211,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                             visitorList.clear();
                             visitorList = response.body();
 
-                            VisitorGatePassListAdapter adapter = new VisitorGatePassListAdapter(visitorList, getContext(),loginUser,syncArray);
+                             adapter = new VisitorGatePassListAdapter(visitorList, getContext(),loginUser,syncArray);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -325,8 +261,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         private VisitorEmployeeAdapter mAdapter;
        // ArrayList<String> empNameList = new ArrayList<>();
        // ArrayList<Integer> empIdList = new ArrayList<>();
-
-
 
         public FilterDialog(@NonNull Context context) {
             super(context);
@@ -788,6 +722,55 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             }
         }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(true);
+
+        SearchView searchView = (SearchView) item.getActionView();
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+        ImageView v = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        v.setImageResource(R.drawable.ic_search_white); //Changing the image
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                FilterSearch(charSequence.toString());
+                // empAdapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        searchView.setQueryHint("search");
+    }
+
+    private void FilterSearch(String s) {
+        temp = new ArrayList();
+        for (VisitorList d : visitorList) {
+            if (d.getPersonName().toLowerCase().contains(s.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        adapter.updateList(temp);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
 
 }

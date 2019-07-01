@@ -130,6 +130,51 @@ public class Employee {
 
     private Boolean isChecked;
 
+
+    public Employee(Integer empId, String empDsc, String empCode, Integer companyId, Integer empCatId, Integer empTypeId, Integer empDeptId, Integer locId, String empFname, String empMname, String empSname, String empPhoto, String empMobile1, String empMobile2, String empEmail, String empAddressTemp, String empAddressPerm, String empBloodgrp, String empEmergencyPerson1, String empEmergencyNo1, String empEmergencyPerson2, String empEmergencyNo2, float empRatePerhr, String empJoiningDate, Integer empPrevExpYrs, Integer empPrevExpMonths, Object empLeavingDate, Object empLeavingReason, String lockPeriod, Object termConditions, Integer salaryId, Integer delStatus, Integer isActive, Integer makerUserId, String makerEnterDatetime, Integer exInt1, Integer exInt2, Integer exInt3, String exVar1, String exVar2, String exVar3) {
+        this.empId = empId;
+        this.empDsc = empDsc;
+        this.empCode = empCode;
+        this.companyId = companyId;
+        this.empCatId = empCatId;
+        this.empTypeId = empTypeId;
+        this.empDeptId = empDeptId;
+        this.locId = locId;
+        this.empFname = empFname;
+        this.empMname = empMname;
+        this.empSname = empSname;
+        this.empPhoto = empPhoto;
+        this.empMobile1 = empMobile1;
+        this.empMobile2 = empMobile2;
+        this.empEmail = empEmail;
+        this.empAddressTemp = empAddressTemp;
+        this.empAddressPerm = empAddressPerm;
+        this.empBloodgrp = empBloodgrp;
+        this.empEmergencyPerson1 = empEmergencyPerson1;
+        this.empEmergencyNo1 = empEmergencyNo1;
+        this.empEmergencyPerson2 = empEmergencyPerson2;
+        this.empEmergencyNo2 = empEmergencyNo2;
+        this.empRatePerhr = empRatePerhr;
+        this.empJoiningDate = empJoiningDate;
+        this.empPrevExpYrs = empPrevExpYrs;
+        this.empPrevExpMonths = empPrevExpMonths;
+        this.empLeavingDate = empLeavingDate;
+        this.empLeavingReason = empLeavingReason;
+        this.lockPeriod = lockPeriod;
+        this.termConditions = termConditions;
+        this.salaryId = salaryId;
+        this.delStatus = delStatus;
+        this.isActive = isActive;
+        this.makerUserId = makerUserId;
+        this.makerEnterDatetime = makerEnterDatetime;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exInt3 = exInt3;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+        this.exVar3 = exVar3;
+    }
+
     public Integer getEmpId() {
         return empId;
     }

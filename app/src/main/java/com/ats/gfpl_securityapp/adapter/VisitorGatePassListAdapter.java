@@ -102,7 +102,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.profile)).into(myViewHolder.ivPhoto);
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
@@ -242,7 +242,7 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             myViewHolder.tvStatus.setText("Rejected");
         }else if(model.getVisitStatus()==3)
         {
-            myViewHolder.tvStatus.setText("Allow to Enter");
+            myViewHolder.tvStatus.setText("Allowed to Enter");
         }else if(model.getVisitStatus()==4)
         {
             myViewHolder.tvStatus.setText("Close Meeting");
@@ -575,6 +575,12 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     public int getItemCount() {
         return visitorList.size();
     }
+
+    public void updateList(ArrayList<VisitorList> temp) {
+        visitorList = temp;
+        notifyDataSetChanged();
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,ivInfo,ivOutFactory,ivClose,tvDate,tvEmpName;

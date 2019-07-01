@@ -1,9 +1,12 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,12 +18,18 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +41,8 @@ import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.adapter.ItemListDialogAdapter;
+import com.ats.gfpl_securityapp.adapter.PartyListDialogAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.Item;
 import com.ats.gfpl_securityapp.model.Login;
@@ -69,11 +80,16 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
     private Spinner spParty, spItem;
     private Button btnSubmit;
     private LinearLayout linearLayout_photo1,LinearLayout_photo2;
-    private TextView tvPhoto1,tvPhoto2,tvPhoto3,tvPhoto1lable,tvPhoto2label;
+    private TextView tvPhoto1,tvPhoto2,tvPhoto3,tvPhoto1lable,tvPhoto2label,tvPartyName,tvPartyId,tvItemName,tvItemId;
     private int gatePassType;
     Login loginUser;
     MaterialDetail model;
     int materialType;
+
+    Dialog dialog;
+    private BroadcastReceiver mBroadcastReceiver;
+    PartyListDialogAdapter partyAdapter;
+    ItemListDialogAdapter itemAdapter;
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -83,9 +99,11 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
     ArrayList<String> partyNameList = new ArrayList<>();
     ArrayList<Integer> partyIdList = new ArrayList<>();
+    ArrayList<Party> partyList = new ArrayList<>();
 
-    ArrayList<String> itemList = new ArrayList<>();
+   // ArrayList<String> itemList = new ArrayList<>();
     ArrayList<Integer> itemIdList = new ArrayList<>();
+    ArrayList<Item> itemList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,6 +124,11 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         spParty = view.findViewById(R.id.spParty);
         spItem = view.findViewById(R.id.spItem);
         btnSubmit = view.findViewById(R.id.btnSubmit);
+        tvPartyName = view.findViewById(R.id.tvPartyName);
+        tvPartyId = view.findViewById(R.id.tvPartyId);
+        tvItemName = view.findViewById(R.id.tvItemName);
+        tvItemId = view.findViewById(R.id.tvItemId);
+
 
         tvPhoto1 = view.findViewById(R.id.tvPhoto1);
         tvPhoto2 = view.findViewById(R.id.tvPhoto2);
@@ -121,6 +144,8 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         ivCamera2.setOnClickListener(this);
         ivCamera3.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        tvPartyName.setOnClickListener(this);
+        tvItemName.setOnClickListener(this);
 
         getAllItem();
         getAllPart();
@@ -146,6 +171,8 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
            edNugs.setText(""+model.getNoOfNugs());
            edInvoice.setText(""+model.getInvoiceNumber());
+           tvPartyName.setText(""+model.getPartyName());
+           tvItemName.setText(""+model.getExVar2());
 
         }catch (Exception e)
         {
@@ -181,6 +208,17 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         }
 
         createFolder();
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("CUSTOMER_DATA")) {
+                    handlePushNotification(intent);
+                }else if(intent.getAction().equals("CUSTOMER_DATA1"))
+                {
+                    handlePushNotification1(intent);
+                }
+            }
+        };
 
         return view;
     }
@@ -202,33 +240,34 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                             partyIdList.clear();
                             partyNameList.clear();
+                            partyList=response.body();
 
-                            partyNameList.add("Select Party");
-                            partyIdList.add(0);
-
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    partyIdList.add(response.body().get(i).getVendorId());
-                                    partyNameList.add(response.body().get(i).getVendorName());
-                                }
-
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, partyNameList);
-                                spParty.setAdapter(projectAdapter);
-
-                            }
-                            if (model != null) {
-                                int position = 0;
-                                if (partyIdList.size() > 0) {
-                                    for (int i = 0; i < partyIdList.size(); i++) {
-                                        if (model.getPartyId().equals(partyIdList.get(i))) {
-                                            position = i;
-                                            break;
-                                        }
-                                    }
-                                    spParty.setSelection(position);
-
-                                }
-                            }
+//                            partyNameList.add("Select Party");
+//                            partyIdList.add(0);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    partyIdList.add(response.body().get(i).getVendorId());
+//                                    partyNameList.add(response.body().get(i).getVendorName());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, partyNameList);
+//                                spParty.setAdapter(projectAdapter);
+//
+//                            }
+//                            if (model != null) {
+//                                int position = 0;
+//                                if (partyIdList.size() > 0) {
+//                                    for (int i = 0; i < partyIdList.size(); i++) {
+//                                        if (model.getPartyId().equals(partyIdList.get(i))) {
+//                                            position = i;
+//                                            break;
+//                                        }
+//                                    }
+//                                    spParty.setSelection(position);
+//
+//                                }
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -269,36 +308,37 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                             Log.e("ITEM LIST : ", " - " + response.body());
 
-                            itemList.clear();
                             itemIdList.clear();
+                            itemList=response.body();
+                            Log.e("ITEM ","------------------"+itemList);
 
-                            itemList.add("Select Item");
-                            itemIdList.add(0);
-
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    itemIdList.add(response.body().get(i).getItemId());
-                                    itemList.add(response.body().get(i).getItemDesc());
-                                }
-
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, itemList);
-                                spItem.setAdapter(projectAdapter);
-
-                            }
-
-                            if (model != null) {
-                                int position = 0;
-                                if (itemIdList.size() > 0) {
-                                    for (int i = 0; i < itemIdList.size(); i++) {
-                                        if (model.getItemType()==itemIdList.get(i)) {
-                                            position = i;
-                                            break;
-                                        }
-                                    }
-                                    spItem.setSelection(position);
-
-                                }
-                            }
+//                            itemList.add("Select Item");
+//                            itemIdList.add(0);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    itemIdList.add(response.body().get(i).getItemId());
+//                                    itemList.add(response.body().get(i).getItemDesc());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, itemList);
+//                                spItem.setAdapter(projectAdapter);
+//
+//                            }
+//
+//                            if (model != null) {
+//                                int position = 0;
+//                                if (itemIdList.size() > 0) {
+//                                    for (int i = 0; i < itemIdList.size(); i++) {
+//                                        if (model.getItemType()==itemIdList.get(i)) {
+//                                            position = i;
+//                                            break;
+//                                        }
+//                                    }
+//                                    spItem.setSelection(position);
+//
+//                                }
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -338,15 +378,31 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
             showCameraDialog("Photo3");
 
+        } else if (v.getId() == R.id.tvPartyName) {
+
+            showDialog();
+
+        }else if (v.getId() == R.id.tvItemName) {
+
+            showDialog1();
+
         } else if (v.getId() == R.id.btnSubmit) {
-            String strInvoiceNumber,strNoOfNugs;
-            boolean isValidInvoiceNumber = false,isvalidNoNuges = false;
+            String strInvoiceNumber,strNoOfNugs,strParty,strPartyId,strItem,strItemId;
+            boolean isValidInvoiceNumber = false,isvalidNoNuges = false,isvalidParty = false,isvalidItem = false;
 
             strInvoiceNumber=edInvoice.getText().toString();
+            strParty=tvPartyName.getText().toString();
+            strPartyId=tvPartyId.getText().toString();
+            strItem=tvItemName.getText().toString();
+            strItemId=tvItemId.getText().toString();
             strNoOfNugs=edNugs.getText().toString();
+
             float noOfNuges = 0;
+            int partyId = 0,itemId=0;
             try {
                  noOfNuges = Float.parseFloat(strNoOfNugs);
+                  partyId= Integer.parseInt(strPartyId);
+                itemId= Integer.parseInt(strItemId);
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -364,17 +420,30 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                 edNugs.setError(null);
                 isvalidNoNuges = true;
             }
+            if (strParty.isEmpty()) {
+                tvPartyName.setError("required");
+            } else {
+                tvPartyName.setError(null);
+                isvalidParty = true;
+            }
+            if (strItem.isEmpty()) {
+                tvItemName.setError("required");
+            } else {
+                tvItemName.setError(null);
+                isvalidItem = true;
+            }
+
             gatePassType = 1;
             if (rbInward.isChecked()) {
                 gatePassType = 1;
             } else if (rbParcel.isChecked()) {
                 gatePassType = 2;
             }
-            int partyId = partyIdList.get(spParty.getSelectedItemPosition());
-            int itemId = itemIdList.get(spItem.getSelectedItemPosition());
-            String partyName = partyNameList.get(spParty.getSelectedItemPosition());
+            //int partyId = partyIdList.get(spParty.getSelectedItemPosition());
+            //int itemId = itemIdList.get(spItem.getSelectedItemPosition());
+            //String partyName = partyNameList.get(spParty.getSelectedItemPosition());
 
-            if(isValidInvoiceNumber && isvalidNoNuges)
+            if(isValidInvoiceNumber && isvalidNoNuges && isvalidParty && isvalidItem)
             {
                 Calendar calender = Calendar.getInstance();
                 SimpleDateFormat mdformat = new SimpleDateFormat("hh:mm");
@@ -383,11 +452,11 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, partyName, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", "", "");
+                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, strParty, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", strItem, "");
                     if (imagePath1 != null && imagePath2 != null) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                         builder.setTitle("Confirmation");
-                        builder.setMessage("Do you want material gate pass ?");
+                        builder.setMessage("Do you want to submit?");
                         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -443,7 +512,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                         Toast.makeText(getActivity(), "Please Select Photo", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                     final Material material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, partyName, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "","","");
+                     final Material material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, strParty, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "",strItem,"");
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
                     builder.setMessage("Do you want to edit Material gate pass ?");
@@ -468,6 +537,145 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
             }
         }
     }
+
+    private void showDialog1() {
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        itemAdapter = new ItemListDialogAdapter(itemList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(itemAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (itemAdapter != null) {
+                        filterCustomer1(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer1(String text) {
+        ArrayList<Item> temp1 = new ArrayList();
+        for (Item d : itemList) {
+            if (d.getItemDesc().toLowerCase().contains(text.toLowerCase())) {
+                temp1.add(d);
+            }
+        }
+        //update recyclerview
+        itemAdapter.updateList(temp1);
+    }
+
+    private void handlePushNotification1(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String name = intent.getStringExtra("name");
+        int custId = intent.getIntExtra("id", 0);
+        Log.e("CUSTOMER NAME : ", " " + name);
+        tvItemName.setText("" + name);
+        tvItemId.setText("" + custId);
+
+    }
+
+
+    private void showDialog() {
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        partyAdapter = new PartyListDialogAdapter(partyList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(partyAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (partyAdapter != null) {
+                        filterCustomer(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer(String text) {
+        ArrayList<Party> temp = new ArrayList();
+        for (Party d : partyList) {
+            if (d.getVendorName().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        //update recyclerview
+        partyAdapter.updateList(temp);
+    }
+
+    private void handlePushNotification(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String name = intent.getStringExtra("name");
+        int custId = intent.getIntExtra("id", 0);
+        Log.e("CUSTOMER NAME : ", " " + name);
+        tvPartyName.setText("" + name);
+        tvPartyId.setText("" + custId);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA1"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver);
+    }
+
 
     private void sendImage(final ArrayList<String> filePath, final ArrayList<String> fileName, final Material material) {
         Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName);
@@ -612,29 +820,29 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
 
     public void showCameraDialog(final String type) {
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
-        builder.setTitle("Choose");
-        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (type.equalsIgnoreCase("Photo1")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 101);
-                } else if (type.equalsIgnoreCase("Photo2")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 201);
-                } else if (type.equalsIgnoreCase("Photo3")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 301);
-                }
-            }
-        });
-        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+//        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+//        builder.setTitle("Choose");
+//        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if (type.equalsIgnoreCase("Photo1")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 101);
+//                } else if (type.equalsIgnoreCase("Photo2")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 201);
+//                } else if (type.equalsIgnoreCase("Photo3")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 301);
+//                }
+//            }
+//        });
+//        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
@@ -689,9 +897,9 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                 } catch (Exception e) {
                     ////Log.e("select camera : ", " Exception : " + e.getMessage());
                 }
-            }
-        });
-        builder.show();
+           // }
+       // });
+        //builder.show();
     }
 
 

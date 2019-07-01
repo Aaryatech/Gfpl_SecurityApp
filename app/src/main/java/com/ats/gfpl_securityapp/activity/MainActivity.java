@@ -37,6 +37,8 @@ import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.MaterialFragment;
 import com.ats.gfpl_securityapp.fragment.MaterialTrackingDetailFragment;
+import com.ats.gfpl_securityapp.fragment.OutwardFragment;
+import com.ats.gfpl_securityapp.fragment.OutwardGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.PendingInwardFragment;
 import com.ats.gfpl_securityapp.fragment.PurposeListFragment;
 import com.ats.gfpl_securityapp.fragment.TabFragment;
@@ -129,8 +131,10 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_material_tracking).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_purpose_gp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
                     Log.e("MY TAG","-----Security-------");
                 }
            }
@@ -157,6 +161,8 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
                     Log.e("MY TAG","-----Admin-------");
                 }
 //                else {
@@ -183,6 +189,8 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_purpose_list_gp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_add_card).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
                     Log.e("MY TAG","------Supervisor------");
                 }
 //                else {
@@ -200,7 +208,15 @@ public class MainActivity extends AppCompatActivity
 
         if (loginUser != null) {
             tvNavHeadName.setText("" + loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname());
-            tvNavHeadDesg.setText("" + loginUser.getEmpEmail());
+            if(loginUser.getEmpCatId()==1) {
+                tvNavHeadDesg.setText("Superwiser");
+            }else  if(loginUser.getEmpCatId()==2) {
+                tvNavHeadDesg.setText("Admin");
+            }else  if(loginUser.getEmpCatId()==3) {
+                tvNavHeadDesg.setText("Employee");
+            }else  if(loginUser.getEmpCatId()==4) {
+                tvNavHeadDesg.setText("Security");
+            }
 
             try {
                 Picasso.with(MainActivity.this).load(Constants.IMAGE_URL+loginUser.getEmpPhoto()).placeholder(getResources().getDrawable(R.drawable.profile)).into(ivNavHeadPhoto);
@@ -282,6 +298,38 @@ public class MainActivity extends AppCompatActivity
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
                     ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("1")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("2")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("3")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("4")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("5")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Outward gate pass list")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Outward Close")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Outward gate pass")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
+                    ft.commit();
                 }
                 else {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -310,6 +358,7 @@ public class MainActivity extends AppCompatActivity
         Fragment inwardGPListFragment = getSupportFragmentManager().findFragmentByTag("InwardGPListFragment");
         Fragment materialTrackingListFragment = getSupportFragmentManager().findFragmentByTag("MaterialTrackingListFragment");
         Fragment visitCardListFragment = getSupportFragmentManager().findFragmentByTag("VisitCardListFragment");
+        Fragment outwardListFragment = getSupportFragmentManager().findFragmentByTag("OutwardListFragment");
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -337,6 +386,7 @@ public class MainActivity extends AppCompatActivity
                 dashFragment instanceof VisitorGatePassListFragment && dashFragment.isVisible() ||
                 dashFragment instanceof VisitorDetailFragment && dashFragment.isVisible() ||
                 dashFragment instanceof EmployeeGatePassFragment && dashFragment.isVisible() ||
+                dashFragment instanceof EmployeeFragment && dashFragment.isVisible() ||
                 dashFragment instanceof MaintenanceGatePassFragment && dashFragment.isVisible() ||
                 dashFragment instanceof MaintenanceGatePassListFragment && dashFragment.isVisible() ||
                 dashFragment instanceof EmployeeGatePassListFragment && dashFragment.isVisible() ||
@@ -372,7 +422,7 @@ public class MainActivity extends AppCompatActivity
                 employeeGPListFragment instanceof EmployeeGatePassDetailFragment && employeeGPListFragment.isVisible()) {
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, new EmployeeGatePassListFragment(), "DashFragment");
+            ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
             ft.commit();
 
         }else if (inwardGPListFragment instanceof InwardGatePassFragment && inwardGPListFragment.isVisible() ||
@@ -391,6 +441,11 @@ public class MainActivity extends AppCompatActivity
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
+            ft.commit();
+        }else if (outwardListFragment instanceof OutwardGatePassFragment && outwardListFragment.isVisible()) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
             ft.commit();
         }
 
@@ -476,7 +531,29 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
 
-        } else if (id == R.id.nav_material_gp) {
+        }else if (id == R.id.nav_outward_gp) {
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Outward gate pass");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
+//            ft.commit();
+
+        } else if (id == R.id.nav_outward_gp_list) {
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Outward gate pass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
+//            ft.commit();
+        }
+        else if (id == R.id.nav_material_gp) {
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Material gate pass");

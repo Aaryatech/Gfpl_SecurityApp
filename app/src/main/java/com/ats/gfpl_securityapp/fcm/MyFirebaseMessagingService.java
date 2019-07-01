@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.ats.gfpl_securityapp.activity.MainActivity;
+import com.ats.gfpl_securityapp.activity.LoginActivity;
 import com.ats.gfpl_securityapp.sqlite.DatabaseHandler;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -43,7 +43,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-
     private void sendPushNotification(JSONObject json) {
 
         Log.e(TAG, "--------------------------------JSON String" + json.toString());
@@ -51,6 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             String title = json.getString("title");
             String message = json.getString("body");
+            String type = json.getString("tag");
             String imageUrl = "";
             int tag = json.getInt("tag");
 
@@ -64,15 +64,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 db.addNotification(title, message, "" + sdf.format(Calendar.getInstance().getTimeInMillis()));
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.putExtra("model", type);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
                 //intent.putExtra("Feedback","fcm");
 
                 mNotificationManager.showSmallNotification(title, message, intent);
 
             } else {
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", type);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 //intent.putExtra("Feedback","fcm");
 
@@ -82,7 +85,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //                notificationUtils.playNotificationSound();
 
                 db.addNotification(title, message, "" + sdf.format(Calendar.getInstance().getTimeInMillis()));
-
             }
 
             Intent pushNotificationIntent = new Intent();

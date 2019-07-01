@@ -71,7 +71,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
-                android:text="Photo of carrying"
+                android:text="Object Carrying if any"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -114,7 +114,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
-                android:text="Other Photo"
+                android:text="Object Carrying if any"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -178,7 +178,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/sf_ui_regular"
-                android:text="Submit Mobile"
+                android:text="Mobile Submitted"
                 android:textStyle="bold" />
 
             <RadioGroup

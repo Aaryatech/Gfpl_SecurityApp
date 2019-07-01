@@ -6,14 +6,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -66,6 +72,8 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
     RecyclerView recyclerViewFilter;
     public static ArrayList<Employee> assignInwardEmpStaticList = new ArrayList<>();
 
+    InwardGatePassAdapter adapter;
+    ArrayList<MaterialDetail> temp;
     Login loginUser;
 
     ArrayList<MaterialDetail> inwardList = new ArrayList<>();
@@ -228,7 +236,7 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                             inwardList.clear();
                             inwardList = response.body();
 
-                            InwardGatePassAdapter adapter = new InwardGatePassAdapter(inwardList, getContext());
+                             adapter = new InwardGatePassAdapter(inwardList, getContext());
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -647,5 +655,57 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
             }
         };
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(true);
+
+        SearchView searchView = (SearchView) item.getActionView();
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+        ImageView v = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+        v.setImageResource(R.drawable.ic_search_white); //Changing the image
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                FilterSearch(charSequence.toString());
+                // empAdapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        searchView.setQueryHint("search");
+    }
+
+    private void FilterSearch(String s) {
+        temp = new ArrayList();
+        for (MaterialDetail d : inwardList) {
+            if (d.getPartyName().toLowerCase().contains(s.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        adapter.updateList(temp);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+
 
 }

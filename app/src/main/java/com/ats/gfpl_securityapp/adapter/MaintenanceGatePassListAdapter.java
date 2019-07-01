@@ -275,7 +275,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             myViewHolder.tvStatus.setText("Rejected");
         }else if(model.getVisitStatus()==3)
         {
-            myViewHolder.tvStatus.setText("Allow to Enter");
+            myViewHolder.tvStatus.setText("Allowed to Enter");
         }else if(model.getVisitStatus()==4)
         {
             myViewHolder.tvStatus.setText("Close Meeting");
@@ -542,6 +542,11 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             Toast.makeText(context, "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    public void updateList(ArrayList<VisitorList> temp) {
+        maintenanceList = temp;
+        notifyDataSetChanged();
     }
 
     private class AddApproveDialog extends Dialog {

@@ -474,29 +474,29 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
 
     public void showCameraDialog(final String type) {
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
-        builder.setTitle("Choose");
-        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (type.equalsIgnoreCase("Photo1")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 101);
-                } else if (type.equalsIgnoreCase("Photo2")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 201);
-                } else if (type.equalsIgnoreCase("Photo3")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 301);
-                }
-            }
-        });
-        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+//        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+//        builder.setTitle("Choose");
+//        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if (type.equalsIgnoreCase("Photo1")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 101);
+//                } else if (type.equalsIgnoreCase("Photo2")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 201);
+//                } else if (type.equalsIgnoreCase("Photo3")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 301);
+//                }
+//            }
+//        });
+//        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
@@ -551,9 +551,9 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 } catch (Exception e) {
                     ////Log.e("select camera : ", " Exception : " + e.getMessage());
                 }
-            }
-        });
-        builder.show();
+         //   }
+       // });
+       // builder.show();
     }
 
 

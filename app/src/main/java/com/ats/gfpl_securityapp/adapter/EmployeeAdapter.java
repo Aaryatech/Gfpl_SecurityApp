@@ -36,7 +36,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull EmployeeAdapter.MyViewHolder myViewHolder, int i) {
         final Employee model=empList.get(i);
-        myViewHolder.tvEmp.setText(model.getEmpFname()+" "+model.getEmpSname());
+        myViewHolder.tvEmp.setText(model.getEmpFname()+" "+model.getEmpMname()+" "+model.getEmpSname());
 
         if(model.getChecked())
         {

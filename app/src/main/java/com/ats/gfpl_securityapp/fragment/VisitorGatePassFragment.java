@@ -1,9 +1,12 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,11 +19,18 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,7 +44,10 @@ import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.adapter.PersonListDialogAdapter;
+import com.ats.gfpl_securityapp.adapter.PurposeListDialogAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Company;
 import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Login;
@@ -69,8 +82,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
     private EditText edName, edMobile,edCompany,edNoOfPer,edEmployee,edRemark;
     private TextInputLayout textEmp;
-    private TextView tvPerson,tvImageLable;
-    private Spinner spPurpose, spPerson,spGate;
+    private TextView tvPerson,tvImageLable,tvPersonName,tvPersonId,tvPurpose,tvPurposeId;
+    private Spinner spPurpose, spPerson,spGate,spCompany;
     private RadioButton rbAppointment, rbRandom;
     private Button btnSubmit;
     int purposeId= 0,purposeType;
@@ -84,11 +97,20 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
     ArrayList<Integer> purposeIdList = new ArrayList<>();
     ArrayList<PurposeList> purposeList = new ArrayList<>();
 
+    Dialog dialog;
+    private BroadcastReceiver mBroadcastReceiver;
+    PersonListDialogAdapter personAdapter;
+    PurposeListDialogAdapter purposeAdapter;
+
     ArrayList<String> empNameList = new ArrayList<>();
     ArrayList<Integer> empIdList = new ArrayList<>();
+    ArrayList<Employee> empList = new ArrayList<>();
 
     ArrayList<String> getNameList = new ArrayList<>();
     ArrayList<Integer> getIdList = new ArrayList<>();
+
+    ArrayList<String> getCompNameList = new ArrayList<>();
+    ArrayList<Integer> getCompIdList = new ArrayList<>();
     int visitorType;
 
     //Image Upload
@@ -111,12 +133,17 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
         spPurpose = view.findViewById(R.id.spPurpose);
         spPerson = view.findViewById(R.id.spPerson);
         spGate = view.findViewById(R.id.spGate);
+        spCompany = view.findViewById(R.id.spCompany);
         rbAppointment = view.findViewById(R.id.rbAppointment);
         rbRandom = view.findViewById(R.id.rbRandom);
         btnSubmit = view.findViewById(R.id.btnSubmit);
         edCompany = view.findViewById(R.id.edCompany);
         edNoOfPer = view.findViewById(R.id.edNoOfPer);
         tvPerson=(TextView)view.findViewById(R.id.tvPerson);
+        tvPersonName=(TextView)view.findViewById(R.id.tvPersonName);
+        tvPersonId=(TextView)view.findViewById(R.id.tvPersonId);
+        tvPurpose=(TextView)view.findViewById(R.id.tvPurpose);
+        tvPurposeId=(TextView)view.findViewById(R.id.tvPurposeId);
         tvImageLable=(TextView)view.findViewById(R.id.tvImageLable);
         edEmployee=(EditText) view.findViewById(R.id.edEmployee);
         textEmp=(TextInputLayout) view.findViewById(R.id.textEmployee);
@@ -130,6 +157,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
         btnSubmit.setOnClickListener(this);
         ivCamera1.setOnClickListener(this);
+        tvPersonName.setOnClickListener(this);
+        tvPurpose.setOnClickListener(this);
 
 
         try {
@@ -153,14 +182,8 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
             edMobile.setText(model.getMobileNo());
             edNoOfPer.setText(""+model.getExInt1());
             edRemark.setText(model.getPurposeRemark());
-
-//            String imageUri = String.valueOf(model.getPersonPhoto());
-//            try {
-//                Picasso.with(getActivity()).load(imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto1);
-//
-//            } catch (Exception e) {
-//
-//            }
+            tvPurpose.setText(model.getPurposeHeading());
+            tvPersonName.setText(model.getEmpName());
 
         }catch (Exception e)
         {
@@ -202,6 +225,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
         getPurpose();
         getPerson();
         getGate();
+        getCompany();
 
         spPurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -209,36 +233,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                 purposeId = purposeIdList.get(position);
                 Log.e("CUST ID","--------------------------------"+purposeId);
-//                if(purposeList!=null) {
-//                    for (int j = 0; j < purposeList.size(); j++) {
-//
-//                        if (purposeList.get(j).getPurposeId() == purposeId) {
-//
-//                            purposeType=purposeList.get(j).getPurposeType();
-//                            Log.e("TYPE", "----------------"+purposeType);
-//
-//                            if(purposeList.get(j).getPurposeType()==1)
-//                            {
-//                                Log.e("hiii", "----------------"+purposeList.get(j).getPurposeType());
-//                                tvPerson.setVisibility(View.VISIBLE);
-//                                spPerson.setVisibility(View.VISIBLE);
-//                                edEmployee.setVisibility(View.GONE);
-//                                textEmp.setVisibility(View.GONE);
-//
-//                            }else if(purposeList.get(j).getPurposeType()==2) {
-//                                Log.e("hiii111", "----------------"+purposeList.get(j).getPurposeType());
-//                                tvPerson.setVisibility(View.GONE);
-//                                spPerson.setVisibility(View.GONE);
-//                                edEmployee.setVisibility(View.VISIBLE);
-//                                textEmp.setVisibility(View.VISIBLE);
-//                                edEmployee.setText(purposeList.get(j).getAssignEmpName());
-//                                empIds= purposeList.get(j).getEmpId();
-//
-//                            }
-//
-//                        }
-//                    }
-//                }
+
 
             }
 
@@ -249,7 +244,90 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
         });
 
 
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                Log.e("Broad cast data","---------------"+intent);
+                if (intent.getAction().equals("CUSTOMER_DATA")) {
+                    handlePushNotification(intent);
+
+                }else if(intent.getAction().equals("CUSTOMER_DATA1"))
+                {
+                    handlePushNotification1(intent);
+                }
+            }
+        };
+
         return view;
+    }
+
+    private void getCompany() {
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<ArrayList<Company>> listCall = Constants.myInterface.allCompany();
+            listCall.enqueue(new Callback<ArrayList<Company>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Company>> call, Response<ArrayList<Company>> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("GATE LIST : ", " - " + response.body());
+
+                            getCompNameList.clear();
+                            getCompIdList.clear();
+
+                            getCompNameList.add("Select Company");
+                            getCompIdList.add(0);
+
+                            if (response.body().size() > 0) {
+                                for (int i = 0; i < response.body().size(); i++) {
+                                    getCompIdList.add(response.body().get(i).getCompanyId());
+                                    getCompNameList.add(response.body().get(i).getCompanyName());
+                                }
+
+                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, getCompNameList);
+                                spCompany.setAdapter(projectAdapter);
+
+                            }
+                            if (model != null) {
+                                int position = 0;
+                                if (getCompIdList.size() > 0) {
+                                    for (int i = 0; i < getCompIdList.size(); i++) {
+                                        if (model.getGateId() == getCompIdList.get(i)) {
+                                            position = i;
+                                            break;
+                                        }
+                                    }
+                                    spCompany.setSelection(position);
+                                }
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Company>> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getGate() {
@@ -336,33 +414,34 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
                             empNameList.clear();
                             empIdList.clear();
+                            empList=response.body();
 
-                            empNameList.add("Select Person");
-                            empIdList.add(0);
-
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    empIdList.add(response.body().get(i).getEmpId());
-                                    empNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
-                                }
-
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
-                                spPerson.setAdapter(projectAdapter);
-
-                            }
-                            if (model != null) {
-                                int position = 0;
-                                if (empIdList.size() > 0) {
-                                    for (int i = 0; i < empIdList.size(); i++) {
-                                        if (model.getEmpIds().equalsIgnoreCase(String.valueOf(empIdList.get(i)))) {
-                                            position = i;
-                                            break;
-                                        }
-                                    }
-                                    spPerson.setSelection(position);
-
-                                }
-                            }
+//                            empNameList.add("Select Person");
+//                            empIdList.add(0);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    empIdList.add(response.body().get(i).getEmpId());
+//                                    empNameList.add(response.body().get(i).getEmpFname()+ " "+response.body().get(i).getEmpMname()+ " "+response.body().get(i).getEmpSname());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+//                                spPerson.setAdapter(projectAdapter);
+//
+//                            }
+//                            if (model != null) {
+//                                int position = 0;
+//                                if (empIdList.size() > 0) {
+//                                    for (int i = 0; i < empIdList.size(); i++) {
+//                                        if (model.getEmpIds().equalsIgnoreCase(String.valueOf(empIdList.get(i)))) {
+//                                            position = i;
+//                                            break;
+//                                        }
+//                                    }
+//                                    spPerson.setSelection(position);
+//
+//                                }
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -409,33 +488,33 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                             purposeIdList.clear();
                             purposeList=response.body();
 
-                            purposeHeadingList.add("Select Purpose");
-                            purposeIdList.add(0);
-
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    purposeIdList.add(response.body().get(i).getPurposeId());
-                                    purposeHeadingList.add(response.body().get(i).getPurposeHeading());
-                                }
-
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, purposeHeadingList);
-                                spPurpose.setAdapter(projectAdapter);
-
-                            }
-
-                            if (model != null) {
-                                int position = 0;
-                                if (purposeIdList.size() > 0) {
-                                    for (int i = 0; i < purposeIdList.size(); i++) {
-                                        if (model.getPurposeId() == purposeIdList.get(i)) {
-                                            position = i;
-                                            break;
-                                        }
-                                    }
-                                    spPurpose.setSelection(position);
-
-                                }
-                            }
+//                            purposeHeadingList.add("Select Purpose");
+//                            purposeIdList.add(0);
+//
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    purposeIdList.add(response.body().get(i).getPurposeId());
+//                                    purposeHeadingList.add(response.body().get(i).getPurposeHeading());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, purposeHeadingList);
+//                                spPurpose.setAdapter(projectAdapter);
+//
+//                            }
+//
+//                            if (model != null) {
+//                                int position = 0;
+//                                if (purposeIdList.size() > 0) {
+//                                    for (int i = 0; i < purposeIdList.size(); i++) {
+//                                        if (model.getPurposeId() == purposeIdList.get(i)) {
+//                                            position = i;
+//                                            break;
+//                                        }
+//                                    }
+//                                    spPurpose.setSelection(position);
+//
+//                                }
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -467,18 +546,39 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
             showCameraDialog("Photo1");
 
-        } else if (v.getId() == R.id.btnSubmit) {
+        }else if(v.getId()==R.id.tvPersonName)
+        {
+            showDialog();
 
-            String strVisitorName, strCompany, strMob, strNoOfPerson, strEmpName, strRemark,strPhoto;
-            boolean isValidVisitorName = false, isValidCompany = false, isValidMob = false, isValidNoOfPerson = false, isValidPhoto = false;
+        }else if(v.getId()==R.id.tvPurpose)
+        {
+            showDialog1();
+
+        }
+        else if (v.getId() == R.id.btnSubmit) {
+
+            String strVisitorName, strMob, strNoOfPerson, strEmpName, strRemark,strPhoto,strPurose,strPurposeId,strPerson,strPersonId;
+            boolean isValidVisitorName = false, isValidPerson = false, isValidMob = false, isValidNoOfPerson = false, isValidPhoto = false ,isValidPurpose=false;
 
             strVisitorName = edName.getText().toString();
-            strCompany = edCompany.getText().toString();
+           // strCompany = edCompany.getText().toString();
             strMob = edMobile.getText().toString();
             strNoOfPerson = edNoOfPer.getText().toString();
             strEmpName = edEmployee.getText().toString();
             strRemark = edRemark.getText().toString();
             strPhoto=tvPhoto1.getText().toString();
+            strPurose=tvPurpose.getText().toString();
+            strPurposeId=tvPurposeId.getText().toString();
+            strPerson=tvPersonName.getText().toString();
+            strPersonId=tvPersonId.getText().toString();
+            int purpId = 0;
+            try {
+                 purpId = Integer.parseInt(strPurposeId);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
             int noOfper = 0;
             try {
                 noOfper = Integer.parseInt(strNoOfPerson);
@@ -487,38 +587,25 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 e.printStackTrace();
             }
 
-            final int purposeId = purposeIdList.get(spPurpose.getSelectedItemPosition());
-            final String purposeHeading = purposeHeadingList.get(spPurpose.getSelectedItemPosition());
+            //final int purposeId = purposeIdList.get(spPurpose.getSelectedItemPosition());
+            //final String purposeHeading = purposeHeadingList.get(spPurpose.getSelectedItemPosition());
+
+            int compId = getCompIdList.get(spCompany.getSelectedItemPosition());
+            final String companyName = getCompNameList.get(spCompany.getSelectedItemPosition());
 
 //            if(purposeType==1) {
-                empIds = String.valueOf(empIdList.get(spPerson.getSelectedItemPosition()));
-               int empId = empIdList.get(spPerson.getSelectedItemPosition());
-                strEmpName = String.valueOf(empNameList.get(spPerson.getSelectedItemPosition()));
+              //  empIds = String.valueOf(empIdList.get(spPerson.getSelectedItemPosition()));
+              // int empId = empIdList.get(spPerson.getSelectedItemPosition());
+              //  strEmpName = String.valueOf(empNameList.get(spPerson.getSelectedItemPosition()));
             //}
             Log.e("EMP","------------------"+empIds);
             int gateID = getIdList.get(spGate.getSelectedItemPosition());
 
-//            if (gateID == 0) {
-//                TextView viewProj = (TextView) spGate.getSelectedView();
-//                viewProj.setError("required");
-//            } else {
-//                TextView viewProj = (TextView) spGate.getSelectedView();
-//                viewProj.setError(null);
-//            }
-
-            if (purposeId == 0) {
-                TextView viewProj = (TextView) spPurpose.getSelectedView();
+            if (compId == 0) {
+                TextView viewProj = (TextView) spCompany.getSelectedView();
                 viewProj.setError("required");
             } else {
-                TextView viewProj = (TextView) spPurpose.getSelectedView();
-                viewProj.setError(null);
-            }
-
-            if (empId==0) {
-                TextView viewProj = (TextView) spPerson.getSelectedView();
-                viewProj.setError("required");
-            } else {
-                TextView viewProj = (TextView) spPerson.getSelectedView();
+                TextView viewProj = (TextView) spCompany.getSelectedView();
                 viewProj.setError(null);
             }
 
@@ -528,12 +615,20 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 edName.setError(null);
                 isValidVisitorName = true;
             }
-            if (strCompany.isEmpty()) {
-                edCompany.setError("required");
+            if (strPerson.isEmpty()) {
+                tvPersonName.setError("required");
             } else {
-                edCompany.setError(null);
-                isValidCompany = true;
+                tvPersonName.setError(null);
+                isValidPerson = true;
             }
+
+            if (strPurose.isEmpty()) {
+                tvPurpose.setError("required");
+            } else {
+                tvPurpose.setError(null);
+                isValidPurpose = true;
+            }
+
             if (strMob.isEmpty()) {
                 edMobile.setError("required");
             } else {
@@ -554,7 +649,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 visitorType = 2;
             }
 
-            if (isValidVisitorName && isValidCompany && isValidMob && isValidNoOfPerson && empId!=0 && purposeId!=0) {
+            if (isValidVisitorName && isValidMob && isValidNoOfPerson && isValidPerson && isValidPurpose && compId!=0) {
                 //get Time
                 Calendar cal = Calendar.getInstance();
                 Date date = cal.getTime();
@@ -564,7 +659,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
                 if (model == null) {
-                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, strCompany, "NA", strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, 1, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
+                    final Visitor visitor = new Visitor(0, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), strVisitorName, companyName, "NA", strMob, "NA", "NA", "NA", purpId, strPurose, strRemark, strPersonId, strPerson, 1, 1, 0, visitorType, Time, 0, "NA", 0, "NA", "NA", "NA", 0, 0, sdf.format(System.currentTimeMillis()), "NA", 1, 1, noOfper, 0, 0, "NA", "NA", "NA");
 
                     if (imagePath1 != null)
                     {
@@ -612,30 +707,9 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 }else{
                         Toast.makeText(getActivity(), "Please Select Person Photo", Toast.LENGTH_SHORT).show();
                     }
-//                else{
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-//                        builder.setTitle("Confirmation");
-//                        builder.setMessage("Do you want visitor gate pass ?");
-//                        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                saveVisitor(visitor);
-//                                Log.e("Image Not Upload", "-----------------------" + visitor);
-//
-//                            }
-//                        });
-//                        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                        AlertDialog dialog = builder.create();
-//                        dialog.show();
-//                    }
+
                 }else {
-                    final Visitor visitor = new Visitor(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), strVisitorName, strCompany, model.getPersonPhoto(), strMob, "NA", "NA", "NA", purposeId, purposeHeading, strRemark, empIds, strEmpName, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, model.getInTime(), model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
+                    final Visitor visitor = new Visitor(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), strVisitorName, companyName, model.getPersonPhoto(), strMob, "NA", "NA", "NA", purpId, strPurose, strRemark, strPersonId, strPerson, gateID, model.getGatePasstype(), model.getVisitStatus(), visitorType, model.getInTime(), model.getVisitCardId(), model.getVisitCardNo(), model.getTakeMobile(), model.getMeetingDiscussion(), "NA", model.getVisitOutTime(), model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), noOfper, model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3());
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
                     builder.setMessage("Do you want to edit visitor ?");
@@ -663,6 +737,147 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
         }
 
     }
+
+    private void showDialog1() {
+
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        purposeAdapter = new PurposeListDialogAdapter(purposeList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(purposeAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (purposeAdapter != null) {
+                        filterCustomer1(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer1(String text) {
+        ArrayList<PurposeList> temp1 = new ArrayList();
+        for (PurposeList d : purposeList) {
+            if (d.getPurposeHeading().toLowerCase().contains(text.toLowerCase()) ) {
+                temp1.add(d);
+            }
+        }
+        //update recyclerview
+        purposeAdapter.updateList(temp1);
+    }
+
+    private void showDialog() {
+
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+        personAdapter = new PersonListDialogAdapter(empList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(personAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (personAdapter != null) {
+                        filterCustomer(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    void filterCustomer(String text) {
+        ArrayList<Employee> temp = new ArrayList();
+        for (Employee d : empList) {
+            if (d.getEmpFname().toLowerCase().contains(text.toLowerCase()) || d.getEmpMname().toLowerCase().contains(text.toLowerCase()) || d.getEmpSname().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        //update recyclerview
+        personAdapter.updateList(temp);
+    }
+
+    private void handlePushNotification(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String name = intent.getStringExtra("name");
+        int custId = intent.getIntExtra("id", 0);
+        Log.e("CUSTOMER NAME : ", " " + name);
+        tvPersonName.setText("" + name);
+        tvPersonId.setText("" + custId);
+
+
+    }
+
+    private void handlePushNotification1(Intent intent) {
+        Log.e("handlePushNotification", "------------------------------------**********");
+        dialog.dismiss();
+        String purposeName = intent.getStringExtra("purposeName");
+        int purposeId = intent.getIntExtra("purposeId", 0);
+        Log.e("CUSTOMER NAME : ", " " + purposeName);
+        tvPurpose.setText("" + purposeName);
+        tvPurposeId.setText("" + purposeId);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver,
+                new IntentFilter("CUSTOMER_DATA1"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver);
+    }
+
 
     private void sendImage(ArrayList<String> filePath, ArrayList<String> fileName, final Visitor visitor) {
 
@@ -806,21 +1021,21 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
 
 
     public void showCameraDialog(final String type) {
-        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
-        builder.setTitle("Choose");
-        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (type.equalsIgnoreCase("Photo1")) {
-                    Intent pictureActionIntent = null;
-                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pictureActionIntent, 101);
-                }
-            }
-        });
-        builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+       // android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getContext(), R.style.AlertDialogTheme);
+       // builder.setTitle("Choose");
+//        builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if (type.equalsIgnoreCase("Photo1")) {
+//                    Intent pictureActionIntent = null;
+//                    pictureActionIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(pictureActionIntent, 101);
+//                }
+//            }
+//        });
+       // builder.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
+          //  @Override
+          //  public void onClick(DialogInterface dialog, int which) {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         if (type.equalsIgnoreCase("Photo1")) {
@@ -847,9 +1062,9 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 } catch (Exception e) {
                     ////Log.e("select camera : ", " Exception : " + e.getMessage());
                 }
-            }
-        });
-        builder.show();
+           // }
+      //  });
+       // builder.show();
     }
 
 

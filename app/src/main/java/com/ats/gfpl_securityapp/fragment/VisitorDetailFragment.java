@@ -120,7 +120,7 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
             tvStatus.setText("Status : "+"Rejected");
         }else if(staticVisitorModel.getVisitStatus()==3)
         {
-            tvStatus.setText("Status : "+"Allow to Enter");
+            tvStatus.setText("Status : "+"Allowed to Enter");
         }else if(staticVisitorModel.getVisitStatus()==4)
         {
             tvStatus.setText("Status : "+"Close Meeting");

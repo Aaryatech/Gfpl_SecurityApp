@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ats.gfpl_securityapp.R;
@@ -19,12 +18,14 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EmployeeGatePassDetailFragment extends Fragment {
 EmpGatePass model;
-public ImageView ivPhoto;
+public CircleImageView ivPhoto;
     public TextView tvName, tvMobile, tvType, tvRemark,tvGPNo,tvOutTime,tvInTime,tvPurposeText,tvgEmpName,tvNewOutTime,tvNewInTime;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,15 +46,8 @@ public ImageView ivPhoto;
         tvgEmpName = view.findViewById(R.id.tvgEmpName);
         ivPhoto=view.findViewById(R.id.ivPhoto);
 
-        try {
-            String imageUri = String.valueOf(model.getExVar2());
-            Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+ " " +imageUri);
-            Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
 
-        } catch (Exception e) {
-
-        }
-
+        //Log.e("Image Path1","---------------------"+ Constants.IMAGE_URL+model.getExVar2());
         try {
             String quoteStr = getArguments().getString("model");
             Gson gson = new Gson();
@@ -112,6 +106,16 @@ public ImageView ivPhoto;
 
         }catch (Exception e)
         {
+            e.printStackTrace();
+        }
+
+
+        try {
+            String imageUri = String.valueOf(model.getExVar2());
+            Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+model.getExVar2());
+            Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

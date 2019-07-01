@@ -85,9 +85,9 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
         btnSubmit=(Button)view.findViewById(R.id.btnSubmit);
 
         typeArray.add("Select Type");
-        typeArray.add("Type 1");
-        typeArray.add("Type 2");
-        typeArray.add("Type 3");
+        typeArray.add("Visitor Purpose");
+        typeArray.add("Maintenance Purpose");
+        typeArray.add("Employee Purpose");
 
         typeIdArray.add(0);
         typeIdArray.add(1);
@@ -141,12 +141,12 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                  type = typeArray.get(position);
-                if(type.equalsIgnoreCase("Type 1"))
+                if(type.equalsIgnoreCase("Visitor Purpose"))
                 {
                     tvEmp.setVisibility(View.GONE);
                     textEmp.setVisibility(View.GONE);
                     edEmployee.setVisibility(View.GONE);
-                }else if(type.equalsIgnoreCase("Type 2")){
+                }else if(type.equalsIgnoreCase("Maintenance Purpose")){
                     tvEmp.setVisibility(View.VISIBLE);
                     textEmp.setVisibility(View.VISIBLE);
                     edEmployee.setVisibility(View.VISIBLE);
@@ -274,7 +274,7 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
             new EmpListDialog(getContext()).show();
         }else if(v.getId()==R.id.btnSubmit)
         {
-            if(type.equalsIgnoreCase("Type 1")) {
+            if(type.equalsIgnoreCase("Visitor Purpose")) {
                 String strHeading, strDescription, strRemark, strPassDuration;
                 boolean isValidHeading = false, isValidDescription = false, isValidRemark = false, isValidPassDuration = false;
                 strHeading = edPurHeading.getText().toString();
@@ -296,19 +296,19 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                     isValidDescription = true;
                 }
 
-                if (strRemark.isEmpty()) {
-                    edRemark.setError("required");
-                } else {
-                    edRemark.setError(null);
-                    isValidRemark = true;
-                }
+//                if (strRemark.isEmpty()) {
+//                    edRemark.setError("required");
+//                } else {
+//                    edRemark.setError(null);
+//                    isValidRemark = true;
+//                }
 //                if (strPassDuration.isEmpty()) {
 //                    edPassDuration.setError("required");
 //                } else {
 //                    edPassDuration.setError(null);
 //                    isValidPassDuration = true;
 //                }
-                if (isValidHeading && isValidDescription && isValidRemark) {
+                if (isValidHeading && isValidDescription) {
 
                    if(model!=null)
                    {
@@ -358,7 +358,7 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                    }
                 }
             }
-            if(type.equalsIgnoreCase("Type 3")){
+            if(type.equalsIgnoreCase("Employee Purpose")){
                 String strHeading, strDescription, strRemark, strPassDuration;
                 boolean isValidHeading = false, isValidDescription = false, isValidRemark = false, isValidPassDuration = false;
                 strHeading = edPurHeading.getText().toString();
@@ -380,19 +380,19 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                     isValidDescription = true;
                 }
 
-                if (strRemark.isEmpty()) {
-                    edRemark.setError("required");
-                } else {
-                    edRemark.setError(null);
-                    isValidRemark = true;
-                }
+//                if (strRemark.isEmpty()) {
+//                    edRemark.setError("required");
+//                } else {
+//                    edRemark.setError(null);
+//                    isValidRemark = true;
+//                }
 //                if (strPassDuration.isEmpty()) {
 //                    edPassDuration.setError("required");
 //                } else {
 //                    edPassDuration.setError(null);
 //                    isValidPassDuration = true;
 //                }
-                if (isValidHeading && isValidDescription && isValidRemark) {
+                if (isValidHeading && isValidDescription) {
 
                     if(model!=null)
                     {
@@ -442,7 +442,7 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                     }
                 }
             }
-            if(type.equalsIgnoreCase("Type 2"))
+            if(type.equalsIgnoreCase("Maintenance Purpose"))
             {
                 String strHeading, strDescription, strRemark, strPassDuration;
                 boolean isValidHeading = false, isValidDescription = false, isValidRemark = false, isValidPassDuration = false;
@@ -464,12 +464,12 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
                     edDescription.setError(null);
                     isValidDescription = true;
                 }
-                if (strRemark.isEmpty()) {
-                    edRemark.setError("required");
-                } else {
-                    edRemark.setError(null);
-                    isValidRemark = true;
-                }
+//                if (strRemark.isEmpty()) {
+//                    edRemark.setError("required");
+//                } else {
+//                    edRemark.setError(null);
+//                    isValidRemark = true;
+//                }
 
 //                if (strPassDuration.isEmpty()) {
 //                    edPassDuration.setError("required");
@@ -478,7 +478,7 @@ public class AddPurposeFragment extends Fragment implements View.OnClickListener
 //                    isValidPassDuration = true;
 //                }
 
-                if (isValidHeading && isValidDescription && isValidRemark ) {
+                if (isValidHeading && isValidDescription) {
 
                     if (model != null) {
                         final Purpose purpose = new Purpose(model.getPurposeId(), strHeading, 2, strDescription, strRemark, stringId, "NA", "NA", model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), null, null, null);
