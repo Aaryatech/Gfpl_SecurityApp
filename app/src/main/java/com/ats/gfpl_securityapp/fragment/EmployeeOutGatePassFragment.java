@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,7 +58,7 @@ import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.syncArray;
  */
 public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInterface,View.OnClickListener {
     private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+//    private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab;
 //    Login loginUser,loginUserMain;
 
@@ -82,7 +81,7 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
         //getActivity().setTitle("Employee Out");
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+//        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(this);

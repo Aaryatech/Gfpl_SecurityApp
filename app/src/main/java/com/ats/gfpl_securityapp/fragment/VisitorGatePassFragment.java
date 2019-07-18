@@ -679,7 +679,7 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                             String photo1 = "";
 
                            // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                             if (imagePath1 != null) {
 
                                 pathArray.add(imagePath1);
@@ -735,7 +735,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 }
             }
         }
-
     }
 
     private void showDialog1() {
@@ -1113,7 +1112,6 @@ public class VisitorGatePassFragment extends Fragment implements View.OnClickLis
                 tvPhoto1.setText("" + uriFromPath.getPath());
 
                 try {
-
                     FileOutputStream out = new FileOutputStream(uriFromPath.getPath());
                     myBitmap1.compress(Bitmap.CompressFormat.PNG, 100, out);
                     out.flush();

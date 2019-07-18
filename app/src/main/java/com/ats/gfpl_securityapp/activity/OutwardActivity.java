@@ -153,7 +153,15 @@ public class OutwardActivity extends AppCompatActivity implements View.OnClickLi
                         //visitor.setPersonPhoto(photo1);
                        // sendImage(pathArray, fileNameArray, visitor);
                         if(strIntent.equalsIgnoreCase("Close Outward")) {
-                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+
+                            if(model.getExInt1()==2)
+                            {
+                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
+                            }else{
+                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+                            }
+
+//                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
                         }else if(strIntent.equalsIgnoreCase("In Outward"))
                         {
                             saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);

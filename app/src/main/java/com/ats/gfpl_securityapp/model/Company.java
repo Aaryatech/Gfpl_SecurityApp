@@ -47,6 +47,23 @@ public class Company {
     @Expose
     private Object exVar3;
 
+    public Company(Integer companyId, String companyName, String companyLogo, String companyRemarks, Integer delStatus, Integer isActive, Integer makerUserId, String makerEnterDatetime, Integer exInt1, Integer exInt2, Integer exInt3, Object exVar1, Object exVar2, Object exVar3) {
+        this.companyId = companyId;
+        this.companyName = companyName;
+        this.companyLogo = companyLogo;
+        this.companyRemarks = companyRemarks;
+        this.delStatus = delStatus;
+        this.isActive = isActive;
+        this.makerUserId = makerUserId;
+        this.makerEnterDatetime = makerEnterDatetime;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exInt3 = exInt3;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+        this.exVar3 = exVar3;
+    }
+
     public Integer getCompanyId() {
         return companyId;
     }

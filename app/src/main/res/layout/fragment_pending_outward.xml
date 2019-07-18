@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/swipeRefresh"
     android:padding="@dimen/ParentPadding"
     tools:context=".fragment.EmployeeGatePassListFragment">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -24,5 +23,5 @@
             android:visibility="gone"
             android:layout_alignParentBottom="true"
             android:src="@drawable/ic_filter" />
-    </RelativeLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+    <!--</RelativeLayout>-->
+</RelativeLayout>

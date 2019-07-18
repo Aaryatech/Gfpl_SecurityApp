@@ -45,7 +45,7 @@ public class OutwardFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_outward, container, false);
 
-        getActivity().setTitle("Outward Details");
+        getActivity().setTitle("Material Gate Pass");
 
         viewPager = view.findViewById(R.id.viewPager);
         tab = view.findViewById(R.id.tab);

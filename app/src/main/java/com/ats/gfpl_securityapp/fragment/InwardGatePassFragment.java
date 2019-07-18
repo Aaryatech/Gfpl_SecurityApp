@@ -109,7 +109,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inward_gate_pass, container, false);
-        getActivity().setTitle("Material Gate Pass");
+        getActivity().setTitle("Material Inward");
 
         rbInward = view.findViewById(R.id.rbInward);
         rbParcel = view.findViewById(R.id.rbParcel);
@@ -470,7 +470,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                                 String photo1 = "", photo2 = "";
 
                                // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                                 if (imagePath1 != null) {
 
                                     pathArray.add(imagePath1);

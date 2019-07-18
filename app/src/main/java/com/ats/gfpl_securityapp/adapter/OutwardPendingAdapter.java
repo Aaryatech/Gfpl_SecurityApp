@@ -69,6 +69,13 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
         myViewHolder.tvExpectedDate.setText(model.getDateInExpected());
         myViewHolder.tvToName.setText(model.getToName());
 
+        if(model.getExInt1()==1)
+        {
+            myViewHolder.tvType.setText("Yes");
+        }else{
+            myViewHolder.tvType.setText("No");
+        }
+
         for(int j=0;j<syncArray.size();j++)
         {
             if(syncArray.get(j).getSettingKey().equals("Security"))
@@ -188,7 +195,6 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
             }
         });
 
-
     }
 
     private void deleteOutward(int gpOutwardId) {
@@ -203,7 +209,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
                     try {
                         if (response.body() != null) {
 
-                            Log.e("DELETE EMPLOYEE: ", " - " + response.body());
+                            Log.e("DELETE OUTWARD: ", " - " + response.body());
 
                             if (!response.body().getError()) {
 
@@ -253,7 +259,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvGpNo,tvOutwardName,tvOutDate,tvExpectedDate,tvToName,tvOut,tvIn;
+        private TextView tvGpNo,tvOutwardName,tvOutDate,tvExpectedDate,tvToName,tvOut,tvIn,tvType;
         private ImageView ivEdit;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -265,6 +271,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
             tvOut=itemView.findViewById(R.id.tvOut);
             tvIn=itemView.findViewById(R.id.tvIn);
             ivEdit=itemView.findViewById(R.id.ivEdit);
+            tvType=itemView.findViewById(R.id.tvType);
         }
     }
 }

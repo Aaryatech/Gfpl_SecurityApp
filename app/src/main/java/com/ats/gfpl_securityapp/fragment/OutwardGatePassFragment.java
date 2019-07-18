@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
@@ -39,20 +41,28 @@ import retrofit2.Response;
 public class OutwardGatePassFragment extends Fragment implements View.OnClickListener {
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
+    private RadioButton rbYes, rbNo;
+    private RadioGroup rg;
     public EditText edOutwardName,edToName,edOutDate,edExpectedDate;
     public Button btnSubmit;
     Login loginUser;
     Outward model;
+    int gatePassType,type;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_outward_gate_pass, container, false);
+        getActivity().setTitle("Material Gate Pass");
         edOutwardName=(EditText)view.findViewById(R.id.edOutwardName);
         edToName=(EditText)view.findViewById(R.id.edToName);
         edOutDate=(EditText)view.findViewById(R.id.edOutDate);
         edExpectedDate=(EditText)view.findViewById(R.id.edExpectedDate);
+
+        rbYes = view.findViewById(R.id.rbYes);
+        rbNo = view.findViewById(R.id.rbNo);
+        rg = view.findViewById(R.id.rg);
 
         btnSubmit=(Button)view.findViewById(R.id.btnSubmit);
 
@@ -89,6 +99,19 @@ public class OutwardGatePassFragment extends Fragment implements View.OnClickLis
         }catch (Exception e)
         {
             e.printStackTrace();
+        }
+
+
+        if(model==null) {
+            rbYes.setChecked(true);
+        }else{
+            type = model.getExInt1();
+            if (type==1) {
+                rbYes.setChecked(true);
+            } else if (type==2) {
+                rbNo.setChecked(true);
+
+            }
         }
 
 
@@ -186,11 +209,18 @@ public class OutwardGatePassFragment extends Fragment implements View.OnClickLis
             final String dateExpected = formatter3.format(expectedDate);
             Log.e("Expected Date","--------------------"+dateExpected);
 
+            gatePassType = 1;
+            if (rbYes.isChecked()) {
+                gatePassType = 1;
+            } else if (rbNo.isChecked()) {
+                gatePassType = 2;
+            }
+
 
             if(isValidOutward && isValidToName) {
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final Outward outward = new Outward(0, dateOut, dateExpected, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), strOutwardName, strToName, loginUser.getEmpId(), loginUser.getEmpId(), "", "", 0, "", "", 1, 1, 0, 0, 0, "", "", "");
+                    final Outward outward = new Outward(0, dateOut, dateExpected, sdf.format(System.currentTimeMillis()), loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), strOutwardName, strToName, loginUser.getEmpId(), loginUser.getEmpId(), "", "", 3, "", "", 1, 1, gatePassType, 0, 0, "", "", "");
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
@@ -262,7 +292,7 @@ public class OutwardGatePassFragment extends Fragment implements View.OnClickLis
                             Log.e("SAVE OUTWARD : ", " ------------------------------SAVE OUTWARD------------------------- " + response.body());
                             Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
                             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                            ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
+                            ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
                             ft.commit();
 
                             commonDialog.dismiss();

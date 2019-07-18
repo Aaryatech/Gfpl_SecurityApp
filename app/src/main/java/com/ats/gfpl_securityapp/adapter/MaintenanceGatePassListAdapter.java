@@ -115,6 +115,7 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivInfo.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                            myViewHolder.tvStatus.setText("Approve");
                         }else if(model.getVisitStatus()==4)
                         {
                             myViewHolder.ivApprove.setVisibility(View.GONE);
@@ -123,10 +124,15 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==0)
+                        {
+                            myViewHolder.tvStatus.setText("Pending");
                         }
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
+
+                        Log.e("Synch","--------------"+syncArray.get(j).getSettingValue()+" LOGIN "+login.getEmpCatId());
 //                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
 //                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
 //                        myViewHolder.ivClose.setVisibility(View.GONE);
@@ -134,16 +140,45 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
 //                        myViewHolder.ivOutFactory.setVisibility(View.GONE);
 //                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
 
-                        if(model.getVisitStatus()==0)
-                        {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-                            myViewHolder.ivClose.setVisibility(View.GONE);
-                            myViewHolder.ivInfo.setVisibility(View.GONE);
-                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-                        }else if(model.getVisitStatus()==3)
-                        {
+                        for(int k=0;k<model.getNotificationList().size();k++) {
+                            Log.e("hiiii","--------------------------------------");
+                            if(login.getEmpId().equals(model.getNotificationList().get(k).getEmpId())) {
+
+                                Log.e("Detail","--------------"+login.getEmpId()+" Detail Id "+model.getNotificationList().get(k).getEmpId());
+
+                                if (model.getNotificationList().get(k).getStatus() == 0) {
+                                    Log.e("hiiii111111","--------------------------------------");
+
+                                    myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                                    myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                                    myViewHolder.ivClose.setVisibility(View.GONE);
+                                    myViewHolder.ivInfo.setVisibility(View.GONE);
+                                    myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                                    myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                                    myViewHolder.tvStatus.setText("Pending");
+
+                                }else if(model.getNotificationList().get(k).getStatus()==1)
+                                {
+                                    myViewHolder.tvStatus.setText("Approve");
+                                }
+//                                else if (model.getVisitStatus() == 3) {
+//
+//                                    Log.e("hiiii2222222","--------------------------------------");
+//
+//                                    myViewHolder.ivApprove.setVisibility(View.GONE);
+//                                    myViewHolder.ivReject.setVisibility(View.GONE);
+//                                    myViewHolder.ivClose.setVisibility(View.VISIBLE);
+//                                    myViewHolder.ivInfo.setVisibility(View.GONE);
+//                                    myViewHolder.ivOutFactory.setVisibility(View.GONE);
+//                                    myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+//                                }
+                            }
+                        }
+
+                        if (model.getVisitStatus() == 3) {
+
+                            Log.e("hiiii2222222","--------------------------------------");
+
                             myViewHolder.ivApprove.setVisibility(View.GONE);
                             myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.VISIBLE);
@@ -152,72 +187,32 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }
 
-
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(login.getEmpCatId()))) {
-//                        myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivClose.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivInfo.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
-//                        myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
 
-//                        if(model.getVisitStatus()==0)
-//                        {
-//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivClose.setVisibility(View.GONE);
-//                            myViewHolder.ivInfo.setVisibility(View.GONE);
-//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-//
-//                        }else if(model.getVisitStatus()==3)
-//                        {
-//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivInfo.setVisibility(View.GONE);
-//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-//
-//                        }else if(model.getVisitStatus()==1)
-//                        {
-//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivClose.setVisibility(View.GONE);
-//                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-//
-//                        }else if(model.getVisitStatus()==4)
-//                        {
-//                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivClose.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivInfo.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
-//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-//                        }else if(model.getVisitStatus()==2)
-//                        {
-//                            myViewHolder.ivApprove.setVisibility(View.GONE);
-//                            myViewHolder.ivReject.setVisibility(View.GONE);
-//                            myViewHolder.ivClose.setVisibility(View.GONE);
-//                            myViewHolder.ivInfo.setVisibility(View.GONE);
-//                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-//                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-//                        }
+                        for(int k=0;k<model.getNotificationList().size();k++) {
+                            Log.e("hiiii", "--------------------------------------");
+                            if (login.getEmpId().equals(model.getNotificationList().get(k).getEmpId())) {
+                                Log.e("hiiii55555", "--------------------------------------");
+                                if (model.getNotificationList().get(k).getStatus()  == 0) {
+                                    Log.e("hiiii666", "--------------------------------------");
+                                    myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                                    myViewHolder.ivReject.setVisibility(View.VISIBLE);
+                                    myViewHolder.ivClose.setVisibility(View.GONE);
+                                    myViewHolder.ivInfo.setVisibility(View.GONE);
+                                    myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                                    myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                                    myViewHolder.tvStatus.setText("Pending");
 
-                        if(model.getVisitStatus()==0)
-                        {
-                            myViewHolder.ivApprove.setVisibility(View.VISIBLE);
-                            myViewHolder.ivReject.setVisibility(View.VISIBLE);
-                            myViewHolder.ivClose.setVisibility(View.GONE);
-                            myViewHolder.ivInfo.setVisibility(View.GONE);
-                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
-                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
-
-                        }else if(model.getVisitStatus()==3)
+                                }else if(model.getNotificationList().get(k).getStatus()==1)
+                                {
+                                    Log.e("hiiii77777", "--------------------------------------");
+                                    myViewHolder.tvStatus.setText("Approve");
+                                }
+                            }
+                        }
+                        if(model.getVisitStatus()==3)
                         {
                             myViewHolder.ivApprove.setVisibility(View.GONE);
                             myViewHolder.ivReject.setVisibility(View.GONE);
@@ -264,13 +259,18 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
         {
             myViewHolder.tvType.setText("Random");
         }
-        if(model.getVisitStatus()==0)
-        {
-            myViewHolder.tvStatus.setText("Pending");
-        }else if(model.getVisitStatus()==1)
-        {
-            myViewHolder.tvStatus.setText("Approve");
-        }else if(model.getVisitStatus()==2)
+
+
+//        if(model.getVisitStatus()==0)
+//        {
+//            myViewHolder.tvStatus.setText("Pending");
+//        }
+//        else if(model.getVisitStatus()==1)
+//        {
+//            myViewHolder.tvStatus.setText("Approve");
+//        }
+//        else
+            if(model.getVisitStatus()==2)
         {
             myViewHolder.tvStatus.setText("Rejected");
         }else if(model.getVisitStatus()==3)

@@ -19,12 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.fragment.AddCompanyFragment;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.AddPurposeFragment;
 import com.ats.gfpl_securityapp.fragment.AddVisitingCardFragment;
+import com.ats.gfpl_securityapp.fragment.CompanyListFragment;
 import com.ats.gfpl_securityapp.fragment.DashboardFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeFragment;
 import com.ats.gfpl_securityapp.fragment.EmployeeGatePassDetailFragment;
@@ -37,6 +40,7 @@ import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
 import com.ats.gfpl_securityapp.fragment.MaterialFragment;
 import com.ats.gfpl_securityapp.fragment.MaterialTrackingDetailFragment;
+import com.ats.gfpl_securityapp.fragment.OutwardApproveFragment;
 import com.ats.gfpl_securityapp.fragment.OutwardFragment;
 import com.ats.gfpl_securityapp.fragment.OutwardGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.PendingInwardFragment;
@@ -46,8 +50,10 @@ import com.ats.gfpl_securityapp.fragment.VisitingCardListFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorDetailFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
+import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Sync;
+import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.CustomSharedPreference;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.google.gson.Gson;
@@ -58,6 +64,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -135,6 +144,9 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(false);
                     Log.e("MY TAG","-----Security-------");
                 }
            }
@@ -163,6 +175,9 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(true);
                     Log.e("MY TAG","-----Admin-------");
                 }
 //                else {
@@ -191,6 +206,9 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_card_list).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_list).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(true);
                     Log.e("MY TAG","------Supervisor------");
                 }
 //                else {
@@ -330,6 +348,55 @@ public class MainActivity extends AppCompatActivity
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
                     ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Outward gate pass approve")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
+                    ft.commit();
+                }
+                else if (strIntentMain.equalsIgnoreCase("Add Company")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new AddCompanyFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Add Company List")) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, new CompanyListFragment(), "DashFragment");
+                    ft.commit();
+                }else if (strIntentMain.equalsIgnoreCase("Employee Pending")) {
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new MaterialFragment();
+                    Bundle args = new Bundle();
+                    args.putString("Tracking", "Employee Pending");
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
+                }else if (strIntentMain.equalsIgnoreCase("Employee Approve")) {
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new MaterialFragment();
+                    Bundle args = new Bundle();
+                    args.putString("Tracking", "Employee Approve");
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
+                }else if (strIntentMain.equalsIgnoreCase("Employee Rejected")) {
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new MaterialFragment();
+                    Bundle args = new Bundle();
+                    args.putString("Tracking", "Employee Rejected");
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
                 }
                 else {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -359,6 +426,7 @@ public class MainActivity extends AppCompatActivity
         Fragment materialTrackingListFragment = getSupportFragmentManager().findFragmentByTag("MaterialTrackingListFragment");
         Fragment visitCardListFragment = getSupportFragmentManager().findFragmentByTag("VisitCardListFragment");
         Fragment outwardListFragment = getSupportFragmentManager().findFragmentByTag("OutwardListFragment");
+        Fragment companyListFragment = getSupportFragmentManager().findFragmentByTag("CompanyListFragment");
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -370,6 +438,7 @@ public class MainActivity extends AppCompatActivity
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    updateToken(loginUser.getEmpId(), "");
                     finish();
                 }
             });
@@ -396,6 +465,12 @@ public class MainActivity extends AppCompatActivity
                 dashFragment instanceof VisitingCardListFragment && dashFragment.isVisible() ||
                 dashFragment instanceof AddVisitingCardFragment && dashFragment.isVisible() ||
                 dashFragment instanceof InwardGatePassDetailFragment && dashFragment.isVisible() ||
+                dashFragment instanceof MaterialFragment && dashFragment.isVisible() ||
+                dashFragment instanceof AddCompanyFragment && dashFragment.isVisible() ||
+                dashFragment instanceof CompanyListFragment && dashFragment.isVisible() ||
+                dashFragment instanceof OutwardApproveFragment && dashFragment.isVisible() ||
+                dashFragment instanceof OutwardGatePassFragment && dashFragment.isVisible() ||
+                dashFragment instanceof OutwardFragment && dashFragment.isVisible() ||
                 dashFragment instanceof PendingInwardFragment && dashFragment.isVisible()) {
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -447,10 +522,59 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
             ft.commit();
+        }else if (companyListFragment instanceof AddCompanyFragment && companyListFragment.isVisible()) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new CompanyListFragment(), "DashFragment");
+            ft.commit();
         }
 
         else {
             super.onBackPressed();
+        }
+    }
+
+    private void updateToken(Integer empId, String token) {
+        Log.e("PARAMETERS : ", "       EMP ID : " + empId +"             TOKEN:"  +token);
+
+        if (Constants.isOnline(this)) {
+            final CommonDialog commonDialog = new CommonDialog(MainActivity.this, "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<Info> listCall = Constants.myInterface.updateUserToken(empId, token);
+            listCall.enqueue(new Callback<Info>() {
+                @Override
+                public void onResponse(Call<Info> call, Response<Info> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("TOKEN INFO NULL : ", "------------" + response.body());
+                            finish();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Info> call, Throwable t) {
+                    commonDialog.dismiss();
+                    // Toast.makeText(LoginActivity.this, "Unable to login", Toast.LENGTH_SHORT).show();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+
+                }
+            });
+        } else {
+            Toast.makeText(MainActivity.this, "No Internet Connection !", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -531,7 +655,19 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
 
-        }else if (id == R.id.nav_outward_gp) {
+        }else if (id == R.id.nav_outward_gp_approve) {
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Outward gate pass approve");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
+//            ft.commit();
+
+        }
+        else if (id == R.id.nav_outward_gp) {
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Outward gate pass");
@@ -608,6 +744,27 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("model", "Visit Card List");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if (id == R.id.nav_add_comp) {
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new AddCompanyFragment(), "DashFragment");
+//            ft.commit();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Add Company");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+        }else if (id == R.id.nav_add_comp_list) {
+
+//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//            ft.replace(R.id.content_frame, new CompanyListFragment(), "DashFragment");
+//            ft.commit();
+
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.putExtra("model", "Add Company List");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }

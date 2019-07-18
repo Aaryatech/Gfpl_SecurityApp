@@ -1,6 +1,7 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.activity.LoginActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.Dashboard;
 import com.ats.gfpl_securityapp.model.Login;
@@ -33,9 +35,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DashboardFragment extends Fragment {
+public class DashboardFragment extends Fragment implements View.OnClickListener {
 public LinearLayout linearLayoutVisitor1,linearLayoutVisitor2,LinearLayoutVisitor3,linearLayoutVisitorEmployee1,linearLayoutVisitorEmployee2,linearLayoutVisitorEmployee3,linearLayoutVisitorMaintenance1,linearLayoutMaintenanceEmployee2,linearLayoutGP1,linearLayoutGP2,linearLayoutGP3,linearLayoutDepartment1,linearLayoutEmployee1,linearLayoutEmployee2,linearLayoutSuperGP1,linearLayoutSuperGP2,linearLayoutMainTotal,linearLayoutDeptRejected;
+public LinearLayout linearLayoutvisitorCount,linearLayoutEmpVisitorCount,linearLayoutMaintenanceCount,linearLayoutEmpCount,linearLayoutMaterialCount,linearLayoutEmpMaterialCount,linearLayoutSuperWiserCount;
 public CardView cardViewMaintenancePending,cardViewEmployeeMeetingCompleted,cardViewParcel,cardViewMeetingCompletedForAdmin,cardViewMaintenancePendingEmp,cardViewDeptpending;
+public CardView cardViewEmpPending,cardViewEmpApprove,cardViewEmpRejected;
 Login loginUserMain,loginUser;
 public TextView tvTotalVisitor,tvCurrVisitorComp,tvVisitorMeetingCompleted,tvVisitorRejected,tvVisitorPending,tvCurrMeetingGoingOn,tvEmpTotalVisitor,tvEmpCurrEmployeeMeetingGoingOn,tvEmpWiseRejected,tvEmpWisePending,tvEmpwisemeetingcompleted,tvMaintenanceWisePending,tvMaintenanceWiseApprove,tvMaintenanceWiseRejected,tvMaintenanceWiseWorkCompleted,tvMaintenanceTotal,tvTotalTempGP,tvTotalDayGP,tvNoOfEmpOutsideFactory,tvTotalNoOfInward,tvTotalNoOfParcel,tvDeptWiseTotalPending,tvDeptWiseTotalApprove,tvDeptWiseTotalRejected,tvEmpWiseTotalPending,tvEmpWiseTotalApprove,tvEmpWiseTotalRejected,tvSuptotalTempGP,tvSuptotalDayGP,tvNoOfEmpOutSide;
 public TextView tvLabVisitorCount,tvLabEmpVisitorCount,tvLabMaintenanceCount,tvLabEmpGatePassCount,tvlabMaterialCount,tvLabEmpMaterialCount,tvLabSuperWiserCount;
@@ -79,7 +83,6 @@ private RecyclerView recyclerView;
         tvSuptotalDayGP=(TextView) view.findViewById(R.id.tvSupTotalDayGP);
         tvNoOfEmpOutSide=(TextView) view.findViewById(R.id.tvNoOfEmpOutside);
 
-
         tvLabVisitorCount=(TextView) view.findViewById(R.id.tvLabVisitorCount);
         tvLabEmpVisitorCount=(TextView) view.findViewById(R.id.tvLabEmpVisitorCount);
         tvLabMaintenanceCount=(TextView) view.findViewById(R.id.tvLabMaintenanceCount);
@@ -113,6 +116,29 @@ private RecyclerView recyclerView;
         cardViewParcel=(CardView)view.findViewById(R.id.cardViewParcel);
         cardViewMeetingCompletedForAdmin=(CardView)view.findViewById(R.id.cardViewMeetingCompletedForAdmin);
         cardViewMaintenancePendingEmp=(CardView)view.findViewById(R.id.cardViewMaintenancePendingEmp);
+
+        cardViewEmpPending=(CardView)view.findViewById(R.id.cardViewEmpPending);
+        cardViewEmpApprove=(CardView)view.findViewById(R.id.cardViewEmpApprove);
+        cardViewEmpRejected=(CardView)view.findViewById(R.id.cardViewEmpRejected);
+
+        linearLayoutvisitorCount=(LinearLayout)view.findViewById(R.id.linearLayoutvisitorCount);
+        linearLayoutEmpVisitorCount=(LinearLayout)view.findViewById(R.id.linearLayoutEmpVisitorCount);
+        linearLayoutMaintenanceCount=(LinearLayout)view.findViewById(R.id.linearLayoutMaintenanceCount);
+        linearLayoutEmpCount=(LinearLayout)view.findViewById(R.id.linearLayoutEmpCount);
+        linearLayoutMaterialCount=(LinearLayout)view.findViewById(R.id.linearLayoutMaterialCount);
+        linearLayoutEmpMaterialCount=(LinearLayout)view.findViewById(R.id.linearLayoutEmpMaterialCount);
+        linearLayoutSuperWiserCount=(LinearLayout)view.findViewById(R.id.linearLayoutSuperWiserCount);
+
+        linearLayoutvisitorCount.setOnClickListener(this);
+        linearLayoutEmpVisitorCount.setOnClickListener(this);
+        linearLayoutMaintenanceCount.setOnClickListener(this);
+        linearLayoutEmpCount.setOnClickListener(this);
+        linearLayoutMaterialCount.setOnClickListener(this);
+     //   linearLayoutEmpMaterialCount.setOnClickListener(this);
+        linearLayoutSuperWiserCount.setOnClickListener(this);
+        cardViewEmpPending.setOnClickListener(this);
+        cardViewEmpApprove.setOnClickListener(this);
+        cardViewEmpRejected.setOnClickListener(this);
 
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.MAIN_KEY_USER);
@@ -331,4 +357,70 @@ private RecyclerView recyclerView;
         }
     }
 
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.linearLayoutvisitorCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Add visitor getPass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+        }else if(v.getId()==R.id.linearLayoutEmpVisitorCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Add visitor getPass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMaintenanceCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Add Maintenance getPass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Employee gate pass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMaterialCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Material gate pass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpMaterialCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Material Tracking");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutSuperWiserCount)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Employee gate pass list");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.cardViewEmpPending)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Employee Pending");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.cardViewEmpApprove)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Employee Approve");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.cardViewEmpRejected)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Employee Rejected");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
 }

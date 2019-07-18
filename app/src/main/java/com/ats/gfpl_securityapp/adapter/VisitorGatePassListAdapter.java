@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -290,7 +291,9 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         myViewHolder.ivOutFactory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUpdateFactoryStatus(model.getGatepassVisitorId(),5);
+
+                new AddOutDialog(context,model).show();
+//                getUpdateFactoryStatus(model.getGatepassVisitorId(),5);
             }
         });
 
@@ -742,5 +745,65 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         }
     }
 
+    private class AddOutDialog extends Dialog {
+        public Button btnCancel, btnSubmit;
+        private RadioButton rbYes, rbNo;
 
+        ArrayList<String> getNameList = new ArrayList<>();
+        ArrayList<Integer> getIdList = new ArrayList<>();
+
+        VisitorList model;
+        Login login;
+
+        public AddOutDialog(Context context, VisitorList model) {
+            super(context);
+            this.model = model;
+
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            setTitle("Filter");
+            setContentView(R.layout.dialog_layout_out);
+            setCancelable(false);
+
+            Window window = getWindow();
+            WindowManager.LayoutParams wlp = window.getAttributes();
+            //  wlp.gravity = Gravity.TOP | Gravity.RIGHT;
+            wlp.gravity = Gravity.CENTER_VERTICAL;
+            wlp.x = 5;
+            wlp.y = 5;
+            wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            wlp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(wlp);
+
+            btnCancel = (Button) findViewById(R.id.btnCancel);
+            btnSubmit = (Button) findViewById(R.id.btnSubmit);
+            rbYes = (RadioButton)findViewById(R.id.rbYes);
+            rbNo = (RadioButton)findViewById(R.id.rbNo);
+
+            rbYes.setChecked(true);
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+            btnSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    getUpdateFactoryStatus(model.getGatepassVisitorId(),5);
+                    dismiss();
+                }
+            });
+
+        }
+
+
+    }
 }

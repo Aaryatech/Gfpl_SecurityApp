@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,7 +56,7 @@ import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.syncArray;
 public class EmployeeGatePassListFragment extends Fragment implements View.OnClickListener, PendingEmpInterface {
 
     private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
+//    private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab;
 //    Login loginUser,loginUserMain;
 
@@ -80,7 +79,7 @@ public class EmployeeGatePassListFragment extends Fragment implements View.OnCli
        // getActivity().setTitle("Employee Pending");
 
         recyclerView = view.findViewById(R.id.recyclerView);
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
+//        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(this);

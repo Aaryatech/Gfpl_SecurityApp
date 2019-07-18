@@ -27,11 +27,12 @@
                 android:fontFamily="@font/sf_ui_regular">
 
                 <EditText
-                    android:id="@+id/edOutwardName"
+                    android:id="@+id/edCompName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sf_ui_regular"
-                    android:hint="Material Name"
+                    android:inputType="text"
+                    android:hint="Enter Company Name"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -40,96 +41,66 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:fontFamily="@font/sf_ui_regular">
+                android:layout_margin="10dp">
 
                 <EditText
-                    android:id="@+id/edToName"
+                    android:id="@+id/edRemark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:drawable/editbox_background_normal"
                     android:fontFamily="@font/sf_ui_regular"
-                    android:hint="Purpose"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:gravity="start"
+                    android:hint="Remark"
+                    android:lines="3" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
+                android:id="@+id/tvLableComp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:visibility="gone"
                 android:fontFamily="@font/sf_ui_regular"
-                android:text="Type Return" />
+                android:text="Company Logo"
+                android:textStyle="bold" />
 
-            <RadioGroup
-                android:id="@+id/rg"
+            <LinearLayout
+                android:id="@+id/linearLayoutComp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:visibility="gone"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/rbYes"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/ivCamera1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/sf_ui_regular"
-                    android:text="Yes" />
+                    android:padding="10dp"
+                    android:src="@drawable/ic_camera" />
 
-                <RadioButton
-                    android:id="@+id/rbNo"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/ivPhoto1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/sf_ui_regular"
-                    android:text="No" />
+                    android:id="@+id/tvPhoto1"
+                    android:visibility="gone"/>
 
-            </RadioGroup>
+            </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="5dp">
-
-                <EditText
-                    android:id="@+id/edOutDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_cal"
-                    android:drawablePadding="5dp"
-                    android:editable="false"
-                    android:hint="Out Date"
-                    android:inputType="none"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="5dp">
-
-                <EditText
-                    android:id="@+id/edExpectedDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_cal"
-                    android:drawablePadding="5dp"
-                    android:editable="false"
-                    android:hint="Expected Date"
-                    android:inputType="none"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
 
 
             <Button

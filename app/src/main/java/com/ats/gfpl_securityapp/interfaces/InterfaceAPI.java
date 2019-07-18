@@ -164,5 +164,10 @@ public interface InterfaceAPI {
     @POST("master/deleteOutwardGatepass")
     Call<Info> deleteOutwardGatepass(@Query("gpOutwardId") int gpOutwardId);
 
+    @POST("master/saveCompany")
+    Call<Company> saveCompany(@Body Company company);
+
+    @POST("master/deleteCompany")
+    Call<Info> deleteCompany(@Query("companyId") int companyId);
 
 }

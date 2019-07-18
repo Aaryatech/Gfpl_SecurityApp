@@ -662,7 +662,7 @@ public class MaintenanceGatePassFragment extends Fragment implements View.OnClic
                                 String photo1 = "", photo2 = "", photo3 = "";
 
                                // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                                 if (imagePath1 != null) {
 
                                     pathArray.add(imagePath1);

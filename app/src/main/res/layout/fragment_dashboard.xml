@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/ParentPadding"
     tools:context=".fragment.DashboardFragment">
+
+    <!--android:padding="@dimen/ParentPadding"-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -27,11 +28,19 @@
                 android:id="@+id/tvLabVisitorCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Visitor's Count :"
+                android:text="Visitors Count :"
+                android:padding="4dp"
                 android:visibility="gone"
+                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutvisitorCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayoutVisitor1"
@@ -61,7 +70,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/sf_ui_bold"
                     android:padding="10dp"
-                    android:text="Total Visitor's"
+                    android:text="Total Visitors"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -102,7 +111,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:padding="10dp"
                     android:gravity="center"
-                    android:text="Currently Visitor's in Company"
+                    android:text="Currently Visitors in Company"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -155,7 +164,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Visitor's Meeting Completed"
+                    android:text="Visitors Meeting Completed"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -195,7 +204,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Visitor's Rejected"
+                    android:text="Visitors Rejected"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -244,7 +253,7 @@
                     android:layout_gravity="center"
                     android:fontFamily="@font/sf_ui_bold"
                     android:padding="10dp"
-                    android:text="Visitor's Pending"
+                    android:text="Visitors Pending"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -305,6 +314,7 @@
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -317,12 +327,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:background="@color/colorPrimary"
                 android:text="Employee Wise Visitor Count :"
+                android:padding="4dp"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
 
-        <LinearLayout
+            <LinearLayout
+                android:id="@+id/linearLayoutEmpVisitorCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <LinearLayout
             android:id="@+id/linearLayoutVisitorEmployee1"
             android:visibility="gone"
             android:layout_width="match_parent"
@@ -560,6 +579,7 @@
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -572,12 +592,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:text="Maintenance Visitor's Count :"
+                android:background="@color/colorPrimary"
+                android:text="Maintenance Visitors Count :"
+                android:padding="4dp"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
 
-    <LinearLayout
+            <LinearLayout
+                android:id="@+id/linearLayoutMaintenanceCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <LinearLayout
         android:id="@+id/linearLayoutVisitorMaintenance1"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -607,7 +636,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Maintenance Visitor's pending"
+                    android:text="Maintenance Visitors pending"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -651,7 +680,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Maintenance Visitor's Approve"
+                    android:text="Maintenance Visitors Approve"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -700,7 +729,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Maintenance Visitor's Rejected"
+                    android:text="Maintenance Visitors Rejected"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -744,7 +773,7 @@
                     android:fontFamily="@font/sf_ui_bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Mainteanace Visitor's Work Completed"
+                    android:text="Mainteanace Visitors Work Completed"
                     android:textColor="@color/colorWhite"
                     android:textSize="14sp" />
 
@@ -793,7 +822,7 @@
                         android:fontFamily="@font/sf_ui_bold"
                         android:gravity="center"
                         android:padding="10dp"
-                        android:text="Maintenance Visitor's Total"
+                        android:text="Maintenance Visitors Total"
                         android:textColor="@color/colorWhite"
                         android:textSize="14sp" />
 
@@ -812,6 +841,7 @@
 
             </android.support.v7.widget.CardView>
         </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -824,12 +854,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:background="@color/colorPrimary"
                 android:text="Employee Gate Pass Count :"
+                android:padding="4dp"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
 
-        <LinearLayout
+            <LinearLayout
+                android:id="@+id/linearLayoutEmpCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <LinearLayout
         android:id="@+id/linearLayoutGP1"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -972,7 +1011,7 @@
             </android.support.v7.widget.CardView>
 
         </LinearLayout>
-
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -985,12 +1024,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:text="Material Gate Pass Count :"
+                android:background="@color/colorPrimary"
+                android:text="Material Inward Count :"
+                android:padding="4dp"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
 
-        <LinearLayout
+            <LinearLayout
+                android:id="@+id/linearLayoutMaterialCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <LinearLayout
             android:id="@+id/linearLayoutGP3"
             android:visibility="gone"
             android:layout_width="match_parent"
@@ -1226,6 +1274,7 @@
 
             </android.support.v7.widget.CardView>
         </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -1239,9 +1288,18 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:text="Employee Wise Material Gate Pass Count :"
+                android:padding="4dp"
+                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutEmpMaterialCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <LinearLayout
             android:id="@+id/linearLayoutEmployee1"
             android:visibility="gone"
@@ -1250,6 +1308,7 @@
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardViewEmpPending"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
@@ -1294,6 +1353,7 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardViewEmpApprove"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
@@ -1342,6 +1402,7 @@
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardViewEmpRejected"
                 android:layout_width="190dp"
                 android:layout_height="150dp"
                 android:layout_margin="3dp"
@@ -1385,6 +1446,7 @@
             </android.support.v7.widget.CardView>
 
         </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
         <!--SuperWiser Screen-->
 
@@ -1399,11 +1461,20 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:text="SuperWiser Gate Pass Count :"
+                android:padding="4dp"
+                android:background="@color/colorPrimary"
                 android:fontFamily="@font/sf_ui_bold"
                 android:textSize="18sp"
-                android:textColor="@color/colorTwo"/>
+                android:textColor="@color/colorWhite"/>
 
-        <LinearLayout
+            <LinearLayout
+                android:id="@+id/linearLayoutSuperWiserCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+            <LinearLayout
             android:id="@+id/linearLayoutSuperGP1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -1546,6 +1617,7 @@
 
             </android.support.v7.widget.CardView>
         </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
         <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->

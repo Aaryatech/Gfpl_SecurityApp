@@ -3,6 +3,8 @@ package com.ats.gfpl_securityapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class VisitorList {
 
     @SerializedName("gatepassVisitorId")
@@ -121,7 +123,7 @@ public class VisitorList {
     private String exVar3;
     @SerializedName("securityInName")
     @Expose
-    private Object securityInName;
+    private String securityInName;
     @SerializedName("securityOutName")
     @Expose
     private Object securityOutName;
@@ -134,8 +136,11 @@ public class VisitorList {
     @SerializedName("assignEmpName")
     @Expose
     private String assignEmpName;
+    @SerializedName("notificationList")
+    @Expose
+    private List<NotificationList> notificationList = null;
 
-    public VisitorList(Integer gatepassVisitorId, String visitDateIn, Integer securityIdIn, String personName, String personCompany, String personPhoto, String mobileNo, String idProof, String idProof1, String otherPhoto, Integer purposeId, String visitPurposeText, String purposeRemark, String empIds, String empName, Integer gateId, Integer gatePasstype, Integer visitStatus, Integer visitType, String inTime, Integer visitCardId, String visitCardNo, Integer takeMobile, String meetingDiscussion, String uploadPhoto, String visitOutTime, Integer totalTimeDifference, Integer securityIdOut, String visitDateOut, String userSignImage, Integer delStatus, Integer isUsed, Integer exInt1, Integer exInt2, Integer exInt3, String exVar1, String exVar2, String exVar3, Object securityInName, Object securityOutName, String purposeHeading, String gateName, String assignEmpName) {
+    public VisitorList(Integer gatepassVisitorId, String visitDateIn, Integer securityIdIn, String personName, String personCompany, String personPhoto, String mobileNo, String idProof, String idProof1, String otherPhoto, Integer purposeId, String visitPurposeText, String purposeRemark, String empIds, String empName, Integer gateId, Integer gatePasstype, Integer visitStatus, Integer visitType, String inTime, Integer visitCardId, String visitCardNo, Integer takeMobile, String meetingDiscussion, String uploadPhoto, String visitOutTime, float totalTimeDifference, Integer securityIdOut, String visitDateOut, String userSignImage, Integer delStatus, Integer isUsed, Integer exInt1, Integer exInt2, Integer exInt3, String exVar1, String exVar2, String exVar3, String securityInName, Object securityOutName, String purposeHeading, String gateName, String assignEmpName) {
         this.gatepassVisitorId = gatepassVisitorId;
         this.visitDateIn = visitDateIn;
         this.securityIdIn = securityIdIn;
@@ -485,11 +490,11 @@ public class VisitorList {
         this.exVar3 = exVar3;
     }
 
-    public Object getSecurityInName() {
+    public String getSecurityInName() {
         return securityInName;
     }
 
-    public void setSecurityInName(Object securityInName) {
+    public void setSecurityInName(String securityInName) {
         this.securityInName = securityInName;
     }
 
@@ -523,6 +528,14 @@ public class VisitorList {
 
     public void setAssignEmpName(String assignEmpName) {
         this.assignEmpName = assignEmpName;
+    }
+
+    public List<NotificationList> getNotificationList() {
+        return notificationList;
+    }
+
+    public void setNotificationList(List<NotificationList> notificationList) {
+        this.notificationList = notificationList;
     }
 
     @Override
@@ -566,11 +579,12 @@ public class VisitorList {
                 ", exVar1='" + exVar1 + '\'' +
                 ", exVar2='" + exVar2 + '\'' +
                 ", exVar3='" + exVar3 + '\'' +
-                ", securityInName=" + securityInName +
+                ", securityInName='" + securityInName + '\'' +
                 ", securityOutName=" + securityOutName +
                 ", purposeHeading='" + purposeHeading + '\'' +
                 ", gateName='" + gateName + '\'' +
                 ", assignEmpName='" + assignEmpName + '\'' +
+                ", notificationList=" + notificationList +
                 '}';
     }
 }

@@ -528,7 +528,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
-                    builder.setMessage("Do you want employee gate pass ?");
+                    builder.setMessage("Do you want to submit employee gatepass ?");
                     builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -551,7 +551,7 @@ public class EmployeeGatePassFragment extends Fragment implements View.OnClickLi
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Confirmation");
-                builder.setMessage("Do you want to edit employee gate pass ?");
+                builder.setMessage("Do you want to edit employee gatepass ?");
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

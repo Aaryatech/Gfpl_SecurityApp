@@ -82,7 +82,7 @@ public class InwardgatePassListFragment extends Fragment implements View.OnClick
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_inwardgate_pass_list, container, false);
-        getActivity().setTitle("Material List");
+        getActivity().setTitle("Material Inward List");
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(this);

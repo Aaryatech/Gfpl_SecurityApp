@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -24,6 +24,35 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Department"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/spDept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawablePadding="15dp"
+            android:gravity="center_vertical"
+            android:hint="Select Department"
+            android:padding="10dp"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/common_google_signin_btn_text_light_default"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvDeptId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
 
         <TextView
         android:layout_width="wrap_content"
@@ -31,18 +60,51 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
+        android:visibility="gone"
         android:fontFamily="@font/sf_ui_regular"
         android:text="Department"
         android:textSize="10sp" />
 
     <Spinner
-        android:id="@+id/spDept"
+        android:id="@+id/spDept1"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:visibility="gone"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Employee"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/spEmp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawablePadding="15dp"
+            android:gravity="center_vertical"
+            android:hint="Select Employee"
+            android:padding="10dp"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/common_google_signin_btn_text_light_default"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvEmpId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,16 +112,18 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
+        android:visibility="gone"
         android:fontFamily="@font/sf_ui_regular"
-        android:text="Employee"
+        android:text="Select Employee"
         android:textSize="10sp" />
 
     <Spinner
-        android:id="@+id/spEmp"
+        android:id="@+id/spEmp1"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:visibility="gone"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp" />
 
@@ -97,4 +161,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

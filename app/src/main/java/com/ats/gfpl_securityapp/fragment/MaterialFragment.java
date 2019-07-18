@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 public class MaterialFragment extends Fragment {
     private ViewPager viewPager;
     private TabLayout tab;
+    static String type;
     FragmentPagerAdapter adapterViewPager;
     public static Login staticLoginUser;
 
@@ -35,7 +36,7 @@ public class MaterialFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_material, container, false);
-        getActivity().setTitle("Material Tracking");
+        getActivity().setTitle("Document Tracking");
         viewPager = view.findViewById(R.id.viewPager);
         tab = view.findViewById(R.id.tab);
 
@@ -50,6 +51,24 @@ public class MaterialFragment extends Fragment {
                 }
             }
         });
+
+        try {
+            type = getArguments().getString("Tracking");
+            Log.e("TRACKING","----------------------"+type);
+            if(type!=null) {
+                if (type.equalsIgnoreCase("Employee Pending")) {
+                    viewPager.setCurrentItem(0);
+                } else if (type.equalsIgnoreCase("Employee Approve")) {
+                    viewPager.setCurrentItem(1);
+                }else if (type.equalsIgnoreCase("Employee Rejected")) {
+                    viewPager.setCurrentItem(2);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

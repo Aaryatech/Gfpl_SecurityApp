@@ -57,36 +57,43 @@
             android:visible="false"
             android:title="Employee Gate Pass List" />
 
+
         <item
             android:id="@+id/nav_outward_gp"
             android:icon="@drawable/ic_material"
             android:visible="true"
-            android:title="Outward Gate Pass" />
+            android:title="Material Gate Pass" />
+
+        <item
+            android:id="@+id/nav_outward_gp_approve"
+            android:icon="@drawable/ic_material"
+            android:visible="true"
+            android:title="Material Gate Pass Approve" />
 
         <item
             android:id="@+id/nav_outward_gp_list"
             android:icon="@drawable/ic_material"
             android:visible="true"
-            android:title="Outward Gate Pass List" />
+            android:title="Material Gate Pass List" />
 
         <item
             android:id="@+id/nav_material_gp"
             android:visible="false"
             android:icon="@drawable/ic_material"
-            android:title="Material Gate Pass" />
+            android:title="Material Inward" />
 
         <item
             android:id="@+id/nav_material_gp_list"
             android:icon="@drawable/ic_material"
             android:visible="false"
-            android:title="Material Gate Pass List" />
+            android:title="Material Inward List" />
 
 
         <item
             android:id="@+id/nav_material_tracking"
             android:icon="@drawable/ic_tracking"
             android:visible="false"
-            android:title="Material Tracking" />
+            android:title="Document Tracking" />
 
         <item
             android:id="@+id/nav_purpose_gp"
@@ -111,6 +118,18 @@
             android:icon="@drawable/ic_visite_card"
             android:visible="false"
             android:title="Visiting Card List" />
+
+        <item
+            android:id="@+id/nav_add_comp"
+            android:icon="@drawable/ic_company"
+            android:visible="false"
+            android:title="Add Comapny" />
+
+        <item
+            android:id="@+id/nav_add_comp_list"
+            android:icon="@drawable/ic_company"
+            android:visible="false"
+            android:title="Comapny List" />
 
 
         <item

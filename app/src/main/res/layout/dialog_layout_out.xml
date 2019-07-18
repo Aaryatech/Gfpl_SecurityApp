@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Out From Factory"
+            android:fontFamily="@font/sf_ui_bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/sf_ui_regular"
+            android:text="Card Submitted"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <RadioButton
+                android:id="@+id/rbYes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/sf_ui_regular"
+                android:text="Yes" />
+
+            <RadioButton
+                android:id="@+id/rbNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/sf_ui_regular"
+                android:text="No" />
+
+        </RadioGroup>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_margin="10dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"
+            android:layout_marginRight="8dp"
+            android:fontFamily="@font/sf_ui_bold"
+            android:text="Cancel"
+            android:textColor="@color/colorWhite" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:fontFamily="@font/sf_ui_bold"
+            android:text="Submit"
+            android:textColor="@color/colorWhite" />
+
+    </LinearLayout>
+</LinearLayout>
