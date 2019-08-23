@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.MaterialDetailAdapter;
+import com.ats.gfpl_securityapp.model.DocHandoverDetail;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
 import com.google.gson.Gson;
 
@@ -24,7 +25,8 @@ import java.util.ArrayList;
 public class InwardGatePassDetailFragment extends Fragment {
 MaterialDetail model;
 private RecyclerView recyclerView;
-ArrayList<MaterialDetail> detailList = new ArrayList<>();
+ArrayList<DocHandoverDetail> detailList = new ArrayList<>();
+    //MaterialDetail
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,7 +41,15 @@ ArrayList<MaterialDetail> detailList = new ArrayList<>();
             Gson gson = new Gson();
             model = gson.fromJson(quoteStr, MaterialDetail.class);
             Log.e("MATERIAL DETAIL MODEL","-----------------------------------"+model);
-            detailList.add(model);
+           // detailList.add(model.getDocHandoverDetail());
+
+            if (model.getDocHandoverDetail() != null) {
+                //ArrayList<DocHandoverDetail> detailList = new ArrayList<>();
+                for (int i = 0; i < model.getDocHandoverDetail().size(); i++) {
+                    detailList.add(model.getDocHandoverDetail().get(i));
+                }
+
+            }
 
             MaterialDetailAdapter adapter = new MaterialDetailAdapter(detailList, getContext());
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());

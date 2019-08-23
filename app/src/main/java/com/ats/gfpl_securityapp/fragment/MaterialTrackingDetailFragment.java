@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.adapter.MaterialDetailAdapter;
+import com.ats.gfpl_securityapp.model.DocHandoverDetail;
 import com.ats.gfpl_securityapp.model.MaterialDetail;
 import com.google.gson.Gson;
 
@@ -24,8 +25,8 @@ import java.util.ArrayList;
 public class MaterialTrackingDetailFragment extends Fragment {
     MaterialDetail model;
     private RecyclerView recyclerView;
-    ArrayList<MaterialDetail> detailList = new ArrayList<>();
-
+   ArrayList<DocHandoverDetail> detailList = new ArrayList<>();
+    //MaterialDetail
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,8 +41,19 @@ public class MaterialTrackingDetailFragment extends Fragment {
             String quoteStr = getArguments().getString("model");
             Gson gson = new Gson();
             model = gson.fromJson(quoteStr, MaterialDetail.class);
-            Log.e("MATERIAL TRACK DETAIL","-----------------------------------"+model);
-            detailList.add(model);
+            Log.e("MATERIAL TRACK ","-----------------------------------"+model);
+
+
+            if (model.getDocHandoverDetail() != null) {
+                //ArrayList<DocHandoverDetail> detailList = new ArrayList<>();
+                for (int i = 0; i < model.getDocHandoverDetail().size(); i++) {
+                    detailList.add(model.getDocHandoverDetail().get(i));
+                }
+
+            }
+
+            Log.e("MATERIAL TRACK DETAIL","-----------------------------------"+detailList);
+            //detailList.add(model.getDocHandoverDetail());
 
             MaterialDetailAdapter adapter = new MaterialDetailAdapter(detailList, getContext());
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());

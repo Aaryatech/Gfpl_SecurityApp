@@ -1,11 +1,11 @@
 package com.ats.gfpl_securityapp.adapter;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.activity.OutwardActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
@@ -31,6 +32,7 @@ import com.ats.gfpl_securityapp.model.Outward;
 import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,13 +43,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAdapter.MyViewHolder> {
+public class OutwardOutAdapter extends RecyclerView.Adapter<OutwardOutAdapter.MyViewHolder>  {
     private ArrayList<Outward> outwardList;
     private Context context;
     ArrayList<Sync> syncArray = new ArrayList<>();
     Login loginUser;
 
-    public OutwardPendingAdapter(ArrayList<Outward> outwardList, Context context, ArrayList<Sync> syncArray, Login loginUser) {
+    public OutwardOutAdapter(ArrayList<Outward> outwardList, Context context, ArrayList<Sync> syncArray, Login loginUser) {
         this.outwardList = outwardList;
         this.context = context;
         this.syncArray = syncArray;
@@ -56,20 +58,20 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
 
     @NonNull
     @Override
-    public OutwardPendingAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public OutwardOutAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.adapter_outward_list, viewGroup, false);
+                .inflate(R.layout.adapter_out_outward, viewGroup, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OutwardPendingAdapter.MyViewHolder myViewHolder, int i) {
+    public void onBindViewHolder(@NonNull OutwardOutAdapter.MyViewHolder myViewHolder, int i) {
         final Outward model=outwardList.get(i);
         myViewHolder.tvGpNo.setText(model.getExVar1());
         myViewHolder.tvOutwardName.setText(model.getOutwardName());
-      //  myViewHolder.tvOutDate.setText(model.getDateOut());
-      //  myViewHolder.tvExpectedDate.setText(model.getDateInExpected());
+        //  myViewHolder.tvOutDate.setText(model.getDateOut());
+        //  myViewHolder.tvExpectedDate.setText(model.getDateInExpected());
         myViewHolder.tvToName.setText(model.getToName());
 
 
@@ -103,6 +105,26 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
         }else{
             myViewHolder.tvType.setText("No");
         }
+
+
+        String imageUri = String.valueOf(model.getOutPhoto());
+        Log.e("Image URL","-----------------------------------------------"+Constants.IMAGE_URL+imageUri);
+        try {
+            Picasso.with(context).load(Constants.IMAGE_URL+imageUri).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto1);
+
+        } catch (Exception e) {
+
+        }
+
+        myViewHolder.ivPhoto1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageZoomActivity.class);
+                intent.putExtra("image", Constants.IMAGE_URL + model.getOutPhoto());
+                context.startActivity(intent);
+            }
+        });
+
 
         for(int j=0;j<syncArray.size();j++)
         {
@@ -169,7 +191,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
                 Bundle args = new Bundle();
                 args.putString("model", json);
                 intent.putExtra("model", json);
-                 intent.putExtra("meeting", "In Outward");
+                intent.putExtra("meeting", "In Outward");
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
             }
@@ -195,7 +217,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
                             activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "OutwardListFragment").commit();
 
                         }else
-                            if(menuItem.getItemId()==R.id.action_delete)
+                        if(menuItem.getItemId()==R.id.action_delete)
                         {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
                             builder.setTitle("Confirm Action");
@@ -289,6 +311,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvGpNo,tvOutwardName,tvOutDate,tvExpectedDate,tvToName,tvOut,tvIn,tvType;
         private ImageView ivEdit;
+        public ImageView ivPhoto1;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGpNo=itemView.findViewById(R.id.tvGPNo);
@@ -300,6 +323,7 @@ public class OutwardPendingAdapter extends RecyclerView.Adapter<OutwardPendingAd
             tvIn=itemView.findViewById(R.id.tvIn);
             ivEdit=itemView.findViewById(R.id.ivEdit);
             tvType=itemView.findViewById(R.id.tvType);
+            ivPhoto1 = itemView.findViewById(R.id.ivPhoto1);
         }
     }
 }

@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.CloseMeetingActivity;
+import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
@@ -46,7 +47,10 @@ import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -92,8 +96,22 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
         myViewHolder.tvName.setText(model.getPersonName());
         myViewHolder.tvCompany.setText(model.getPersonCompany());
         myViewHolder.tvMobile.setText(model.getMobileNo());
-        myViewHolder.tvDate.setText(model.getVisitDateIn());
+        //myViewHolder.tvDate.setText(model.getVisitDateIn());
         myViewHolder.tvEmpName.setText(model.getEmpName());
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date TODate = null;
+        try {
+            TODate = formatter.parse(model.getVisitDateIn());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String visitorDate = formatter1.format(TODate);
+        myViewHolder.tvDate.setText(visitorDate);
 
 
         try {
@@ -103,6 +121,16 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
         } catch (Exception e) {
 
         }
+
+        myViewHolder.ivPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageZoomActivity.class);
+                intent.putExtra("image", Constants.IMAGE_URL + model.getPersonPhoto());
+                context.startActivity(intent);
+            }
+        });
+
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
@@ -261,15 +289,15 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
         }
 
 
-//        if(model.getVisitStatus()==0)
-//        {
-//            myViewHolder.tvStatus.setText("Pending");
-//        }
-//        else if(model.getVisitStatus()==1)
-//        {
-//            myViewHolder.tvStatus.setText("Approve");
-//        }
-//        else
+        if(model.getVisitStatus()==0)
+        {
+            myViewHolder.tvStatus.setText("Pending");
+        }
+        else if(model.getVisitStatus()==1)
+        {
+            myViewHolder.tvStatus.setText("Approve");
+        }
+        else
             if(model.getVisitStatus()==2)
         {
             myViewHolder.tvStatus.setText("Rejected");

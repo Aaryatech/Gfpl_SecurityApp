@@ -36,6 +36,7 @@ public class EmployeeFragment extends Fragment {
     private TabLayout tab;
     FragmentPagerAdapter adapterViewPager;
     public static Login loginUser,loginUserMain;
+    public static String strIntentMain;
     public static ArrayList<Sync> syncArray = new ArrayList<>();
 
     @Override
@@ -60,6 +61,23 @@ public class EmployeeFragment extends Fragment {
                 }
             }
         });
+
+        try {
+            strIntentMain = getArguments().getString("model");
+            Log.e("StringMain Emp", "--------------------------" + strIntentMain);
+
+            if(strIntentMain!=null) {
+                if (strIntentMain.equalsIgnoreCase("OutEmp")) {
+                    viewPager.setCurrentItem(1);
+                }else if(strIntentMain.equalsIgnoreCase("SupOut"))
+                {
+                    viewPager.setCurrentItem(1);
+                }
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -134,6 +152,8 @@ public class EmployeeFragment extends Fragment {
         {
             e.printStackTrace();
         }
+
+
 
 
         return view;

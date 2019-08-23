@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -101,11 +100,6 @@ public class MyNotificationManager {
     }
 
     public void showSmallNotification(String title, String message, Intent intent) {
-
-       Uri uri = Uri.parse("mattersofgrey.com/audio/DEX-Gen-MainThemeDing.mp3");
-       //Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-       // Uri uri =Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + mCtx.getPackageName() + "/raw/mysound");
-
         final PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         mCtx,
@@ -114,54 +108,47 @@ public class MyNotificationManager {
                         PendingIntent.FLAG_CANCEL_CURRENT
                 );
 
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.e("ANDROID","----------------------------------O");
+            NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(NOTIFICATION_SERVICE);
+            String id = "id_product";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(id, title, importance);
+            // Configure the notification channel.
+            mChannel.setDescription(message);
+            mChannel.enableLights(true);
+            // Sets the notification light color for notifications posted to this
+            // channel, if the device supports this feature.
+            mChannel.setLightColor(Color.RED);
+            notificationManager.createNotificationChannel(mChannel);
 
-            if(uri != null) {
-                AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                        .build();
-                NotificationManager notificationManager = (NotificationManager) mCtx.getSystemService(NOTIFICATION_SERVICE);
-                String id = "id_product";
-                int importance = NotificationManager.IMPORTANCE_HIGH;
-                NotificationChannel mChannel = new NotificationChannel(id, title, importance);
-                // Configure the notification channel.
-                mChannel.setDescription(message);
-                mChannel.enableLights(true);
-                // Sets the notification light color for notifications posted to this
-                // channel, if the device supports this feature.
-                mChannel.setLightColor(Color.RED);
-                mChannel.setSound(uri, audioAttributes);
-                notificationManager.createNotificationChannel(mChannel);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mCtx, 123, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mCtx,"id_product")
+                    .setSmallIcon(R.mipmap.ic_launcher) //your app icon
+                    .setBadgeIconType(R.mipmap.ic_launcher) //your app icon
+                    .setChannelId(id)
+                    .setContentTitle(title)
+                    .setAutoCancel(true).setContentIntent(pendingIntent)
+                    .setNumber(1)
+                    .setColor(255)
+                    .setContentText(message)
+                    .setWhen(System.currentTimeMillis());
+            notificationManager.notify(1, notificationBuilder.build());
 
-                PendingIntent pendingIntent = PendingIntent.getActivity(mCtx, 123, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mCtx, "id_product")
-                        .setSmallIcon(R.mipmap.ic_launcher) //your app icon
-                        .setBadgeIconType(R.mipmap.ic_launcher) //your app icon
-                        .setChannelId(id)
-                        .setContentTitle(title)
-                        .setAutoCancel(true).setContentIntent(pendingIntent)
-                        .setNumber(1)
-                        .setColor(255)
-                        .setSound(uri)
-                        .setContentText(message)
-                        .setWhen(System.currentTimeMillis());
-                notificationManager.notify(1, notificationBuilder.build());
-            }
+
         } else {
             Log.e("ANDROID","---------------------------------- < O");
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(mCtx)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.ic_launcher).setDefaults(Notification.DEFAULT_ALL)
                     .setContentTitle(title)
-                    .setSound(uri)
                     .setContentText(message)
                     .setContentIntent(resultPendingIntent);
             NotificationManager manager = (NotificationManager) mCtx.getSystemService(NOTIFICATION_SERVICE);
             manager.notify(0, builder.build());
-            builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
+            builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
         }
 
     /*    NotificationCompat.Builder builder = new NotificationCompat.Builder(mCtx)
@@ -222,7 +209,9 @@ public class MyNotificationManager {
     public void playNotificationSound() {
         try {
 
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            //Uri notification = Uri.parse("jingle-[AudioTrimmer.com].mp3");
+            Uri notification = Uri.parse("android.resource://com.ats.gfpl_securityapp/"+"/raw/jingle");
+            //Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(mCtx, notification);
             r.play();
             Vibrator v = (Vibrator) mCtx.getSystemService(Context.VIBRATOR_SERVICE);

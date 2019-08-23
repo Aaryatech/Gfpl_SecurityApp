@@ -33,7 +33,7 @@
                     android:layout_margin="3dp"
                     android:textSize="15sp"
                     android:fontFamily="@font/sf_ui_bold"
-                    android:text="Gate Pass No : " />
+                    android:text="Inward No : " />
 
                 <TextView
                     android:id="@+id/tvGPNo"

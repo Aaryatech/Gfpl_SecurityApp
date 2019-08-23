@@ -23,6 +23,10 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".activity.OutwardActivity"></activity>
         <activity
+            android:name=".activity.ImageZoomActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
             android:name=".activity.CloseMeetingActivity"
             android:screenOrientation="portrait" />
         <activity

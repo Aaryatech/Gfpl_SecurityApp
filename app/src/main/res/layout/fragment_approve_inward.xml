@@ -10,7 +10,8 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@id/linearLayout"
         android:orientation="vertical">
 
     <CheckBox
@@ -27,7 +28,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/btnSubmit"
+        android:layout_above="@id/linearLayout"
         android:layout_below="@id/cbAll" />
 
     <android.support.design.widget.FloatingActionButton

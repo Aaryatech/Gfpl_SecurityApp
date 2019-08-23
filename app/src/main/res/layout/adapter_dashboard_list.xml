@@ -978,6 +978,7 @@
                     android:layout_height="150dp"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/colorOne"
                     app:cardElevation="3dp"
                     app:cardUseCompatPadding="true">
@@ -1025,6 +1026,7 @@
                     android:layout_height="150dp"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/colorOne"
                     app:cardElevation="3dp"
                     app:cardUseCompatPadding="true">
@@ -1068,6 +1070,7 @@
                     android:layout_height="150dp"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/colorTwo"
                     app:cardElevation="3dp"
                     app:cardUseCompatPadding="true">

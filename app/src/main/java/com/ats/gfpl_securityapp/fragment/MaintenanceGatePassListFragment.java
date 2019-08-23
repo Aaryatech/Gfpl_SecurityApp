@@ -67,6 +67,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
 
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+    public static String strIntentMain;
 
     long fromDateMillis, toDateMillis;
     int yyyy, mm, dd;
@@ -121,11 +122,20 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             Type type = new TypeToken<ArrayList<Sync>>() {}.getType();
             syncArray= gson.fromJson(json, type);
 
-            Log.e("SYNC MAIN : ", "--------USER-------" + syncArray);
+            Log.e("SYNC MAIN Mainte : ", "--------USER-------" + syncArray);
 
         }catch (Exception e)
         {
             e.printStackTrace();
+        }
+
+        try {
+            strIntentMain = getArguments().getString("model");
+            Log.e("StringMain List", "--------------------------" + strIntentMain);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e("Exception","------------------------------"+e);
         }
 
         getEmployee();
@@ -134,52 +144,213 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("Maint 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(2);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
 
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 3")) {
+
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            }  else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass list") || strIntentMain.equalsIgnoreCase("Maint -1")) {
+
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(2);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                        }
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("Maint 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(2);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList, String.valueOf(loginUser.getEmpId()),statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
 
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 3")) {
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }  else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass list") || strIntentMain.equalsIgnoreCase("Maint -1")) {
+
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(2);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                        }
 
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("Maint 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(2);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
 
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            } else if (strIntentMain.equalsIgnoreCase("Maint 3")) {
+
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            } else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass list") || strIntentMain.equalsIgnoreCase("Maint -1")) {
+
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(2);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(2);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getMaintenanceGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                        }
                     }
                 }
             }
@@ -405,7 +576,7 @@ public class MaintenanceGatePassListFragment extends Fragment implements View.On
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
             spDept = findViewById(R.id.spDept);
-             spEmp = findViewById(R.id.spEmp);
+             //spEmp = findViewById(R.id.spEmp);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
             tvType = findViewById(R.id.tvType);

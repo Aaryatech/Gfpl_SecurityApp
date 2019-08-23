@@ -14,6 +14,10 @@ import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.interfaces.VisitorDetailInterface;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
@@ -84,7 +88,7 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         tvCompany.setText(staticVisitorModel.getPersonCompany());
         tvMobile.setText(staticVisitorModel.getMobileNo());
         tvRemark.setText("Remark : "+staticVisitorModel.getPurposeRemark());
-        tvDate.setText(""+staticVisitorModel.getVisitDateIn());
+        //tvDate.setText(""+staticVisitorModel.getVisitDateIn());
         tvOutTime.setText(staticVisitorModel.getVisitOutTime());
         tvInTime.setText(staticVisitorModel.getInTime());
         tvgateName.setText("Gate Name : "+staticVisitorModel.getGateName());
@@ -93,6 +97,19 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         tvMeetingDisc.setText("Meeting Discusstion : "+staticVisitorModel.getMeetingDiscussion());
         tvVisitCardNumber.setText("Card No : "+staticVisitorModel.getVisitCardNo());
         tvSecurityName.setText("Security Name : "+staticVisitorModel.getSecurityInName());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date TODate = null;
+        try {
+            TODate = formatter.parse(staticVisitorModel.getVisitDateIn());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String visitorDate = formatter1.format(TODate);
+        tvDate.setText(visitorDate);
 
         if(staticVisitorModel.getTakeMobile()==1)
         {

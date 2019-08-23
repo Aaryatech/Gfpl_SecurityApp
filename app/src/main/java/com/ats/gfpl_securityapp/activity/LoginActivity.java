@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public String strIntent,strIntentSplash;
     ArrayList<Sync> syncArray = new ArrayList<>();
     Sync syncData;
+    Login loginUser,loginUserMain;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             //strIntent = getIntent().getStringExtra("model");
             Intent intent = getIntent();
              strIntent = intent.getExtras().getString("model");
-            Log.e("String", "--------------------------" + strIntent);
+            Log.e("String111111111","********************************************" + strIntent);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -64,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             //strIntent = getIntent().getStringExtra("model");
             Intent intent = getIntent();
             strIntentSplash = intent.getExtras().getString("Splash");
-            Log.e("String", "--------------------------" + strIntent);
+            Log.e("String splash", "--------------------------" + strIntentSplash);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -81,6 +82,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             {
                 getSynch();
             }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            String userStr = CustomSharedPreference.getString(getApplication(), CustomSharedPreference.MAIN_KEY_USER);
+            Gson gson = new Gson();
+            loginUserMain = gson.fromJson(userStr, Login.class);
+            Log.e("USER MAIN Login : ", "--------USER-------" + loginUserMain);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try {
+            String userStr = CustomSharedPreference.getString(getApplication(), CustomSharedPreference.KEY_USER);
+            Gson gson = new Gson();
+            loginUser = gson.fromJson(userStr, Login.class);
+            Log.e("LOGIN USER Login : ", "--------USER-------" + loginUser);
         }catch (Exception e)
         {
             e.printStackTrace();
@@ -120,7 +141,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
             if (isValidDSCCode) {
-                doLogin(strDSCCode);
+
+                if(strIntent!=null)
+                {
+                    if(loginUserMain.getEmpDsc().equalsIgnoreCase(strDSCCode))
+                    {
+                        doLogin(strDSCCode);
+                    }else{
+                        Toast.makeText(this, "Invalid User....", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    doLogin(strDSCCode);
+                }
             }
         }else if(v.getId()==R.id.btnSync)
         {

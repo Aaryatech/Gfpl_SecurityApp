@@ -56,11 +56,11 @@ public class MaterialFragment extends Fragment {
             type = getArguments().getString("Tracking");
             Log.e("TRACKING","----------------------"+type);
             if(type!=null) {
-                if (type.equalsIgnoreCase("Employee Pending")) {
+                if (type.equalsIgnoreCase("Doc 0")) {
                     viewPager.setCurrentItem(0);
-                } else if (type.equalsIgnoreCase("Employee Approve")) {
+                } else if (type.equalsIgnoreCase("Doc 1")) {
                     viewPager.setCurrentItem(1);
-                }else if (type.equalsIgnoreCase("Employee Rejected")) {
+                }else if (type.equalsIgnoreCase("Doc 2")) {
                     viewPager.setCurrentItem(2);
                 }
             }
@@ -68,7 +68,6 @@ public class MaterialFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

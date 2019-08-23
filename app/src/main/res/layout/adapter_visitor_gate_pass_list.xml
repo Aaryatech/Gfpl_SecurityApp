@@ -54,13 +54,13 @@
                     android:textSize="15sp" />
 
             <ImageView
-                android:id="@+id/ivEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:padding="5dp"
-                android:layout_gravity="end"
-                android:src="@drawable/ic_menu" />
+            android:id="@+id/ivEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:padding="5dp"
+            android:layout_gravity="end"
+            android:src="@drawable/ic_menu" />
 
         </LinearLayout>
 

@@ -22,7 +22,10 @@ import com.ats.gfpl_securityapp.model.Outward;
 import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,9 +58,33 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
         final Outward model=outwardList.get(i);
         myViewHolder.tvGpNo.setText(model.getExVar1());
         myViewHolder.tvOutwardName.setText(model.getOutwardName());
-        myViewHolder.tvOutDate.setText(model.getDateOut());
-        myViewHolder.tvExpectedDate.setText(model.getDateInExpected());
+       // myViewHolder.tvOutDate.setText(model.getDateOut());
+        //myViewHolder.tvExpectedDate.setText(model.getDateInExpected());
         myViewHolder.tvToName.setText(model.getToName());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date TODate = null;
+        try {
+            TODate = formatter.parse(model.getDateOut());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String outDate = formatter1.format(TODate);
+        myViewHolder.tvOutDate.setText(outDate);
+
+
+        Date TODate1 = null;
+        try {
+            TODate1 = formatter.parse(model.getDateInExpected());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String expDate = formatter1.format(TODate1);
+        myViewHolder.tvExpectedDate.setText(expDate);
 
         if(model.getExInt1()==1)
         {

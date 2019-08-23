@@ -69,6 +69,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                 //intent.putExtra("Feedback","fcm");
+                MyNotificationManager notificationUtils = new MyNotificationManager(getApplicationContext());
+                notificationUtils.playNotificationSound();
 
                 mNotificationManager.showSmallNotification(title, message, intent);
 
@@ -81,8 +83,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 mNotificationManager.showSmallNotification(title, message, intent);
 
-//                MyNotificationManager notificationUtils = new MyNotificationManager(getApplicationContext());
-//                notificationUtils.playNotificationSound();
+                MyNotificationManager notificationUtils = new MyNotificationManager(getApplicationContext());
+                notificationUtils.playNotificationSound();
 
                 db.addNotification(title, message, "" + sdf.format(Calendar.getInstance().getTimeInMillis()));
             }

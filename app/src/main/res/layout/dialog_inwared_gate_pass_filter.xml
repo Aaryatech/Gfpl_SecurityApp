@@ -115,6 +115,8 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardViewDept"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
@@ -138,20 +140,42 @@
                         android:textStyle="bold" />
 
                     <Spinner
-                        android:id="@+id/spDept"
                         style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
                         android:layout_marginTop="5dp"
+                        android:visibility="gone"
                         android:layout_marginRight="15dp"
                         android:layout_marginBottom="5dp" />
+
+
+                    <TextView
+                        android:id="@+id/spDept"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
+                        android:hint="All"
+                        android:padding="10dp"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorBlack"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvDeptId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cardViewEmp"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
@@ -175,14 +199,33 @@
                         android:textStyle="bold" />
 
                     <Spinner
-                        android:id="@+id/spEmp"
                         style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
                         android:layout_marginTop="5dp"
+                        android:visibility="gone"
                         android:layout_marginRight="15dp"
                         android:layout_marginBottom="5dp" />
+
+                    <TextView
+                        android:id="@+id/spEmp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
+                        android:hint="All"
+                        android:padding="10dp"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorBlack"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvEmpId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
 
 
 

@@ -2,6 +2,7 @@ package com.ats.gfpl_securityapp.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.EmployeeFragment;
@@ -33,6 +35,7 @@ import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,9 +82,24 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         myViewHolder.tvHrs.setText(""+model.getNoOfHr()+"("+model.getOutTime()+" to "+model.getInTime()+")");
         myViewHolder.tvSupName.setText(""+model.getUserName());
         myViewHolder.tvTotalHrs.setText(""+model.getActualTimeDifference());
-        myViewHolder.tvDate.setText(""+model.getEmpDateOut());
+       // myViewHolder.tvDate.setText(""+model.getEmpDateOut());
         SimpleDateFormat f1 = new SimpleDateFormat("HH:mm:ss"); //HH for hour of the day (0 - 23)
         SimpleDateFormat f2 = new SimpleDateFormat("hh:mm");
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date TODate = null;
+        try {
+            TODate = formatter.parse(model.getEmpDateOut());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String empDate = formatter1.format(TODate);
+        myViewHolder.tvDate.setText(empDate);
+
 
         String imageUri = String.valueOf(model.getExVar2());
         Log.e("Image Path","---------------------"+Constants.IMAGE_URL+imageUri);
@@ -91,6 +109,15 @@ public class EmployeeGatePassListAdapter  extends RecyclerView.Adapter<EmployeeG
         } catch (Exception e) {
 
         }
+
+        myViewHolder.ivPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageZoomActivity.class);
+                intent.putExtra("image", Constants.IMAGE_URL + model.getExVar2());
+                context.startActivity(intent);
+            }
+        });
 
         for(int j=0;j<syncArray.size();j++)
         {

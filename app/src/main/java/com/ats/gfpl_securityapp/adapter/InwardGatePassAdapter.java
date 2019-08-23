@@ -2,6 +2,7 @@ package com.ats.gfpl_securityapp.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
+import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.InwardGatePassDetailFragment;
@@ -32,7 +34,10 @@ import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,12 +66,33 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         final MaterialDetail model=materialList.get(i);
         myViewHolder.tvGPNo.setText(""+model.getExVar1());
         myViewHolder.tvInvoice.setText(""+model.getInvoiceNumber());
-        myViewHolder.tvDate.setText(""+model.getInwardDate());
+        //myViewHolder.tvDate.setText(""+model.getInwardDate());
         myViewHolder.tvParty.setText(""+model.getPartyName());
         myViewHolder.tvNugs.setText(""+model.getNoOfNugs());
         myViewHolder.tvTime.setText(""+model.getInTime());
         //myViewHolder.tvLastDept.setText(model.getToDeptName());
         myViewHolder.tvLastPerson.setText(model.getToEmpName());
+
+        if(model.getGatePassSubType()==1)
+        {
+            myViewHolder.tvInwardType.setText("Inward");
+        }else if(model.getGatePassSubType()==2)
+        {
+            myViewHolder.tvInwardType.setText("Parcel");
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date TODate = null;
+        try {
+            TODate = formatter.parse(model.getInwardDate());//catch exception
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String inwardDate = formatter1.format(TODate);
+        myViewHolder.tvDate.setText(inwardDate);
 
         if(model.getToStatus()==0)
         {
@@ -87,6 +113,15 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             e.printStackTrace();
         }
 
+        myViewHolder.ivPhoto1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageZoomActivity.class);
+                intent.putExtra("image", Constants.IMAGE_URL + model.getPersonPhoto());
+                context.startActivity(intent);
+            }
+        });
+
         String imageUri1 = String.valueOf(model.getInwardPhoto());
         try {
             Picasso.with(context).load(Constants.IMAGE_URL+imageUri1).placeholder(context.getResources().getDrawable(R.drawable.ic_photo)).into(myViewHolder.ivPhoto2);
@@ -94,6 +129,16 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        myViewHolder.ivPhoto2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageZoomActivity.class);
+                intent.putExtra("image", Constants.IMAGE_URL + model.getInwardPhoto());
+                context.startActivity(intent);
+            }
+        });
+
 
         myViewHolder.linearLayoutInward.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +272,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvStatus, tvLastPerson;
+        public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvStatus, tvLastPerson,tvInwardType;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3,ivEdit;
         public CheckBox checkBox;
         public LinearLayout linearLayoutInward;
@@ -241,6 +286,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             tvNugs = itemView.findViewById(R.id.tvNugs);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvInwardType = itemView.findViewById(R.id.tvInwardType);
             tvLastPerson = itemView.findViewById(R.id.tvLastPerson);
             ivPhoto1 = itemView.findViewById(R.id.ivPhoto1);
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);

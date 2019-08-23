@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Intent intent = getIntent();
             strIntentMain = intent.getExtras().getString("model");
-            Log.e("StringMain","--------------------------"+strIntentMain);
+            Log.e("StringMain Main","--------------------------"+strIntentMain);
 
 
         }catch (Exception e)
@@ -257,37 +257,91 @@ public class MainActivity extends AppCompatActivity
 
         if(strIntentMain!=null) {
                 if (strIntentMain.equalsIgnoreCase("Add visitor getPass")) {
+
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new VisitorGatePassFragment(), "DashFragment");
                     ft.commit();
-                } else if (strIntentMain.equalsIgnoreCase("Add visitor getPass list")) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
-                    ft.commit();
+
+                } else if (strIntentMain.equalsIgnoreCase("Add visitor getPass list") || strIntentMain.equalsIgnoreCase("visit 0") ||
+                            strIntentMain.equalsIgnoreCase("visit 1") || strIntentMain.equalsIgnoreCase("visit 2")||
+                            strIntentMain.equalsIgnoreCase("visit 3") || strIntentMain.equalsIgnoreCase("visit 0,1") ||
+                            strIntentMain.equalsIgnoreCase("emp 1") || strIntentMain.equalsIgnoreCase("emp 2")||
+                            strIntentMain.equalsIgnoreCase("emp 3") || strIntentMain.equalsIgnoreCase("emp 0") ||
+                            strIntentMain.equalsIgnoreCase("visit -1") || strIntentMain.equalsIgnoreCase("emp -1")) {
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new VisitorGatePassListFragment();
+                    Bundle args = new Bundle();
+                    args.putString("model",strIntentMain);
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
                 }else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass")) {
+
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new MaintenanceGatePassFragment(), "DashFragment");
                     ft.commit();
-                }else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass list")) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
-                    ft.commit();
+
+                }else if (strIntentMain.equalsIgnoreCase("Add Maintenance getPass list") || strIntentMain.equalsIgnoreCase("Maint 0") ||
+                        strIntentMain.equalsIgnoreCase("Maint 1") || strIntentMain.equalsIgnoreCase("Maint 2")||
+                        strIntentMain.equalsIgnoreCase("Maint 3") || strIntentMain.equalsIgnoreCase("Maint -1")) {
+
+                    Log.e("Maintence","------------------------------");
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf1 = new MaintenanceGatePassListFragment();
+                    Bundle args1 = new Bundle();
+                    args1.putString("model",strIntentMain);
+                    adf1.setArguments(args1);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                    Log.e("Maintence","--------------END----------------");
+
                 } else if (strIntentMain.equalsIgnoreCase("Employee gate pass")) {
+
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new EmployeeGatePassFragment(), "DashFragment");
                     ft.commit();
-                }else if (strIntentMain.equalsIgnoreCase("Employee gate pass list")) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
-                    ft.commit();
-                }else if (strIntentMain.equalsIgnoreCase("Material gate pass")) {
+
+                }else if (strIntentMain.equalsIgnoreCase("Employee gate pass list") || strIntentMain.equalsIgnoreCase("Temp = 1") ||
+                    strIntentMain.equalsIgnoreCase("Day = 2") || strIntentMain.equalsIgnoreCase("OutEmp") ||
+                        strIntentMain.equalsIgnoreCase("SupTemp") || strIntentMain.equalsIgnoreCase("SupDay") ||
+                        strIntentMain.equalsIgnoreCase("SupOut")) {
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new EmployeeFragment();
+                    Bundle args = new Bundle();
+                    args.putString("model", strIntentMain);
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+                    Log.e("Employee","--------------END----------------");
+
+                } else if (strIntentMain.equalsIgnoreCase("Material gate pass")) {
+
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new InwardGatePassFragment(), "DashFragment");
                     ft.commit();
-                }else if (strIntentMain.equalsIgnoreCase("Material gate pass list")) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
-                    ft.commit();
+
+                }else if (strIntentMain.equalsIgnoreCase("Material gate pass list") || strIntentMain.equalsIgnoreCase("Parcel 2") ||
+                            strIntentMain.equalsIgnoreCase("Inward 1")) {
+
+//                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                    ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
+//                    ft.commit();
+
+                    Fragment adf = new InwardgatePassListFragment();
+                    Bundle args = new Bundle();
+                    args.putString("model", strIntentMain);
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
                 }else if (strIntentMain.equalsIgnoreCase("Purpose")) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new AddPurposeFragment(), "DashFragment");
@@ -394,6 +448,15 @@ public class MainActivity extends AppCompatActivity
                     Fragment adf = new MaterialFragment();
                     Bundle args = new Bundle();
                     args.putString("Tracking", "Employee Rejected");
+                    adf.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
+
+                }else if(strIntentMain.equalsIgnoreCase("Doc 0") || strIntentMain.equalsIgnoreCase("Doc 1") ||
+                        strIntentMain.equalsIgnoreCase("Doc 2"))
+                {
+                    Fragment adf = new MaterialFragment();
+                    Bundle args = new Bundle();
+                    args.putString("Tracking", strIntentMain);
                     adf.setArguments(args);
                     getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "DashFragment").commit();
 
@@ -609,58 +672,103 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_visitor_gp) {
 
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.content_frame, new VisitorGatePassFragment(), "DashFragment");
-//            ft.commit();
+            if(loginUser.getEmpCatId()==2) {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new VisitorGatePassFragment(), "DashFragment");
+            ft.commit();
+            }else {
 
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                 intent.putExtra("model", "Add visitor getPass");
+                intent.putExtra("model", "Add visitor getPass");
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+            }
 
 
         } else if (id == R.id.nav_visitor_gp_list) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Add visitor getPass list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUser.getEmpCatId()==2) {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new VisitorGatePassListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Add visitor getPass list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_maintenance_gp) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Add Maintenance getPass");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUser.getEmpCatId()==2) {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new MaintenanceGatePassFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Add Maintenance getPass");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_maintenance_gp_list) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Add Maintenance getPass list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUser.getEmpCatId()==2) {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new MaintenanceGatePassListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Add Maintenance getPass list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_emp_gp) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Employee gate pass");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new EmployeeGatePassFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Employee gate pass");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_emp_gp_list) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Employee gate pass list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUser.getEmpCatId()==2) {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new EmployeeFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Employee gate pass list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
 
         }else if (id == R.id.nav_outward_gp_approve) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Outward gate pass approve");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Outward gate pass approve");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
@@ -668,22 +776,34 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.nav_outward_gp) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Outward gate pass");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Outward gate pass");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
 //            ft.commit();
 
         } else if (id == R.id.nav_outward_gp_list) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Outward gate pass list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Outward gate pass list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
@@ -691,82 +811,137 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_material_gp) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Material gate pass");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUser.getEmpCatId()==2) {
+
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new InwardGatePassFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Material gate pass");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_material_gp_list) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Material gate pass list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new InwardgatePassListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Material gate pass list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
 
         }else if (id == R.id.nav_purpose_gp) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Purpose");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new AddPurposeFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Purpose");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         }else if (id == R.id.nav_purpose_list_gp) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Purpose list");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new PurposeListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Purpose list");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
         else if (id == R.id.nav_material_tracking) {
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Material Tracking");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Material Tracking");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         } else if (id == R.id.nav_add_card) {
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new AddVisitingCardFragment(), "DashFragment");
 //            ft.commit();
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Visit Card");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new AddVisitingCardFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Visit Card");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         }else if (id == R.id.nav_card_list) {
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
 //            ft.commit();
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Visit Card List");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new VisitingCardListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Visit Card List");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if (id == R.id.nav_add_comp) {
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new AddCompanyFragment(), "DashFragment");
 //            ft.commit();
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Add Company");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new AddCompanyFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Add Company");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
 
         }else if (id == R.id.nav_add_comp_list) {
 
 //            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //            ft.replace(R.id.content_frame, new CompanyListFragment(), "DashFragment");
 //            ft.commit();
+            if(loginUser.getEmpCatId()==2) {
 
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.putExtra("model", "Add Company List");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, new CompanyListFragment(), "DashFragment");
+                ft.commit();
+            }else {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.putExtra("model", "Add Company List");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -51,6 +51,24 @@ public class Department {
     @Expose
     private Object exVar3;
 
+    public Department(Integer empDeptId, Integer companyId, String empDeptName, String empDeptShortName, String empDeptRemarks, Integer delStatus, Integer isActive, Integer makerUserId, String makerEnterDatetime, Object exInt1, Object exInt2, Object exInt3, Object exVar1, Object exVar2, Object exVar3) {
+        this.empDeptId = empDeptId;
+        this.companyId = companyId;
+        this.empDeptName = empDeptName;
+        this.empDeptShortName = empDeptShortName;
+        this.empDeptRemarks = empDeptRemarks;
+        this.delStatus = delStatus;
+        this.isActive = isActive;
+        this.makerUserId = makerUserId;
+        this.makerEnterDatetime = makerEnterDatetime;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exInt3 = exInt3;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+        this.exVar3 = exVar3;
+    }
+
     public Integer getEmpDeptId() {
         return empDeptId;
     }

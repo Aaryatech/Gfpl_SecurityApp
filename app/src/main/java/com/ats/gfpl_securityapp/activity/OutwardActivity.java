@@ -33,12 +33,17 @@ import com.ats.gfpl_securityapp.utils.PermissionsUtil;
 import com.ats.gfpl_securityapp.utils.RealPathUtil;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -137,8 +142,10 @@ public class OutwardActivity extends AppCompatActivity implements View.OnClickLi
 
                         String photo1 = "";
 
-                        // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                       // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
+
                         if (imagePath1 != null) {
 
                             pathArray.add(imagePath1);
@@ -151,21 +158,21 @@ public class OutwardActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         //visitor.setPersonPhoto(photo1);
-                       // sendImage(pathArray, fileNameArray, visitor);
-                        if(strIntent.equalsIgnoreCase("Close Outward")) {
-
-                            if(model.getExInt1()==2)
-                            {
-                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
-                            }else{
-                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
-                            }
-
-//                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
-                        }else if(strIntent.equalsIgnoreCase("In Outward"))
-                        {
-                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
-                        }
+                        sendImage(pathArray,fileNameArray,photo1);
+//                        if(strIntent.equalsIgnoreCase("Close Outward")) {
+//
+//                            if(model.getExInt1()==2)
+//                            {
+//                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
+//                            }else{
+//                                saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+//                            }
+//
+////                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+//                        }else if(strIntent.equalsIgnoreCase("In Outward"))
+//                        {
+//                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
+//                        }
 
                     }
                 });
@@ -182,6 +189,65 @@ public class OutwardActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
+    private void sendImage(ArrayList<String> filePath, ArrayList<String> fileName, final String photo1) {
+
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName  +"           PHOTO1      "+photo1);
+
+        final CommonDialog commonDialog = new CommonDialog(OutwardActivity.this, "Loading", "Please Wait...");
+        commonDialog.show();
+
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+
+                Log.e("Response : ", "--" + response.body());
+               // saveVisitor(visitor);
+                if(strIntent.equalsIgnoreCase("Close Outward")) {
+
+                    if(model.getExInt1()==2)
+                    {
+                        saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
+                    }else{
+                        saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+                    }
+
+//                            saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 1, photo1);
+                }else if(strIntent.equalsIgnoreCase("In Outward"))
+                {
+                    saveOutWard(model.getGpOutwardId(), loginUser.getEmpId(), 2, photo1);
+                }
+                commonDialog.dismiss();
+
+            }
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(OutwardActivity.this, "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private void saveOutWard(int gpOutwardId, Integer empId, int status, String photo1) {
 

@@ -44,7 +44,8 @@ public class MaterialDetail {
     private String inTime;
     @SerializedName("noOfNugs")
     @Expose
-    private Integer noOfNugs;
+   // Integer
+    private float noOfNugs;
     @SerializedName("itemType")
     @Expose
     private Integer itemType;
@@ -92,6 +93,36 @@ public class MaterialDetail {
     private List<DocHandoverDetail> docHandoverDetail = null;
 
     private Boolean isChecked;
+
+    public MaterialDetail(Integer gatepassInwardId, String inwardDate, Integer gatePassType, Integer gatePassSubType, String invoiceNumber, String partyName, Integer partyId, Integer securityId, String securityName, String personPhoto, String inwardPhoto, String inTime, float noOfNugs, Integer itemType, Integer delStatus, Integer status, Integer toEmpId, Integer toDeptId, Integer toStatus, String toEmpName, String toDeptName, Integer exInt1, Integer exInt2, Integer exInt3, Object exVar1, Object exVar2, Object exVar3) {
+        this.gatepassInwardId = gatepassInwardId;
+        this.inwardDate = inwardDate;
+        this.gatePassType = gatePassType;
+        this.gatePassSubType = gatePassSubType;
+        this.invoiceNumber = invoiceNumber;
+        this.partyName = partyName;
+        this.partyId = partyId;
+        this.securityId = securityId;
+        this.securityName = securityName;
+        this.personPhoto = personPhoto;
+        this.inwardPhoto = inwardPhoto;
+        this.inTime = inTime;
+        this.noOfNugs = noOfNugs;
+        this.itemType = itemType;
+        this.delStatus = delStatus;
+        this.status = status;
+        this.toEmpId = toEmpId;
+        this.toDeptId = toDeptId;
+        this.toStatus = toStatus;
+        this.toEmpName = toEmpName;
+        this.toDeptName = toDeptName;
+        this.exInt1 = exInt1;
+        this.exInt2 = exInt2;
+        this.exInt3 = exInt3;
+        this.exVar1 = exVar1;
+        this.exVar2 = exVar2;
+        this.exVar3 = exVar3;
+    }
 
     public Integer getGatepassInwardId() {
         return gatepassInwardId;
@@ -189,11 +220,11 @@ public class MaterialDetail {
         this.inTime = inTime;
     }
 
-    public Integer getNoOfNugs() {
+    public float getNoOfNugs() {
         return noOfNugs;
     }
 
-    public void setNoOfNugs(Integer noOfNugs) {
+    public void setNoOfNugs(float noOfNugs) {
         this.noOfNugs = noOfNugs;
     }
 

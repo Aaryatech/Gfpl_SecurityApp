@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.ats.gfpl_securityapp.R;
-import com.ats.gfpl_securityapp.adapter.OutwardPendingAdapter;
+import com.ats.gfpl_securityapp.adapter.OutwardOutAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.interfaces.OutOutwardInterface;
 import com.ats.gfpl_securityapp.model.Outward;
@@ -106,7 +106,7 @@ public class OutOutwardFragment extends Fragment implements OutOutwardInterface 
                             outwardList.clear();
                             outwardList = response.body();
 
-                            OutwardPendingAdapter adapter = new OutwardPendingAdapter(outwardList, getContext(),syncArray,loginUser);
+                            OutwardOutAdapter adapter = new OutwardOutAdapter(outwardList, getContext(),syncArray,loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());

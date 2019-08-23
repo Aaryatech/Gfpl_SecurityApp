@@ -59,6 +59,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutTotalVisitor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -99,6 +100,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutCurrVisitorComp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -149,14 +151,12 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutVisitorMeetingComp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -193,6 +193,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutVisitorRejected"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -242,6 +243,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutVisitorPending"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -282,6 +284,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutVisitorApprove"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -358,14 +361,15 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutEmpTotalVisitor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content" />-->
 
                     <TextView
                         android:layout_width="match_parent"
@@ -402,6 +406,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutEmpApprove"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -450,14 +455,15 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutEmpRejected"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
 
                 <TextView
                     android:layout_width="match_parent"
@@ -494,6 +500,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutEmpPending"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -544,6 +551,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutEmpMeetingComp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -625,6 +633,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutMaintePending"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -665,6 +674,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutMainteApprove"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -718,6 +728,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutMainteRejected"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -758,6 +769,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutMainteWorkComp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -811,6 +823,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutMainteVisitorTotal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -885,6 +898,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutTotalTempGp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -929,6 +943,7 @@
             app:cardUseCompatPadding="true">
 
             <LinearLayout
+                android:id="@+id/linearLayoutTotalDayGp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -976,6 +991,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutNoEmpOutsideFact"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -992,6 +1008,51 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text="No Of Employee Outside Factory"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvTotalEmp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_ui_bold"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="0"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="22sp" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="190dp"
+                android:layout_height="150dp"
+                android:layout_margin="3dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/colorTwo"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutTotalEmp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_ui_bold"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Total Employee"
                         android:textColor="@color/colorWhite"
                         android:textSize="14sp" />
 
@@ -1055,6 +1116,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutTotalNoInward"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1097,6 +1159,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutTotalNoParcel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1151,6 +1214,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutDeptTotalPending"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1192,6 +1256,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutDeptTotalApprove"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1244,6 +1309,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutDeptTotalRejected"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1318,6 +1384,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutTotalPending"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1363,6 +1430,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutTotalApprove"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1411,6 +1479,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutTotalRejected"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1491,6 +1560,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutSupTotalTemp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1535,6 +1605,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutSupTotalDay"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -1583,6 +1654,7 @@
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/linearLayoutSupNoEmpOut"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"

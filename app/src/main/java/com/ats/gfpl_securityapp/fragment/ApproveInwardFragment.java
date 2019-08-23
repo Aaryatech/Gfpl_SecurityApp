@@ -151,8 +151,6 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
 
     }
 
-
-
     private void getMaterial(ArrayList<Integer> deptIdList, ArrayList<Integer> empIdList, ArrayList<Integer> statusList) {
 
         Log.e("PARAMETER","       DEPT ID   " +  deptIdList  +"           SUPPLY ID   "+   empIdList  +"             STATUS"  +statusList);
@@ -257,8 +255,6 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
             }
         }
         else if (v.getId() == R.id.btnSubmit) {
-
-
             if (assignStaticMaterialList != null) {
                 if (assignStaticMaterialList.size() > 0) {
                     assignedArray.clear();

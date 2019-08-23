@@ -12,6 +12,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -27,7 +28,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +36,7 @@ import com.ats.gfpl_securityapp.adapter.EmployeeGatePassListAdapter;
 import com.ats.gfpl_securityapp.adapter.VisitorEmployeeAdapter;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.interfaces.OutEmpInterface;
+import com.ats.gfpl_securityapp.model.Department;
 import com.ats.gfpl_securityapp.model.EmpGatePass;
 import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
@@ -51,6 +52,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.loginUser;
+import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.strIntentMain;
 import static com.ats.gfpl_securityapp.fragment.EmployeeFragment.syncArray;
 
 /**
@@ -79,47 +81,11 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
         View view= inflater.inflate(R.layout.fragment_employee_out_gate_pass, container, false);
 
         //getActivity().setTitle("Employee Out");
-
         recyclerView = view.findViewById(R.id.recyclerView);
 //        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(this);
-
-//        try {
-//            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
-//            Gson gson = new Gson();
-//            loginUser = gson.fromJson(userStr, Login.class);
-//            Log.e("LOGIN USER : ", "--------USER-------" + loginUser);
-//
-//        }catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.MAIN_KEY_USER);
-//            Gson gson = new Gson();
-//            loginUserMain = gson.fromJson(userStr, Login.class);
-//            Log.e("LOGIN USER MAIN : ", "--------USER-------" + loginUserMain);
-//        }catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-
-//        try {
-//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//            Gson gson = new Gson();
-//            String json = prefs.getString("Sync", null);
-//            Type type = new TypeToken<ArrayList<Sync>>() {}.getType();
-//            syncArray= gson.fromJson(json, type);
-//
-//            Log.e("SYNC EMP : ", "--------USER-------" + syncArray);
-//
-//        }catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
 
         getEmployee();
 
@@ -135,30 +101,35 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
 
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
+                            getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+
 
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
+//                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
+//                        getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList, String.valueOf(loginUser.getEmpId()),statusList);
+                            ArrayList<Integer> deptList1 = new ArrayList<>();
+                            deptList1.add(loginUser.getEmpDeptId());
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getEmployeeGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), deptList1, "-1", statusList);
 
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getEmployeeGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),deptList,"-1",statusList);
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(1);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getEmployeeGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), deptList, "-1", statusList);
 
                     }
                 }
@@ -279,9 +250,43 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                     try {
                         if (response.body() != null) {
 
-                            Log.e("EMPLOYEE LIST : ", " - " + response.body());
+                            Log.e("EMPLOYEE LIST OUT: ", " - " + response.body());
                             empList.clear();
-                            empList = response.body();
+                           // empList = response.body();
+
+                            if(strIntentMain!=null)
+                            {
+                                Log.e("Employe Type","-----------------------------"+strIntentMain);
+                                if(strIntentMain.equalsIgnoreCase("Temp = 1"))
+                                {
+                                    for(int i=0;i<response.body().size();i++)
+                                    {
+                                        if(response.body().get(i).getGatePassSubType()==1)
+                                        {
+                                            EmpGatePass model= new EmpGatePass(response.body().get(i).getGatepassEmpId(),response.body().get(i).getEmpDateOut(),response.body().get(i).getEmpDateIn(),response.body().get(i).getUserId(),response.body().get(i).getUserName(),response.body().get(i).getEmpId(),response.body().get(i).getEmpName(),response.body().get(i).getGatePassType(),response.body().get(i).getGatePassSubType(),response.body().get(i).getPurposeId(),response.body().get(i).getPurposeText(),response.body().get(i).getPurposeRemark(),response.body().get(i).getSecurityIdOut(),response.body().get(i).getSecurityIdIn(),response.body().get(i).getNoOfHr(),response.body().get(i).getOutTime(),response.body().get(i).getInTime(),response.body().get(i).getNewOutTime(),response.body().get(i).getNewInTime(),response.body().get(i).getActualTimeDifference(),response.body().get(i).getGatePassStatus(),response.body().get(i).getDelStatus(),response.body().get(i).getIsUsed(),response.body().get(i).getExInt1(),response.body().get(i).getExInt2(),response.body().get(i).getExInt3(),response.body().get(i).getExVar1(),response.body().get(i).getExVar2(),response.body().get(i).getExVar3());
+                                            empList.add(model);
+                                        }
+                                    }
+                                }else if(strIntentMain.equalsIgnoreCase("Day = 2"))
+                                {
+                                    for(int i=0;i<response.body().size();i++)
+                                    {
+                                        if(response.body().get(i).getGatePassSubType()==2)
+                                        {
+                                            EmpGatePass model= new EmpGatePass(response.body().get(i).getGatepassEmpId(),response.body().get(i).getEmpDateOut(),response.body().get(i).getEmpDateIn(),response.body().get(i).getUserId(),response.body().get(i).getUserName(),response.body().get(i).getEmpId(),response.body().get(i).getEmpName(),response.body().get(i).getGatePassType(),response.body().get(i).getGatePassSubType(),response.body().get(i).getPurposeId(),response.body().get(i).getPurposeText(),response.body().get(i).getPurposeRemark(),response.body().get(i).getSecurityIdOut(),response.body().get(i).getSecurityIdIn(),response.body().get(i).getNoOfHr(),response.body().get(i).getOutTime(),response.body().get(i).getInTime(),response.body().get(i).getNewOutTime(),response.body().get(i).getNewInTime(),response.body().get(i).getActualTimeDifference(),response.body().get(i).getGatePassStatus(),response.body().get(i).getDelStatus(),response.body().get(i).getIsUsed(),response.body().get(i).getExInt1(),response.body().get(i).getExInt2(),response.body().get(i).getExInt3(),response.body().get(i).getExVar1(),response.body().get(i).getExVar2(),response.body().get(i).getExVar3());
+                                            empList.add(model);
+                                        }
+                                    }
+                                }else if(strIntentMain.equalsIgnoreCase("Employee gate pass list"))
+                                {
+                                    empList = response.body();
+                                }else if(strIntentMain.equalsIgnoreCase("OutEmp") || strIntentMain.equalsIgnoreCase("EmpTotal"))
+                                {
+                                    empList = response.body();
+                                }
+                            }else{
+                                empList = response.body();
+                            }
 
                             EmployeeGatePassListAdapter adapter = new EmployeeGatePassListAdapter(empList, getContext(),syncArray,loginUser);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -331,13 +336,30 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
 
         EditText edFromDate, edToDate;
         TextView tvFromDate, tvToDate;
-        Spinner spDept, spType;
+       // Spinner spDept, spType;
         ImageView ivClose;
         LinearLayout llSup;
         String DateTo;
         CheckBox cbAll;
         CardView cardViewDept,cardViewEmp;
         private VisitorEmployeeAdapter mAdapter;
+
+        TextView spDept,spEmp,tvEmpId,tvDeptId;
+
+        int deptId;
+        String employee;
+        Dialog dialog;
+        DepartmentListDialogAdapter deptAdapter;
+       EmployeeListDialogAdapter empAdapter;
+
+        ArrayList<String> deptNameList = new ArrayList<>();
+        ArrayList<Integer> deptIdList = new ArrayList<>();
+        ArrayList<Department> deptList = new ArrayList<>();
+
+        ArrayList<String> empNameList = new ArrayList<>();
+        ArrayList<Integer> empIdList = new ArrayList<>();
+        ArrayList<Employee> empListSearch = new ArrayList<>();
+
 
 
         public FilterDialog(@NonNull Context context) {
@@ -369,6 +391,9 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
             Button btnFilter = findViewById(R.id.btnFilter);
             ivClose = findViewById(R.id.ivClose);
             spDept = findViewById(R.id.spDept);
+            spEmp = findViewById(R.id.spEmp);
+            tvEmpId = findViewById(R.id.tvEmpId);
+            tvDeptId = findViewById(R.id.tvDeptId);
             llSup = findViewById(R.id.llSup);
             cardViewDept = findViewById(R.id.cardViewDept);
             cardViewEmp = findViewById(R.id.cardViewEmp);
@@ -389,29 +414,51 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                 }
             }
 
-            ArrayList<String> typeArray = new ArrayList<>();
-            final ArrayList<Integer> typeIdArray = new ArrayList<>();
-            typeArray.add("All");
-            typeArray.add("Visitor");
-            typeArray.add("Maintenance");
+            spEmp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDialog1();
+                }
+            });
 
-            typeIdArray.add(-1);
-            typeIdArray.add(1);
-            typeIdArray.add(2);
+            spDept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDialog();
+                }
+            });
 
-            ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
-            spDept.setAdapter(spTypeAdapter);
 
-            try {
-                mAdapter = new VisitorEmployeeAdapter(assignEmpOutStaticList, getActivity());
-                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-                recyclerViewFilter.setLayoutManager(mLayoutManager);
-                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
-                recyclerViewFilter.setAdapter(mAdapter);
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            Department department=new Department(-1,0,"All","","",1,1,0,"",1,1,1,1,1,1);
+            deptList.add(department);
+
+            Log.e("PARAMETER","---------------------DEPT--------------------"+deptList);
+
+            getDepartment();
+
+//            ArrayList<String> typeArray = new ArrayList<>();
+//            final ArrayList<Integer> typeIdArray = new ArrayList<>();
+//            typeArray.add("All");
+//            typeArray.add("Visitor");
+//            typeArray.add("Maintenance");
+//
+//            typeIdArray.add(-1);
+//            typeIdArray.add(1);
+//            typeIdArray.add(2);
+//
+//            ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item, typeArray);
+//            spDept.setAdapter(spTypeAdapter);
+//
+//            try {
+//                mAdapter = new VisitorEmployeeAdapter(assignEmpOutStaticList, getActivity());
+//                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+//                recyclerViewFilter.setLayoutManager(mLayoutManager);
+//                recyclerViewFilter.setItemAnimator(new DefaultItemAnimator());
+//                recyclerViewFilter.setAdapter(mAdapter);
+//            }catch (Exception e)
+//            {
+//                e.printStackTrace();
+//            }
 
             cbAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -551,7 +598,7 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
             btnFilter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final int getDept = typeIdArray.get(spDept.getSelectedItemPosition());
+                   // final int getDept = typeIdArray.get(spDept.getSelectedItemPosition());
 
                     if (edFromDate.getText().toString().isEmpty()) {
                         edFromDate.setError("Select From Date");
@@ -566,8 +613,21 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                         getAssignUser();
                         dismiss();
 
+                        String empName=spEmp.getText().toString();
+                        String deptName=spDept.getText().toString();
+
+                        int empId = -1,deptId = -1;
+                        try {
+                            empId = Integer.parseInt(tvEmpId.getText().toString());
+                            deptId = Integer.parseInt(tvDeptId.getText().toString());
+
+                        }catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
                         ArrayList<Integer> getPassDeptList = new ArrayList<>();
-                        getPassDeptList.add(getDept);
+                        getPassDeptList.add(deptId);
 
                         if(syncArray!=null) {
                             for (int j = 0; j < syncArray.size(); j++) {
@@ -592,12 +652,12 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                                         statusList.add(1);
 
                                         ArrayList<Integer> getPassDeptList2 = new ArrayList<>();
-                                        getPassDeptList2.add(-1);
+                                        getPassDeptList2.add(loginUser.getEmpDeptId());
 
                                         String fromDate = tvFromDate.getText().toString();
                                         String toDate = tvToDate.getText().toString();
 
-                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList2, String.valueOf(loginUser.getEmpId()), statusList);
+                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList2, "-1", statusList);
                                     }
                                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
@@ -607,7 +667,7 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                                         String fromDate = tvFromDate.getText().toString();
                                         String toDate = tvToDate.getText().toString();
 
-                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, stringId, statusList);
+                                        getEmployeeGetPassList(fromDate, toDate, getPassDeptList, String.valueOf(empId), statusList);
                                     }
                                 }
                             }
@@ -632,6 +692,392 @@ public class EmployeeOutGatePassFragment extends Fragment implements OutEmpInter
                 }
             });
 
+        }
+
+        private void showDialog1() {
+            dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+            LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+            dialog.setContentView(v);
+            dialog.setCancelable(true);
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+            EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+            empAdapter = new EmployeeListDialogAdapter(empListSearch, getContext());
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            rvCustomerList.setLayoutManager(mLayoutManager);
+            rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+            rvCustomerList.setAdapter(empAdapter);
+
+            edSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    try {
+                        if (empAdapter != null) {
+                            filterEmp(editable.toString());
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+
+            dialog.show();
+        }
+
+        private void filterEmp(String text) {
+            ArrayList<Employee> temp = new ArrayList();
+            for (Employee d : empListSearch) {
+                if (d.getEmpFname().toLowerCase().contains(text.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            //update recyclerview
+            empAdapter.updateList(temp);
+        }
+
+        private void showDialog() {
+            dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+            LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = li.inflate(R.layout.custom_dialog_fullscreen_search, null, false);
+            dialog.setContentView(v);
+            dialog.setCancelable(true);
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+            EditText edSearch = dialog.findViewById(R.id.edSearch);
+
+            deptAdapter = new DepartmentListDialogAdapter(deptList, getContext());
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            rvCustomerList.setLayoutManager(mLayoutManager);
+            rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+            rvCustomerList.setAdapter(deptAdapter);
+
+            edSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    try {
+                        if (deptAdapter != null) {
+                            filterDept(editable.toString());
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            });
+
+            dialog.show();
+        }
+
+        private void filterDept(String text) {
+            ArrayList<Department> temp = new ArrayList();
+            for (Department d : deptList) {
+                if (d.getEmpDeptName().toLowerCase().contains(text.toLowerCase())) {
+                    temp.add(d);
+                }
+            }
+            //update recyclerview
+            deptAdapter.updateList(temp);
+        }
+
+        public class DepartmentListDialogAdapter extends RecyclerView.Adapter<DepartmentListDialogAdapter.MyViewHolder> {
+
+            private ArrayList<Department> custList;
+            private Context context;
+
+            public DepartmentListDialogAdapter(ArrayList<Department> custList, Context context) {
+                this.custList = custList;
+                this.context = context;
+            }
+
+            public class MyViewHolder extends RecyclerView.ViewHolder {
+                public TextView tvName, tvAddress;
+                public LinearLayout linearLayout;
+
+                public MyViewHolder(View view) {
+                    super(view);
+                    tvName = view.findViewById(R.id.tvName);
+                    tvAddress = view.findViewById(R.id.tvAddress);
+                    linearLayout = view.findViewById(R.id.linearLayout);
+                }
+            }
+
+
+            @NonNull
+            @Override
+            public DepartmentListDialogAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View itemView = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.adapter_department_dialog, viewGroup, false);
+
+                return new DepartmentListDialogAdapter.MyViewHolder(itemView);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull final DepartmentListDialogAdapter.MyViewHolder myViewHolder, int i) {
+                final Department model = custList.get(i);
+
+                myViewHolder.tvName.setText(model.getEmpDeptName());
+                //holder.tvAddress.setText(model.getCustAddress());
+
+                myViewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                        spDept.setText(""+model.getEmpDeptName());
+                        tvDeptId.setText(""+model.getEmpDeptId());
+                        deptId= Integer.parseInt(tvDeptId.getText().toString());
+                        getEmployeeSearch(deptId);
+                    }
+                });
+            }
+
+            @Override
+            public int getItemCount() {
+                return custList.size();
+            }
+
+            public void updateList(ArrayList<Department> list) {
+                custList = list;
+                notifyDataSetChanged();
+            }
+
+        }
+
+        private void getEmployeeSearch(final int deptId) {
+            if (Constants.isOnline(getActivity())) {
+                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+                commonDialog.show();
+
+                Call<ArrayList<Employee>> listCall = Constants.myInterface.allEmployees();
+                listCall.enqueue(new Callback<ArrayList<Employee>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<Employee>> call, Response<ArrayList<Employee>> response) {
+                        try {
+                            if (response.body() != null) {
+
+                                Log.e("EMPLOYEE LIST : ", " -----------------------------------EMPLOYEE LIST---------------------------- " + response.body());
+                                empNameList.clear();
+                                empIdList.clear();
+
+                                empNameList.add("All");
+                                empIdList.add(-1);
+
+                                if (response.body().size() > 0) {
+                                    for (int i = 0; i < response.body().size(); i++) {
+                                        if (response.body().get(i).getEmpDeptId() == deptId) {
+
+                                            // empIdList.add(response.body().get(i).getEmpDeptId());
+                                            // empNameList.add(response.body().get(i).getEmpFname() + " " + response.body().get(i).getEmpMname() + " " + response.body().get(i).getEmpSname());
+
+                                            Employee employee = new Employee(response.body().get(i).getEmpId(),response.body().get(i).getEmpDsc(),response.body().get(i).getEmpCode(),response.body().get(i).getCompanyId(),response.body().get(i).getEmpCatId(),response.body().get(i).getEmpTypeId(),response.body().get(i).getEmpDeptId(),response.body().get(i).getLocId(),response.body().get(i).getEmpFname(),response.body().get(i).getEmpMname(),response.body().get(i).getEmpSname(),response.body().get(i).getEmpPhoto(),response.body().get(i).getEmpMobile1(),response.body().get(i).getEmpMobile2(),response.body().get(i).getEmpEmail(),response.body().get(i).getEmpAddressTemp(),response.body().get(i).getEmpAddressPerm(),response.body().get(i).getEmpBloodgrp(),response.body().get(i).getEmpEmergencyPerson1(),response.body().get(i).getEmpEmergencyNo1(),response.body().get(i).getEmpEmergencyPerson2(),response.body().get(i).getEmpEmergencyNo2(),response.body().get(i).getEmpRatePerhr(),response.body().get(i).getEmpJoiningDate(),response.body().get(i).getEmpPrevExpYrs(),response.body().get(i).getEmpPrevExpMonths(),response.body().get(i).getEmpLeavingDate(),response.body().get(i).getEmpLeavingReason(),response.body().get(i).getLockPeriod(),response.body().get(i).getTermConditions(),response.body().get(i).getSalaryId(),response.body().get(i).getDelStatus(),response.body().get(i).getIsActive(),response.body().get(i).getMakerUserId(),response.body().get(i).getMakerEnterDatetime(),response.body().get(i).getExInt1(),response.body().get(i).getExInt2(),response.body().get(i).getExInt3(),response.body().get(i).getExVar1(),response.body().get(i).getExVar2(),response.body().get(i).getExVar3());
+                                            empListSearch.add(employee);
+                                        }
+                                    }
+
+//                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, empNameList);
+//                                    spEmp.setAdapter(projectAdapter);
+
+
+//                                    if(deptId==1)
+//                                    {
+//                                        Log.e("DEPT 1","------------------------------");
+//                                        empIdList.add(response.body().get(i).getEmpId());
+//                                        empNameList.add(response.body().get(i).getEmpFname() + " " + response.body().get(i).getEmpMname() + " " + response.body().get(i).getEmpSname());
+//                                    }else {
+//                                        Log.e("DEPT OTHER","------------------------------");
+//                                        if (deptId.equals(response.body().get(i).getEmpDeptId())) {
+//                                            empIdList.add(response.body().get(i).getEmpId());
+//                                            empNameList.add(response.body().get(i).getEmpFname() + " " + response.body().get(i).getEmpMname() + " " + response.body().get(i).getEmpSname());
+//                                        }
+//                                    }
+
+                                }
+
+                                commonDialog.dismiss();
+
+                            } else {
+                                commonDialog.dismiss();
+                                Log.e("Data Null : ", "-----------");
+                            }
+                        } catch (Exception e) {
+                            commonDialog.dismiss();
+                            Log.e("Exception : ", "-----------" + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Employee>> call, Throwable t) {
+                        commonDialog.dismiss();
+                        Log.e("onFailure : ", "-----------" + t.getMessage());
+                        t.printStackTrace();
+                    }
+                });
+            } else {
+                Toast.makeText(getActivity(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        public class EmployeeListDialogAdapter extends RecyclerView.Adapter<EmployeeListDialogAdapter.MyViewHolder> {
+
+            private ArrayList<Employee> empList;
+            private Context context;
+
+            public EmployeeListDialogAdapter(ArrayList<Employee> empList, Context context) {
+                this.empList = empList;
+                this.context = context;
+            }
+
+            public class MyViewHolder extends RecyclerView.ViewHolder {
+                public TextView tvName, tvAddress;
+                public LinearLayout linearLayout;
+
+                public MyViewHolder(View view) {
+                    super(view);
+                    tvName = view.findViewById(R.id.tvName);
+                    tvAddress = view.findViewById(R.id.tvAddress);
+                    linearLayout = view.findViewById(R.id.linearLayout);
+                }
+            }
+
+
+            @NonNull
+            @Override
+            public EmployeeListDialogAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View itemView = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.adapter_department_dialog, viewGroup, false);
+
+                return new EmployeeListDialogAdapter.MyViewHolder(itemView);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull final EmployeeListDialogAdapter.MyViewHolder myViewHolder, int i) {
+                final Employee model = empList.get(i);
+
+                myViewHolder.tvName.setText(model.getEmpFname()+" "+model.getEmpMname()+" "+model.getEmpSname());
+                //holder.tvAddress.setText(model.getCustAddress());
+
+                myViewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        Intent customerDataIntent = new Intent();
+//                        customerDataIntent.setAction("CUSTOMER_DATA");
+//                        customerDataIntent.putExtra("name", model.getEmpDeptName());
+//                        customerDataIntent.putExtra("id", model.getEmpDeptId());
+//                        LocalBroadcastManager.getInstance(context).sendBroadcast(customerDataIntent);
+                        dialog.dismiss();
+                        spEmp.setText(""+model.getEmpFname()+" "+model.getEmpMname()+" "+model.getEmpSname());
+                        tvEmpId.setText(""+model.getEmpId());
+
+                    }
+                });
+            }
+
+
+
+            @Override
+            public int getItemCount() {
+                return empList.size();
+            }
+
+            public void updateList(ArrayList<Employee> list) {
+                empList = list;
+                notifyDataSetChanged();
+            }
+
+        }
+
+
+        private void getDepartment() {
+            if (Constants.isOnline(getContext())) {
+                final CommonDialog commonDialog = new CommonDialog(getActivity(), "Loading", "Please Wait...");
+                commonDialog.show();
+
+                Call<ArrayList<Department>> listCall = Constants.myInterface.allEmployeeDepartment();
+                listCall.enqueue(new Callback<ArrayList<Department>>() {
+                    @Override
+                    public void onResponse(Call<ArrayList<Department>> call, Response<ArrayList<Department>> response) {
+                        try {
+                            if (response.body() != null) {
+
+                                Log.e("DEPT LIST : ", " - " + response.body());
+
+                                for(int i=0;i<response.body().size();i++)
+                                {
+                                    deptList.add(response.body().get(i));
+                                }
+                                // deptList=response.body();
+
+                                Log.e("DEPARTMENT LIST","---------------------------"+deptList);
+
+//                                deptNameList.clear();
+//                                deptIdList.clear();
+//
+//                                deptNameList.add("All");
+//                                deptIdList.add(-1);
+//
+//                                if (response.body().size() > 0) {
+//                                    for (int i = 0; i < response.body().size(); i++) {
+//                                        deptIdList.add(response.body().get(i).getEmpDeptId());
+//                                        deptNameList.add(response.body().get(i).getEmpDeptName());
+//                                    }
+//                                    Log.e("DEPT ID LIST","------------------------------"+deptIdList);
+//
+//                                    ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, deptNameList);
+//                                    spDept.setAdapter(projectAdapter);
+//
+//                                }
+
+//                                if (model != null) {
+//                                    int position = 0;
+//                                    if (purposeIdList.size() > 0) {
+//                                        for (int i = 0; i < purposeIdList.size(); i++) {
+//                                            if (model.getPurposeId() == purposeIdList.get(i)) {
+//                                                position = i;
+//                                                break;
+//                                            }
+//                                        }
+//                                        spPurpose.setSelection(position);
+//
+//                                    }
+//                                }
+                                commonDialog.dismiss();
+
+                            } else {
+                                commonDialog.dismiss();
+                                Log.e("Data Null : ", "-----------");
+                            }
+                        } catch (Exception e) {
+                            commonDialog.dismiss();
+                            Log.e("Exception : ", "-----------" + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ArrayList<Department>> call, Throwable t) {
+                        commonDialog.dismiss();
+                        Log.e("onFailure : ", "-----------" + t.getMessage());
+                        t.printStackTrace();
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+            }
         }
 
         DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {

@@ -42,15 +42,24 @@ public CardView cardViewMaintenancePending,cardViewEmployeeMeetingCompleted,card
 public CardView cardViewEmpPending,cardViewEmpApprove,cardViewEmpRejected;
 Login loginUserMain,loginUser;
 public TextView tvTotalVisitor,tvCurrVisitorComp,tvVisitorMeetingCompleted,tvVisitorRejected,tvVisitorPending,tvCurrMeetingGoingOn,tvEmpTotalVisitor,tvEmpCurrEmployeeMeetingGoingOn,tvEmpWiseRejected,tvEmpWisePending,tvEmpwisemeetingcompleted,tvMaintenanceWisePending,tvMaintenanceWiseApprove,tvMaintenanceWiseRejected,tvMaintenanceWiseWorkCompleted,tvMaintenanceTotal,tvTotalTempGP,tvTotalDayGP,tvNoOfEmpOutsideFactory,tvTotalNoOfInward,tvTotalNoOfParcel,tvDeptWiseTotalPending,tvDeptWiseTotalApprove,tvDeptWiseTotalRejected,tvEmpWiseTotalPending,tvEmpWiseTotalApprove,tvEmpWiseTotalRejected,tvSuptotalTempGP,tvSuptotalDayGP,tvNoOfEmpOutSide;
-public TextView tvLabVisitorCount,tvLabEmpVisitorCount,tvLabMaintenanceCount,tvLabEmpGatePassCount,tvlabMaterialCount,tvLabEmpMaterialCount,tvLabSuperWiserCount;
+public TextView tvLabVisitorCount,tvLabEmpVisitorCount,tvLabMaintenanceCount,tvLabEmpGatePassCount,tvlabMaterialCount,tvLabEmpMaterialCount,tvLabSuperWiserCount,tvTotalEmp;
 ArrayList<Sync> syncArray = new ArrayList<>();
 private RecyclerView recyclerView;
+public LinearLayout linearLayoutTotalVisitor,linearLayoutCurrVisitorComp,linearLayoutVisitorMeetingComp,linearLayoutVisitorRejected,linearLayoutVisitorPending,linearLayoutVisitorApprove;
+public LinearLayout linearLayoutEmpTotalVisitor,linearLayoutEmpApprove,linearLayoutEmpRejected,linearLayoutEmpPending,linearLayoutEmpMeetingComp;
+public LinearLayout linearLayoutMaintePending,linearLayoutMainteApprove,linearLayoutMainteRejected,linearLayoutMainteWorkComp,linearLayoutMainteVisitorTotal;
+public LinearLayout linearLayoutTotalTempGp,linearLayoutTotalDayGp,linearLayoutNoEmpOutsideFact,linearLayoutTotalEmp;
+public LinearLayout linearLayoutTotalNoInward,linearLayoutTotalNoParcel,linearLayoutDeptTotalPending,linearLayoutDeptTotalApprove,linearLayoutDeptTotalRejected;
+public LinearLayout linearLayoutTotalPending,linearLayoutTotalApprove,linearLayoutTotalRejected;
+public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayoutSupNoEmpOut;
+    int total;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         getActivity().setTitle("Dashboard");
+
 
         tvTotalVisitor=(TextView) view.findViewById(R.id.tvTotalVisitor);
         tvCurrVisitorComp=(TextView) view.findViewById(R.id.tvCurrVisitorComp);
@@ -82,6 +91,7 @@ private RecyclerView recyclerView;
         tvSuptotalTempGP=(TextView) view.findViewById(R.id.tvSupTotalTempGP);
         tvSuptotalDayGP=(TextView) view.findViewById(R.id.tvSupTotalDayGP);
         tvNoOfEmpOutSide=(TextView) view.findViewById(R.id.tvNoOfEmpOutside);
+        tvTotalEmp=(TextView) view.findViewById(R.id.tvTotalEmp);
 
         tvLabVisitorCount=(TextView) view.findViewById(R.id.tvLabVisitorCount);
         tvLabEmpVisitorCount=(TextView) view.findViewById(R.id.tvLabEmpVisitorCount);
@@ -140,6 +150,82 @@ private RecyclerView recyclerView;
         cardViewEmpApprove.setOnClickListener(this);
         cardViewEmpRejected.setOnClickListener(this);
 
+
+        linearLayoutTotalVisitor=(LinearLayout)view.findViewById(R.id.linearLayoutTotalVisitor);
+        linearLayoutCurrVisitorComp=(LinearLayout)view.findViewById(R.id.linearLayoutCurrVisitorComp);
+        linearLayoutVisitorMeetingComp=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorMeetingComp);
+        linearLayoutVisitorRejected=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorRejected);
+        linearLayoutVisitorPending=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorPending);
+        linearLayoutVisitorApprove=(LinearLayout)view.findViewById(R.id.linearLayoutVisitorApprove);
+
+        linearLayoutEmpTotalVisitor=(LinearLayout)view.findViewById(R.id.linearLayoutEmpTotalVisitor);
+        linearLayoutEmpApprove=(LinearLayout)view.findViewById(R.id.linearLayoutEmpApprove);
+        linearLayoutEmpRejected=(LinearLayout)view.findViewById(R.id.linearLayoutEmpRejected);
+        linearLayoutEmpPending=(LinearLayout)view.findViewById(R.id.linearLayoutEmpPending);
+        linearLayoutEmpMeetingComp=(LinearLayout)view.findViewById(R.id.linearLayoutEmpMeetingComp);
+
+        linearLayoutMaintePending=(LinearLayout)view.findViewById(R.id.linearLayoutMaintePending);
+        linearLayoutMainteApprove=(LinearLayout)view.findViewById(R.id.linearLayoutMainteApprove);
+        linearLayoutMainteRejected=(LinearLayout)view.findViewById(R.id.linearLayoutMainteRejected);
+        linearLayoutMainteWorkComp=(LinearLayout)view.findViewById(R.id.linearLayoutMainteWorkComp);
+        linearLayoutMainteVisitorTotal=(LinearLayout)view.findViewById(R.id.linearLayoutMainteVisitorTotal);
+
+        linearLayoutTotalTempGp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalTempGp);
+        linearLayoutTotalDayGp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalDayGp);
+        linearLayoutNoEmpOutsideFact=(LinearLayout)view.findViewById(R.id.linearLayoutNoEmpOutsideFact);
+        linearLayoutTotalEmp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalEmp);
+
+        linearLayoutTotalNoInward=(LinearLayout)view.findViewById(R.id.linearLayoutTotalNoInward);
+        linearLayoutTotalNoParcel=(LinearLayout)view.findViewById(R.id.linearLayoutTotalNoParcel);
+        linearLayoutDeptTotalPending=(LinearLayout)view.findViewById(R.id.linearLayoutDeptTotalPending);
+        linearLayoutDeptTotalApprove=(LinearLayout)view.findViewById(R.id.linearLayoutDeptTotalApprove);
+        linearLayoutDeptTotalRejected=(LinearLayout)view.findViewById(R.id.linearLayoutDeptTotalRejected);
+
+        linearLayoutTotalPending=(LinearLayout)view.findViewById(R.id.linearLayoutTotalPending);
+        linearLayoutTotalApprove=(LinearLayout)view.findViewById(R.id.linearLayoutTotalApprove);
+        linearLayoutTotalRejected=(LinearLayout)view.findViewById(R.id.linearLayoutTotalRejected);
+
+        linearLayoutSupTotalTemp=(LinearLayout)view.findViewById(R.id.linearLayoutSupTotalTemp);
+        linearLayoutSupTotalDay=(LinearLayout)view.findViewById(R.id.linearLayoutSupTotalDay);
+        linearLayoutSupNoEmpOut=(LinearLayout)view.findViewById(R.id.linearLayoutSupNoEmpOut);
+
+
+        linearLayoutTotalVisitor.setOnClickListener(this);
+        linearLayoutCurrVisitorComp.setOnClickListener(this);
+        linearLayoutVisitorMeetingComp.setOnClickListener(this);
+        linearLayoutVisitorRejected.setOnClickListener(this);
+        linearLayoutVisitorPending.setOnClickListener(this);
+        linearLayoutVisitorApprove.setOnClickListener(this);
+
+        linearLayoutEmpTotalVisitor.setOnClickListener(this);
+        linearLayoutEmpApprove.setOnClickListener(this);
+        linearLayoutEmpRejected.setOnClickListener(this);
+        linearLayoutEmpPending.setOnClickListener(this);
+        linearLayoutEmpMeetingComp.setOnClickListener(this);
+
+        linearLayoutMaintePending.setOnClickListener(this);
+        linearLayoutMainteApprove.setOnClickListener(this);
+        linearLayoutMainteRejected.setOnClickListener(this);
+        linearLayoutMainteWorkComp.setOnClickListener(this);
+        linearLayoutMainteVisitorTotal.setOnClickListener(this);
+
+        linearLayoutTotalTempGp.setOnClickListener(this);
+        linearLayoutTotalDayGp.setOnClickListener(this);
+        linearLayoutNoEmpOutsideFact.setOnClickListener(this);
+        linearLayoutTotalEmp.setOnClickListener(this);
+
+        linearLayoutTotalNoInward.setOnClickListener(this);
+        linearLayoutTotalNoParcel.setOnClickListener(this);
+
+        linearLayoutTotalPending.setOnClickListener(this);
+        linearLayoutTotalApprove.setOnClickListener(this);
+        linearLayoutTotalRejected.setOnClickListener(this);
+
+        linearLayoutSupTotalTemp.setOnClickListener(this);
+        linearLayoutSupTotalDay.setOnClickListener(this);
+        linearLayoutSupNoEmpOut.setOnClickListener(this);
+
+
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.MAIN_KEY_USER);
             Gson gson = new Gson();
@@ -194,8 +280,10 @@ private RecyclerView recyclerView;
                         linearLayoutGP1.setVisibility(View.VISIBLE);
                         linearLayoutGP2.setVisibility(View.VISIBLE);
                         linearLayoutGP3.setVisibility(View.VISIBLE);
-                        linearLayoutDepartment1.setVisibility(View.VISIBLE);
-                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
+                        //------------------------------------------------
+                        linearLayoutDepartment1.setVisibility(View.GONE);
+                        linearLayoutDeptRejected.setVisibility(View.GONE);
+                        //--------------------------------------------------
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutSuperGP1.setVisibility(View.GONE);
@@ -223,8 +311,10 @@ private RecyclerView recyclerView;
                         linearLayoutGP1.setVisibility(View.GONE);
                         linearLayoutGP2.setVisibility(View.GONE);
                         linearLayoutGP3.setVisibility(View.GONE);
-                        linearLayoutDepartment1.setVisibility(View.VISIBLE);
-                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
+                        //---------------------------------------------
+                        linearLayoutDepartment1.setVisibility(View.GONE);
+                        linearLayoutDeptRejected.setVisibility(View.GONE);
+                        //---------------------------------------------
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutSuperGP1.setVisibility(View.VISIBLE);
@@ -234,7 +324,7 @@ private RecyclerView recyclerView;
                         tvLabEmpVisitorCount.setVisibility(View.VISIBLE);
                         tvLabMaintenanceCount.setVisibility(View.GONE);
                         tvLabEmpGatePassCount.setVisibility(View.GONE);
-                        tvlabMaterialCount.setVisibility(View.VISIBLE);
+                        tvlabMaterialCount.setVisibility(View.GONE);
                         tvLabEmpMaterialCount.setVisibility(View.VISIBLE);
                         tvLabSuperWiserCount.setVisibility(View.VISIBLE);
                     }
@@ -253,8 +343,10 @@ private RecyclerView recyclerView;
                         linearLayoutGP1.setVisibility(View.VISIBLE);
                         linearLayoutGP2.setVisibility(View.VISIBLE);
                         linearLayoutGP3.setVisibility(View.VISIBLE);
-                        linearLayoutDepartment1.setVisibility(View.VISIBLE);
-                        linearLayoutDeptRejected.setVisibility(View.VISIBLE);
+                        //----------------------------------------------
+                        linearLayoutDepartment1.setVisibility(View.GONE);
+                        linearLayoutDeptRejected.setVisibility(View.GONE);
+                        //------------------------------------------------
                         linearLayoutEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutSuperGP1.setVisibility(View.GONE);
@@ -280,7 +372,7 @@ private RecyclerView recyclerView;
         return view;
     }
 
-    private void getDashboard(String fromDate, String toDate, Integer empId) {
+    private void getDashboard(String fromDate, final String toDate, Integer empId) {
 
         Log.e("PARAMETER","            FROM DATE       "+ fromDate        +"          TO DATE     " +   toDate  +"       EMP ID   " +  empId  );
 
@@ -298,6 +390,14 @@ private RecyclerView recyclerView;
                             Log.e("Dashboard LIST : ", " - " + response.body());
 
                             Dashboard dashboard = response.body();
+
+                            Log.e("Dashboard Bin : ", " - " +dashboard);
+
+                            Log.e("EMP Temp","----------------------------------------------"+dashboard.getEmpGatepassCount().getTempGpCount());
+                            Log.e("EMP Day","----------------------------------------------"+dashboard.getEmpGatepassCount().getDayGpCount());
+                            total=(dashboard.getEmpGatepassCount().getTempGpCount())+(dashboard.getEmpGatepassCount().getDayGpCount());
+                            Log.e("EMP Total","----------------------------------------------"+total);
+                            //tvTotalEmp.setText(total);
 
                             tvTotalVisitor.setText(""+dashboard.getVisAndMaintGatepassCount().getVisitorTotal());
                             tvCurrVisitorComp.setText(""+dashboard.getVisAndMaintGatepassCount().getVisitorInComp());
@@ -330,6 +430,10 @@ private RecyclerView recyclerView;
                             tvSuptotalTempGP.setText(""+dashboard.getSupGatepassCount().getSupTempCount());
                             tvSuptotalDayGP.setText(""+dashboard.getSupGatepassCount().getSupDayCount());
                             tvNoOfEmpOutSide.setText(""+dashboard.getSupGatepassCount().getSupOutEmpCount());
+
+
+
+                           // tvTotalEmp.setText(""+dashboard.getSupGatepassCount().getSupTempCount()+ dashboard.getSupGatepassCount().getSupDayCount());
                            // tvEmpWiseMeetingCopmleted1.setText(""+dashboard.getVisAndMaintGatepassCount().getEmpVisitorCompleted());
                             //tvDeptWiseTotalPending1.setText(""+dashboard.getMatGatepassCount().getDeptPendingCount());
                             commonDialog.dismiss();
@@ -421,6 +525,183 @@ private RecyclerView recyclerView;
             intent.putExtra("model", "Employee Rejected");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            //------------------------------------------PREVIOUS-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutTotalVisitor)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit -1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutCurrVisitorComp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit 0,1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutVisitorMeetingComp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit 3");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutVisitorRejected)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutVisitorPending)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit 0");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutVisitorApprove)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "visit 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //----------------------------------------11111111111111111111111111111-----------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutEmpTotalVisitor)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "emp -1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpApprove)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "emp 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpRejected)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "emp 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpPending)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "emp 0");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutEmpMeetingComp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "emp 3");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------22222222222222222222-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutMaintePending)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Maint 0");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMainteApprove)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Maint 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMainteRejected)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Maint 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMainteWorkComp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Maint 3");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutMainteVisitorTotal)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Maint -1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------3333333333333333333333333-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutTotalTempGp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Temp = 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutTotalDayGp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Day = 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutNoEmpOutsideFact) {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "OutEmp");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutTotalEmp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "EmpTotal");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------444444444444444444444444444444444444-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutTotalPending)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Doc 0");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutTotalApprove)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Doc 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutTotalRejected)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Doc 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------555555555555555555555555555555555555555-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutTotalNoInward)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Inward 1");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutTotalNoParcel)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "Parcel 2");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------666666666666666666666666666666-------------------------------------------------------
+        }else if(v.getId()==R.id.linearLayoutSupTotalTemp)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "SupTemp");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId()==R.id.linearLayoutSupTotalDay)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "SupDay");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        } else if(v.getId()==R.id.linearLayoutSupNoEmpOut)
+        {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra("model", "SupOut");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            //--------------------------------------------77777777777777777777777777------------------------------------------------------
         }
+
+
     }
 }

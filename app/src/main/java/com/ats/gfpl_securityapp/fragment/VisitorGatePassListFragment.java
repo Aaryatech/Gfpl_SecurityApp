@@ -76,6 +76,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
     RecyclerView recyclerViewFilter;
     public static ArrayList<Employee> assignVisitorEmpStaticList = new ArrayList<>();
 
+    public static String strIntentMain;
 
     Login loginUser,loginUserMain;
     ArrayList<Sync> syncArray = new ArrayList<>();
@@ -94,6 +95,15 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         recyclerView = view.findViewById(R.id.recyclerView);
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(this);
+
+        try {
+            strIntentMain = getArguments().getString("model");
+            Log.e("StringMain List", "--------------------------" + strIntentMain);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
@@ -131,116 +141,426 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
 
         getEmployee();
 
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                swipeRefreshLayout.setRefreshing(false);
-//                if(syncArray!=null) {
-//                    for (int j = 0; j < syncArray.size(); j++) {
-//                        if (syncArray.get(j).getSettingKey().equals("Security")) {
-//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-//                                statusList.add(0);
-//                                statusList.add(1);
-//                                statusList.add(2);
-//                                statusList.add(3);
-//                                statusList.add(4);
-//                                statusList.add(5);
-//
-//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-//                                getPassTypeList.add(1);
-//
-//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
-//
-//                            }
-//                        } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
-//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-//                                statusList.add(0);
-//                                statusList.add(1);
-//                                statusList.add(2);
-//                                statusList.add(3);
-//                                statusList.add(4);
-//                                statusList.add(5);
-//
-//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-//                                getPassTypeList.add(1);
-//
-//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList, String.valueOf(loginUser.getEmpId()),statusList);
-//
-//
-//                            }
-//                        }else if(syncArray.get(j).getSettingKey().equals("Admin")){
-//                            if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-//                                statusList.add(0);
-//                                statusList.add(1);
-//                                statusList.add(2);
-//                                statusList.add(3);
-//                                statusList.add(4);
-//                                statusList.add(5);
-//
-//                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
-//                                getPassTypeList.add(1);
-//
-//                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
 
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("visit 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 3")) {
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 0,1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+                                statusList.add(4);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("Add visitor getPass list") || strIntentMain.equalsIgnoreCase("visit -1")) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            }else if(strIntentMain.equalsIgnoreCase("emp 0"))
+                            {
+                                statusList.add(0);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 1"))
+                            {
+                                statusList.add(1);
+                                statusList.add(3);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 2"))
+                            {
+                                statusList.add(2);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 3"))
+                            {
+                                statusList.add(4);
+                                statusList.add(5);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp -1"))
+                            {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(1);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                        }
 
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("visit 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList, String.valueOf(loginUser.getEmpId()),statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 3")) {
+
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 0,1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+                                statusList.add(4);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("Add visitor getPass list") || strIntentMain.equalsIgnoreCase("visit -1")) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 0"))
+                            {
+                                statusList.add(0);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 1"))
+                            {
+                                statusList.add(1);
+                                statusList.add(3);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 2"))
+                            {
+                                statusList.add(2);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 3"))
+                            {
+                                statusList.add(4);
+                                statusList.add(5);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp -1"))
+                            {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(1);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                        }
 
 
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                        statusList.add(0);
-                        statusList.add(1);
-                        statusList.add(2);
-                        statusList.add(3);
-                        statusList.add(4);
-                        statusList.add(5);
+                        if(strIntentMain!=null) {
+                            if (strIntentMain.equalsIgnoreCase("visit 0")) {
+                                statusList.add(0);
 
-                        ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(1);
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        getVisitorGetPassList(sdf.format(System.currentTimeMillis()),sdf.format(System.currentTimeMillis()),getPassTypeList,"-1",statusList);
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 2")) {
+                                statusList.add(2);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 3")) {
+
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("visit 0,1")) {
+                                statusList.add(1);
+                                statusList.add(3);
+                                statusList.add(4);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+
+                            } else if (strIntentMain.equalsIgnoreCase("Add visitor getPass list") || strIntentMain.equalsIgnoreCase("visit -1")) {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 0"))
+                            {
+                                statusList.add(0);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 1"))
+                            {
+                                statusList.add(1);
+                                statusList.add(3);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 2"))
+                            {
+                                statusList.add(2);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp 3"))
+                            {
+
+                                statusList.add(4);
+                                statusList.add(5);
+
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }else if(strIntentMain.equalsIgnoreCase("emp -1"))
+                            {
+                                statusList.add(0);
+                                statusList.add(1);
+                                statusList.add(2);
+                                statusList.add(3);
+                                statusList.add(4);
+                                statusList.add(5);
+
+                                ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                                getPassTypeList.add(1);
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, String.valueOf(loginUser.getEmpId()), statusList);
+                            }
+                        }else{
+                            statusList.add(0);
+                            statusList.add(1);
+                            statusList.add(2);
+                            statusList.add(3);
+                            statusList.add(4);
+                            statusList.add(5);
+
+                            ArrayList<Integer> getPassTypeList = new ArrayList<>();
+                            getPassTypeList.add(1);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                            getVisitorGetPassList(sdf.format(System.currentTimeMillis()), sdf.format(System.currentTimeMillis()), getPassTypeList, "-1", statusList);
+                        }
 
                     }
                 }
@@ -346,7 +666,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
              spDept = findViewById(R.id.spDept);
-            spEmp = findViewById(R.id.spEmp);
+           // spEmp = findViewById(R.id.spEmp);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
             tvType = findViewById(R.id.tvType);

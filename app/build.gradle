@@ -40,6 +40,10 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.3.2'
 
+    //Image zoom
+    implementation 'com.jsibbold:zoomage:1.2.0'
+
+
     //progress dialog
 
     implementation 'com.kaopiz:kprogresshud:1.2.0'
