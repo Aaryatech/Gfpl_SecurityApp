@@ -86,6 +86,10 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
     ArrayList<VisitorList> temp;
     VisitorGatePassListAdapter adapter;
 
+    public String  fromDate,toDate,empId;
+    public ArrayList<Integer> getPassType = new ArrayList<>();
+    public ArrayList<Integer> status = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -140,7 +144,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         }
 
         getEmployee();
-
 
         if(syncArray!=null) {
             for (int j = 0; j < syncArray.size(); j++) {
@@ -213,7 +216,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                             }else if(strIntentMain.equalsIgnoreCase("emp 0"))
                             {
                                 statusList.add(0);
-
 
                                 ArrayList<Integer> getPassTypeList = new ArrayList<>();
                                 getPassTypeList.add(1);
@@ -571,7 +573,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         return view;
     }
 
-    private void getVisitorGetPassList(String formatDate, String toDate, ArrayList<Integer> getPassType, String empIds, ArrayList<Integer> status) {
+    private void getVisitorGetPassList(final String formatDate, final String toDate, final ArrayList<Integer> getPassType, final String empIds, final ArrayList<Integer> status) {
         Log.e("PARAMETER","            FROM DATE       "+ formatDate        +"          TO DATE     " +   toDate  +"       GEAT PASS TYPE   " +  getPassType  +"            EMP ID   "+   empIds  +"             STATUS"  +status);
 
         if (Constants.isOnline(getContext())) {
@@ -589,7 +591,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                             visitorList.clear();
                             visitorList = response.body();
 
-                             adapter = new VisitorGatePassListAdapter(visitorList, getContext(),loginUser,syncArray);
+                            adapter = new VisitorGatePassListAdapter(visitorList, getContext(),loginUser,syncArray,formatDate,toDate,getPassType,empIds,status);
                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
                             recyclerView.setLayoutManager(mLayoutManager);
                             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -633,7 +635,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
         TextView tvFromDate, tvToDate, tvType, tvEmp;
         ImageView ivClose;
         String DateTo;
-        Spinner spDept,spEmp;
+        Spinner spDept,spEmp,spStatus;
         CardView cardViewDept,cardViewEmp;
         CheckBox cbAll;
         private VisitorEmployeeAdapter mAdapter;
@@ -666,6 +668,7 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             tvToDate = findViewById(R.id.tvToDate);
             Button btnFilter = findViewById(R.id.btnFilter);
              spDept = findViewById(R.id.spDept);
+            spStatus = findViewById(R.id.spStatus);
            // spEmp = findViewById(R.id.spEmp);
             LinearLayout llEmp = findViewById(R.id.llEmp);
             ivClose = findViewById(R.id.ivClose);
@@ -680,12 +683,12 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             if(syncArray!=null) {
                 for (int j = 0; j < syncArray.size(); j++) {
                     if(syncArray.get(j).getSettingKey().equals("Admin")){
-                        if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
+                        if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUserMain.getEmpCatId()))) {
                            cardViewEmp.setVisibility(View.VISIBLE);
-                           cardViewDept.setVisibility(View.VISIBLE);
+                           //cardViewDept.setVisibility(View.VISIBLE);
                         }else{
                             cardViewEmp.setVisibility(View.GONE);
-                            cardViewDept.setVisibility(View.GONE);
+                           // cardViewDept.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -703,6 +706,30 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
 
             ArrayAdapter<String> spTypeAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, typeArray);
             spDept.setAdapter(spTypeAdapter);
+
+
+            ArrayList<String> statusArray = new ArrayList<>();
+            final ArrayList<Integer> statusIdArray = new ArrayList<>();
+            statusArray.add("All");
+            statusArray.add("Pending");
+            statusArray.add("Approve");
+            statusArray.add("Rejected");
+            statusArray.add("Allowed to Enter");
+            statusArray.add("Close Metting");
+            statusArray.add("Out From Factory");
+
+            statusIdArray.add(-1);
+            statusIdArray.add(0);
+            statusIdArray.add(1);
+            statusIdArray.add(2);
+            statusIdArray.add(3);
+            statusIdArray.add(4);
+            statusIdArray.add(5);
+
+            ArrayAdapter<String> spStatusAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, statusArray);
+            spStatus.setAdapter(spStatusAdapter);
+
+
 
             try {
                 mAdapter = new VisitorEmployeeAdapter(assignVisitorEmpStaticList, getActivity());
@@ -864,60 +891,276 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
                         dismiss();
 
                         final int getPassType = typeIdArray.get(spDept.getSelectedItemPosition());
+                        final int getPassStatus = statusIdArray.get(spStatus.getSelectedItemPosition());
+
+                        Log.e("Selected Status","--------------------------------"+getPassStatus);
+
                         ArrayList<Integer> getPassTypeList = new ArrayList<>();
-                        getPassTypeList.add(getPassType);
+                        getPassTypeList.add(1);
 
                         ArrayList<Integer> statusList1 = new ArrayList<>();
                         if(syncArray!=null) {
                             for (int j = 0; j < syncArray.size(); j++) {
                                 if (syncArray.get(j).getSettingKey().equals("Security")) {
                                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                        statusList1.add(0);
-                                        statusList1.add(1);
-                                        statusList1.add(2);
-                                        statusList1.add(3);
-                                        statusList1.add(4);
-                                        statusList1.add(5);
+                                        if(getPassStatus==-1) {
 
-                                        ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
-                                        getPassTypeList2.add(1);
+                                            statusList1.add(0);
+                                            statusList1.add(1);
+                                            statusList1.add(2);
+                                            statusList1.add(3);
+                                            statusList1.add(4);
+                                            statusList1.add(5);
 
-                                        String fromDate = tvFromDate.getText().toString();
-                                        String toDate = tvToDate.getText().toString();
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
 
-                                        getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==0)
+                                        {
+                                            statusList1.add(0);
+
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==1)
+                                        {
+
+                                            statusList1.add(1);
+
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==2)
+                                        {
+
+                                            statusList1.add(2);
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==3)
+                                        {
+
+                                            statusList1.add(3);
+
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==4)
+                                        {
+
+                                            statusList1.add(4);
+
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }else if(getPassStatus==5)
+                                        {
+
+                                            statusList1.add(5);
+
+                                            ArrayList<Integer> getPassTypeList2 = new ArrayList<>();
+                                            getPassTypeList2.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList2, "-1", statusList1);
+                                        }
                                     }
                                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
                                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                        statusList1.add(0);
-                                        statusList1.add(1);
-                                        statusList1.add(2);
-                                        statusList1.add(3);
-                                        statusList1.add(4);
-                                        statusList1.add(5);
+                                        if(getPassStatus==-1) {
+                                            statusList1.add(0);
+                                            statusList1.add(1);
+                                            statusList1.add(2);
+                                            statusList1.add(3);
+                                            statusList1.add(4);
+                                            statusList1.add(5);
 
-                                        ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
-                                        getPassTypeList1.add(1);
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
 
-                                        String fromDate = tvFromDate.getText().toString();
-                                        String toDate = tvToDate.getText().toString();
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
 
-                                        getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+                                        }else if(getPassStatus==0)
+                                        {
+                                            statusList1.add(0);
 
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+
+                                        }else if(getPassStatus==1)
+                                        {
+
+                                            statusList1.add(1);
+
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+                                        }else if(getPassStatus==2)
+                                        {
+
+                                            statusList1.add(2);
+
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+
+                                        }else if(getPassStatus==3)
+                                        {
+
+                                            statusList1.add(3);
+
+
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+
+                                        }else if(getPassStatus==4)
+                                        {
+
+                                            statusList1.add(4);
+
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+
+                                        }else if(getPassStatus==5)
+                                        {
+
+                                            statusList1.add(5);
+
+                                            ArrayList<Integer> getPassTypeList1 = new ArrayList<>();
+                                            getPassTypeList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList1, String.valueOf(loginUser.getEmpId()), statusList1);
+
+                                        }
                                     }
                                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
-                                        statusList1.add(0);
-                                        statusList1.add(1);
-                                        statusList1.add(2);
-                                        statusList1.add(3);
-                                        statusList1.add(4);
-                                        statusList1.add(5);
+                                        if(getPassStatus==-1) {
+                                            statusList1.add(0);
+                                            statusList1.add(1);
+                                            statusList1.add(2);
+                                            statusList1.add(3);
+                                            statusList1.add(4);
+                                            statusList1.add(5);
 
-                                        String fromDate = tvFromDate.getText().toString();
-                                        String toDate = tvToDate.getText().toString();
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
 
-                                        getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+                                        }else if(getPassStatus==0)
+                                        {
+                                            statusList1.add(0);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+                                        }else if(getPassStatus==1)
+                                        {
+                                            statusList1.add(1);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+                                        }else if(getPassStatus==2)
+                                        {
+                                            statusList1.add(2);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+
+                                        }else if(getPassStatus==3)
+                                        {
+
+                                            statusList1.add(3);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+
+                                        }else if(getPassStatus==4)
+                                        {
+
+                                            statusList1.add(4);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+
+                                        }else if(getPassStatus==5)
+                                        {
+                                            statusList1.add(5);
+
+                                            String fromDate = tvFromDate.getText().toString();
+                                            String toDate = tvToDate.getText().toString();
+
+                                            getVisitorGetPassList(fromDate, toDate, getPassTypeList, stringId, statusList1);
+
+                                        }
                                     }
                                 }
                             }

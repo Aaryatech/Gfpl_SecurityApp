@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,17 @@ import com.ats.gfpl_securityapp.interfaces.VisitorDetailInterface;
 import com.ats.gfpl_securityapp.model.VisitorList;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 public class TabFragment extends Fragment {
 
     private ViewPager viewPager;
     private TabLayout tab;
     FragmentPagerAdapter adapterViewPager;
     public static VisitorList staticVisitorModel;
+    public static String  fromDate,toDate,empId;
+    public  static ArrayList<Integer> getPassType = new ArrayList<>();
+    public  static ArrayList<Integer> status = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,8 +94,27 @@ public class TabFragment extends Fragment {
         }
 
 
+        try {
+             fromDate = getArguments().getString("fromDate");
+             Log.e("From Date","--------------------------------------------"+fromDate);
+             toDate = getArguments().getString("toDate");
+            Log.e("To Date","--------------------------------------------"+toDate);
+             empId = getArguments().getString("empId");
+            Log.e("Emp Id","--------------------------------------------"+empId);
+            getPassType = getArguments().getIntegerArrayList("getPassType");
+            Log.e("Gate Pass Type","--------------------------------------------"+getPassType);
+            status = getArguments().getIntegerArrayList("status");
+            Log.e("Status","--------------------------------------------"+status);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         return view;
     }
+
+
 
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter {

@@ -196,6 +196,17 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_approve" />
 
+                <ImageView
+                    android:id="@+id/ivReject"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:scaleType="fitXY"
+                    android:gravity="center"
+                    android:padding="1dp"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_reject" />
+
             </LinearLayout>
 
         </LinearLayout>

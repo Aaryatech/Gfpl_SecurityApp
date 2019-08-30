@@ -33,11 +33,11 @@ import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.CloseMeetingActivity;
 import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
+import com.ats.gfpl_securityapp.activity.TabActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.MaintenanceGatePassListFragment;
-import com.ats.gfpl_securityapp.fragment.TabFragment;
 import com.ats.gfpl_securityapp.model.Gate;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
@@ -155,6 +155,14 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                         }else if(model.getVisitStatus()==0)
                         {
                             myViewHolder.tvStatus.setText("Pending");
+                        }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }
                     }
                 } else if(syncArray.get(j).getSettingKey().equals("Supervisor")){
@@ -213,6 +221,14 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }
 
                     }
@@ -267,6 +283,14 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==5)
                         {
                             myViewHolder.ivApprove.setVisibility(View.GONE);
                             myViewHolder.ivReject.setVisibility(View.GONE);
@@ -406,15 +430,22 @@ public class MaintenanceGatePassListAdapter extends RecyclerView.Adapter<Mainten
             @Override
             public void onClick(View v) {
 
+//                Gson gson = new Gson();
+//                String json = gson.toJson(model);
+//                MainActivity activity = (MainActivity) context;
+//
+//                TabFragment adf = new TabFragment();
+//                Bundle args = new Bundle();
+//                args.putString("model", json);
+//                adf.setArguments(args);
+//                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
+
                 Gson gson = new Gson();
                 String json = gson.toJson(model);
-                MainActivity activity = (MainActivity) context;
 
-                TabFragment adf = new TabFragment();
-                Bundle args = new Bundle();
-                args.putString("model", json);
-                adf.setArguments(args);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "MaintenanceGPListFragment").commit();
+                Intent intent = new Intent(context, TabActivity.class);
+                intent.putExtra("model", json);
+                context.startActivity(intent);
 
             }
         });

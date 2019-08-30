@@ -20,7 +20,9 @@ import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
+import static com.ats.gfpl_securityapp.activity.TabActivity.staticVisitorModel;
+
+//import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
 
 public class VisitorDetailFragment extends Fragment implements VisitorDetailInterface {
     public TextView tvName, tvCompany, tvMobile, tvType, tvStatus, tvRemark,tvGPNo,tvDate,tvOutTime,tvInTime,tvgateName,tvgatePassType,tvPurposeText,tvgEmpName,tvPhone,tvMeetingDisc,tvVisitCardNumber,tvSecurityName;
@@ -54,9 +56,30 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
         ivPhoto2 = view.findViewById(R.id.ivPhoto2);
         ivPhoto3 = view.findViewById(R.id.ivPhoto3);
 
-        String imageUri = String.valueOf(staticVisitorModel.getPersonPhoto());
+//        FragmentManager fragmentManager = getFragmentManager();
+//        FragmentTransaction tx = fragmentManager.beginTransaction();
+//        tx.replace( R.id.content_frame, new VisitorDetailFragment() ).addToBackStack( "tag" ).commit();
+//
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//       getView().setOnKeyListener( new View.OnKeyListener()
+//        {
+//            @Override
+//            public boolean onKey( View v, int keyCode, KeyEvent event)
+//            {
+//                if( keyCode == KeyEvent.KEYCODE_BACK )
+//                {
+//                    Toast.makeText(getContext(), "Back Press", Toast.LENGTH_SHORT).show();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        } );
+
+
         try {
-            Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
+            String imageUri = String.valueOf(staticVisitorModel.getPersonPhoto());
+            Picasso.with(getActivity()).load(Constants.IMAGE_URL+staticVisitorModel.getPersonPhoto()).placeholder(getActivity().getResources().getDrawable(R.drawable.profile)).into(ivPhoto);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,20 +106,27 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
             e.printStackTrace();
         }
 
-        tvGPNo.setText(""+staticVisitorModel.getExVar1());
-        tvName.setText(staticVisitorModel.getPersonName());
-        tvCompany.setText(staticVisitorModel.getPersonCompany());
-        tvMobile.setText(staticVisitorModel.getMobileNo());
-        tvRemark.setText("Remark : "+staticVisitorModel.getPurposeRemark());
-        //tvDate.setText(""+staticVisitorModel.getVisitDateIn());
-        tvOutTime.setText(staticVisitorModel.getVisitOutTime());
-        tvInTime.setText(staticVisitorModel.getInTime());
-        tvgateName.setText("Gate Name : "+staticVisitorModel.getGateName());
-        tvPurposeText.setText("Purpose : "+staticVisitorModel.getPurposeHeading());
-        tvgEmpName.setText("Employee Name : "+staticVisitorModel.getEmpName());
-        tvMeetingDisc.setText("Meeting Discusstion : "+staticVisitorModel.getMeetingDiscussion());
-        tvVisitCardNumber.setText("Card No : "+staticVisitorModel.getVisitCardNo());
-        tvSecurityName.setText("Security Name : "+staticVisitorModel.getSecurityInName());
+        try {
+
+            tvGPNo.setText("" + staticVisitorModel.getExVar1());
+            tvName.setText(staticVisitorModel.getPersonName());
+            tvCompany.setText(staticVisitorModel.getPersonCompany());
+            tvMobile.setText(staticVisitorModel.getMobileNo());
+            tvRemark.setText("Remark : " + staticVisitorModel.getPurposeRemark());
+            //tvDate.setText(""+staticVisitorModel.getVisitDateIn());
+            tvOutTime.setText(staticVisitorModel.getVisitOutTime());
+            tvInTime.setText(staticVisitorModel.getInTime());
+            tvgateName.setText("Gate Name : " + staticVisitorModel.getGateName());
+            tvPurposeText.setText("Purpose : " + staticVisitorModel.getPurposeHeading());
+            tvgEmpName.setText("Employee Name : " + staticVisitorModel.getEmpName());
+            tvMeetingDisc.setText("Meeting Discusstion : " + staticVisitorModel.getMeetingDiscussion());
+            tvVisitCardNumber.setText("Card No : " + staticVisitorModel.getVisitCardNo());
+            tvSecurityName.setText("Security Name : " + staticVisitorModel.getSecurityInName());
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
@@ -161,4 +191,6 @@ public class VisitorDetailFragment extends Fragment implements VisitorDetailInte
     public void fragmentBecameVisible() {
 
     }
+
+
 }

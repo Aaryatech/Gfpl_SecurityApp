@@ -43,6 +43,7 @@ import com.ats.gfpl_securityapp.fragment.MaterialTrackingDetailFragment;
 import com.ats.gfpl_securityapp.fragment.OutwardApproveFragment;
 import com.ats.gfpl_securityapp.fragment.OutwardFragment;
 import com.ats.gfpl_securityapp.fragment.OutwardGatePassFragment;
+import com.ats.gfpl_securityapp.fragment.OutwardRejectFragment;
 import com.ats.gfpl_securityapp.fragment.PendingInwardFragment;
 import com.ats.gfpl_securityapp.fragment.PurposeListFragment;
 import com.ats.gfpl_securityapp.fragment.TabFragment;
@@ -70,6 +71,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
     boolean doubleBackToExitPressedOnce = false;
     public String strIntentMain,strMeeting;
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_reject).setVisible(false);
                     Log.e("MY TAG","-----Security-------");
                 }
            }
@@ -178,6 +181,7 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(true);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_reject).setVisible(true);
                     Log.e("MY TAG","-----Admin-------");
                 }
 //                else {
@@ -209,6 +213,7 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_add_comp).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_add_comp_list).setVisible(false);
                     navigationView.getMenu().findItem(R.id.nav_outward_gp_approve).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.nav_outward_gp_reject).setVisible(true);
                     Log.e("MY TAG","------Supervisor------");
                 }
 //                else {
@@ -388,8 +393,9 @@ public class MainActivity extends AppCompatActivity
                     ft.commit();
                 }else if (strIntentMain.equalsIgnoreCase("5")) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, new MaterialFragment(), "DashFragment");
+                    ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
                     ft.commit();
+                    //MaterialFragment
                 }else if (strIntentMain.equalsIgnoreCase("Outward gate pass list")) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_frame, new OutwardFragment(), "DashFragment");
@@ -490,7 +496,7 @@ public class MainActivity extends AppCompatActivity
         Fragment visitCardListFragment = getSupportFragmentManager().findFragmentByTag("VisitCardListFragment");
         Fragment outwardListFragment = getSupportFragmentManager().findFragmentByTag("OutwardListFragment");
         Fragment companyListFragment = getSupportFragmentManager().findFragmentByTag("CompanyListFragment");
-
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -596,6 +602,8 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
 
     private void updateToken(Integer empId, String token) {
         Log.e("PARAMETERS : ", "       EMP ID : " + empId +"             TOKEN:"  +token);
@@ -774,6 +782,11 @@ public class MainActivity extends AppCompatActivity
 //            ft.replace(R.id.content_frame, new OutwardGatePassFragment(), "DashFragment");
 //            ft.commit();
 
+        }else if(id==R.id.nav_outward_gp_reject)
+        {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, new OutwardRejectFragment(), "DashFragment");
+            ft.commit();
         }
         else if (id == R.id.nav_outward_gp) {
             if(loginUser.getEmpCatId()==2) {
@@ -948,4 +961,9 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public interface OnBackPressedListner{
+        boolean onBackPressed();
+    }
+
 }

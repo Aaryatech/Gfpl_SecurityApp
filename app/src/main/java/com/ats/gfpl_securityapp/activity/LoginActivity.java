@@ -313,6 +313,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 if(strIntent==null) {
                                     Log.e("Main User","-----------------------");
                                     CustomSharedPreference.putString(LoginActivity.this, CustomSharedPreference.MAIN_KEY_USER, json);
+                                    if(data.getEmpCatId()==2)
+                                    {
+                                        CustomSharedPreference.putString(LoginActivity.this, CustomSharedPreference.KEY_USER, json);
+                                    }
                                 }else{
                                     Log.e("User","-----------------------");
                                     CustomSharedPreference.putString(LoginActivity.this, CustomSharedPreference.KEY_USER, json);

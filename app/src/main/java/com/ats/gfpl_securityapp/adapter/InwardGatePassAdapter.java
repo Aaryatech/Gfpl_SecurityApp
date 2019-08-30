@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,9 +77,12 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         if(model.getGatePassSubType()==1)
         {
             myViewHolder.tvInwardType.setText("Inward");
+
         }else if(model.getGatePassSubType()==2)
         {
             myViewHolder.tvInwardType.setText("Parcel");
+           // myViewHolder.linearLayoutInward.setBackgroundColor(context.getResources().getColor(R.color.colorRed));
+            myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorFant));
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -104,6 +108,7 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         {
             myViewHolder.tvStatus.setText("Rejected");
         }
+
 
         String imageUri = String.valueOf(model.getPersonPhoto());
         try {
@@ -275,7 +280,8 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
         public TextView tvGPNo, tvInvoice, tvDate, tvParty, tvNugs, tvTime, tvStatus, tvLastPerson,tvInwardType;
         public ImageView ivPhoto1, ivPhoto2, ivPhoto3,ivEdit;
         public CheckBox checkBox;
-        public LinearLayout linearLayoutInward;
+        public CardView cardView;
+        public LinearLayout linearLayoutInward,linearLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -292,7 +298,9 @@ public class InwardGatePassAdapter extends RecyclerView.Adapter<InwardGatePassAd
             ivPhoto2 = itemView.findViewById(R.id.ivPhoto2);
             ivPhoto3 = itemView.findViewById(R.id.ivPhoto3);
             checkBox = itemView.findViewById(R.id.checkBox);
+            cardView = itemView.findViewById(R.id.cardView);
             linearLayoutInward = itemView.findViewById(R.id.linearLayoutInward);
+            linearLayout = itemView.findViewById(R.id.linearLayout);
 
             ivEdit=itemView.findViewById(R.id.ivEdit);
         }

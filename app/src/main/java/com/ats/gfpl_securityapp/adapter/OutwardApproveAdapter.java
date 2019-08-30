@@ -16,6 +16,7 @@ import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.MainActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.OutwardApproveFragment;
+import com.ats.gfpl_securityapp.fragment.OutwardRejectFragment;
 import com.ats.gfpl_securityapp.model.Info;
 import com.ats.gfpl_securityapp.model.Login;
 import com.ats.gfpl_securityapp.model.Outward;
@@ -98,11 +99,13 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
                 if (syncArray.get(j).getSettingKey().equals("Supervisor")) {
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
                         myViewHolder.ivApprove.setVisibility(View.GONE);
+                        myViewHolder.ivReject.setVisibility(View.GONE);
 
                     }
                 }else if(syncArray.get(j).getSettingKey().equals("Admin")){
                     if (syncArray.get(j).getSettingValue().equals(String.valueOf(loginUser.getEmpCatId()))) {
                         myViewHolder.ivApprove.setVisibility(View.VISIBLE);
+                        myViewHolder.ivReject.setVisibility(View.VISIBLE);
                     }
                     }
             }
@@ -114,9 +117,16 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
                     getUpdateStatus(model.getGpOutwardId(),loginUser.getEmpId(),0,"NA");
             }
         });
+
+        myViewHolder.ivReject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUpdateStatus(model.getGpOutwardId(),loginUser.getEmpId(),4,"NA");
+            }
+        });
     }
 
-    private void getUpdateStatus(int gpOutwardId, Integer empId, int status, String photo) {
+    private void getUpdateStatus(int gpOutwardId, Integer empId, final int status, String photo) {
 
         Log.e("PARAMETER","                 OUTWARD PASS ID     "+gpOutwardId +"              EMP ID       "+empId +"       SATAUS      "+status  +"      PHOTO         "+photo);
 
@@ -140,9 +150,17 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
 
                                 Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
 
-                                FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
-                                ft.commit();
+                                if(status==0) {
+                                    FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                                    ft.replace(R.id.content_frame, new OutwardApproveFragment(), "DashFragment");
+                                    ft.commit();
+
+                                }else if(status==4)
+                                {
+                                    FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+                                    ft.replace(R.id.content_frame, new OutwardRejectFragment(), "DashFragment");
+                                    ft.commit();
+                                }
 
                             } else {
                                 Toast.makeText(context, "Unable to process", Toast.LENGTH_SHORT).show();
@@ -183,7 +201,7 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvGpNo,tvOutwardName,tvOutDate,tvExpectedDate,tvToName,tvType;
-        private ImageView ivEdit,ivApprove;
+        private ImageView ivEdit,ivApprove,ivReject;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGpNo=itemView.findViewById(R.id.tvGPNo);
@@ -193,6 +211,7 @@ public class OutwardApproveAdapter extends RecyclerView.Adapter<OutwardApproveAd
             tvToName=itemView.findViewById(R.id.tvToName);
             ivEdit=itemView.findViewById(R.id.ivEdit);
             ivApprove=itemView.findViewById(R.id.ivApprove);
+            ivReject=itemView.findViewById(R.id.ivReject);
             tvType=itemView.findViewById(R.id.tvType);
         }
     }

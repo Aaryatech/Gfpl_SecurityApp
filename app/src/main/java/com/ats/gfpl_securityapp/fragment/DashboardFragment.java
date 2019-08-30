@@ -79,7 +79,7 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
         tvMaintenanceTotal=(TextView) view.findViewById(R.id.tvMaintenanceTotal);
         tvTotalTempGP=(TextView) view.findViewById(R.id.tvTotalTempGP);
         tvTotalDayGP=(TextView) view.findViewById(R.id.tvTotalDayGP);
-        tvNoOfEmpOutsideFactory=(TextView) view.findViewById(R.id.tvNoOfEmpOutsideFactory);
+       // tvNoOfEmpOutsideFactory=(TextView) view.findViewById(R.id.tvNoOfEmpOutsideFactory);
         tvTotalNoOfInward=(TextView) view.findViewById(R.id.tvTotalNoOfInward);
         tvTotalNoOfParcel=(TextView) view.findViewById(R.id.tvTotalNoOfParcel);
         tvDeptWiseTotalPending=(TextView) view.findViewById(R.id.tvDeptWiseTotalPending);
@@ -173,7 +173,7 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
         linearLayoutTotalTempGp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalTempGp);
         linearLayoutTotalDayGp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalDayGp);
         linearLayoutNoEmpOutsideFact=(LinearLayout)view.findViewById(R.id.linearLayoutNoEmpOutsideFact);
-        linearLayoutTotalEmp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalEmp);
+       // linearLayoutTotalEmp=(LinearLayout)view.findViewById(R.id.linearLayoutTotalEmp);
 
         linearLayoutTotalNoInward=(LinearLayout)view.findViewById(R.id.linearLayoutTotalNoInward);
         linearLayoutTotalNoParcel=(LinearLayout)view.findViewById(R.id.linearLayoutTotalNoParcel);
@@ -212,7 +212,7 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
         linearLayoutTotalTempGp.setOnClickListener(this);
         linearLayoutTotalDayGp.setOnClickListener(this);
         linearLayoutNoEmpOutsideFact.setOnClickListener(this);
-        linearLayoutTotalEmp.setOnClickListener(this);
+       // linearLayoutTotalEmp.setOnClickListener(this);
 
         linearLayoutTotalNoInward.setOnClickListener(this);
         linearLayoutTotalNoParcel.setOnClickListener(this);
@@ -305,9 +305,9 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
                         linearLayoutVisitorEmployee1.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee2.setVisibility(View.VISIBLE);
                         linearLayoutVisitorEmployee3.setVisibility(View.VISIBLE);
-                        linearLayoutVisitorMaintenance1.setVisibility(View.GONE);
-                        linearLayoutMaintenanceEmployee2.setVisibility(View.GONE);
-                        linearLayoutMainTotal.setVisibility(View.GONE);
+                        linearLayoutVisitorMaintenance1.setVisibility(View.VISIBLE);
+                        linearLayoutMaintenanceEmployee2.setVisibility(View.VISIBLE);
+                        linearLayoutMainTotal.setVisibility(View.VISIBLE);
                         linearLayoutGP1.setVisibility(View.GONE);
                         linearLayoutGP2.setVisibility(View.GONE);
                         linearLayoutGP3.setVisibility(View.GONE);
@@ -322,7 +322,7 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
 
                         tvLabVisitorCount.setVisibility(View.GONE);
                         tvLabEmpVisitorCount.setVisibility(View.VISIBLE);
-                        tvLabMaintenanceCount.setVisibility(View.GONE);
+                        tvLabMaintenanceCount.setVisibility(View.VISIBLE);
                         tvLabEmpGatePassCount.setVisibility(View.GONE);
                         tvlabMaterialCount.setVisibility(View.GONE);
                         tvLabEmpMaterialCount.setVisibility(View.VISIBLE);
@@ -393,11 +393,12 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
 
                             Log.e("Dashboard Bin : ", " - " +dashboard);
 
-                            Log.e("EMP Temp","----------------------------------------------"+dashboard.getEmpGatepassCount().getTempGpCount());
-                            Log.e("EMP Day","----------------------------------------------"+dashboard.getEmpGatepassCount().getDayGpCount());
-                            total=(dashboard.getEmpGatepassCount().getTempGpCount())+(dashboard.getEmpGatepassCount().getDayGpCount());
-                            Log.e("EMP Total","----------------------------------------------"+total);
+//                            Log.e("EMP Temp","----------------------------------------------"+dashboard.getEmpGatepassCount().getTempGpCount());
+//                            Log.e("EMP Day","----------------------------------------------"+dashboard.getEmpGatepassCount().getDayGpCount());
+//                            total=(dashboard.getEmpGatepassCount().getTempGpCount())+(dashboard.getEmpGatepassCount().getDayGpCount());
+//                            Log.e("EMP Total","----------------------------------------------"+total);
                             //tvTotalEmp.setText(total);
+
 
                             tvTotalVisitor.setText(""+dashboard.getVisAndMaintGatepassCount().getVisitorTotal());
                             tvCurrVisitorComp.setText(""+dashboard.getVisAndMaintGatepassCount().getVisitorInComp());
@@ -417,7 +418,8 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
                             tvMaintenanceTotal.setText(""+dashboard.getVisAndMaintGatepassCount().getMaintTotal());
                             tvTotalTempGP.setText(""+dashboard.getEmpGatepassCount().getTempGpCount());
                             tvTotalDayGP.setText(""+dashboard.getEmpGatepassCount().getDayGpCount());
-                            tvNoOfEmpOutsideFactory.setText(""+dashboard.getEmpGatepassCount().getOutEmpCount());
+                            //tvNoOfEmpOutsideFactory.setText(""+dashboard.getEmpGatepassCount().getOutEmpCount());
+                            tvTotalEmp.setText(""+dashboard.getEmpGatepassCount().getOutEmpCount());
                             tvTotalNoOfInward.setText(""+dashboard.getMatGatepassCount().getInwardCount());
                             tvTotalNoOfParcel.setText(""+dashboard.getMatGatepassCount().getParcelCount());
                             tvDeptWiseTotalPending.setText(""+dashboard.getMatGatepassCount().getDeptPendingCount());
@@ -528,177 +530,487 @@ public LinearLayout linearLayoutSupTotalTemp,linearLayoutSupTotalDay,linearLayou
             //------------------------------------------PREVIOUS-------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutTotalVisitor)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit -1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit -1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit -1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutCurrVisitorComp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit 0,1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit 0,1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit 0,1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutVisitorMeetingComp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit 3");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit 3");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit 3");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutVisitorRejected)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutVisitorPending)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit 0");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit 0");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit 0");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutVisitorApprove)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "visit 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "visit 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "visit 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //----------------------------------------11111111111111111111111111111-----------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutEmpTotalVisitor)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "emp -1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "emp -1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "emp -1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutEmpApprove)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "emp 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "emp 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "emp 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutEmpRejected)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "emp 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "emp 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "emp 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutEmpPending)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "emp 0");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "emp 0");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "emp 0");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutEmpMeetingComp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "emp 3");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new VisitorGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "emp 3");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "emp 3");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //--------------------------------------------22222222222222222222-------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutMaintePending)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Maint 0");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaintenanceGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Maint 0");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Maint 0");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutMainteApprove)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Maint 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaintenanceGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Maint 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Maint 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutMainteRejected)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Maint 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaintenanceGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Maint 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Maint 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutMainteWorkComp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Maint 3");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaintenanceGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Maint 3");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Maint 3");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutMainteVisitorTotal)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Maint -1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaintenanceGatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Maint -1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Maint -1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //--------------------------------------------3333333333333333333333333-------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutTotalTempGp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Temp = 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Temp = 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Temp = 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutTotalDayGp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Day = 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Day = 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Day = 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutNoEmpOutsideFact) {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "OutEmp");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }else if(v.getId()==R.id.linearLayoutTotalEmp)
-        {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "EmpTotal");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "OutEmp");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "OutEmp");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        }
+//        else if(v.getId()==R.id.linearLayoutTotalEmp)
+//        {
+//            if(loginUserMain.getEmpCatId()==2) {
+//
+//                Fragment adf1 = new EmployeeFragment();
+//                Bundle args1 = new Bundle();
+//                args1.putString("model", "EmpTotal");
+//                adf1.setArguments(args1);
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+//                Log.e("Maintence", "--------------END----------------");
+//
+//            }else {
+//                Intent intent = new Intent(getActivity(), LoginActivity.class);
+//                intent.putExtra("model", "EmpTotal");
+//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
+//            }
             //--------------------------------------------444444444444444444444444444444444444-------------------------------------------------------
-        }else if(v.getId()==R.id.linearLayoutTotalPending)
+       // }
+        else if(v.getId()==R.id.linearLayoutTotalPending)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Doc 0");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaterialFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Doc 0");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Doc 0");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutTotalApprove)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Doc 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaterialFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Doc 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Doc 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutTotalRejected)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Doc 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new MaterialFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Doc 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Doc 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //--------------------------------------------555555555555555555555555555555555555555-------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutTotalNoInward)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Inward 1");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new InwardgatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Inward 1");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Inward 1");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutTotalNoParcel)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "Parcel 2");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new InwardgatePassListFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "Parcel 2");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "Parcel 2");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //--------------------------------------------666666666666666666666666666666-------------------------------------------------------
         }else if(v.getId()==R.id.linearLayoutSupTotalTemp)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "SupTemp");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "SupTemp");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "SupTemp");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         }else if(v.getId()==R.id.linearLayoutSupTotalDay)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "SupDay");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "SupDay");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "SupDay");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
         } else if(v.getId()==R.id.linearLayoutSupNoEmpOut)
         {
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.putExtra("model", "SupOut");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            if(loginUserMain.getEmpCatId()==2) {
+
+                Fragment adf1 = new EmployeeFragment();
+                Bundle args1 = new Bundle();
+                args1.putString("model", "SupOut");
+                adf1.setArguments(args1);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf1, "DashFragment").commit();
+                Log.e("Maintence", "--------------END----------------");
+
+            }else {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.putExtra("model", "SupOut");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             //--------------------------------------------77777777777777777777777777------------------------------------------------------
         }
 

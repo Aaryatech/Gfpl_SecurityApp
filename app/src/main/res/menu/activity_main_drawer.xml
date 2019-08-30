@@ -68,7 +68,14 @@
             android:id="@+id/nav_outward_gp_approve"
             android:icon="@drawable/ic_material"
             android:visible="true"
-            android:title="Material Gate Pass Approve" />
+            android:title="Approve Material Gate Pass" />
+
+        <item
+            android:id="@+id/nav_outward_gp_reject"
+            android:icon="@drawable/ic_material"
+            android:visible="true"
+            android:title="Reject Material Gate Pass" />
+
 
         <item
             android:id="@+id/nav_outward_gp_list"

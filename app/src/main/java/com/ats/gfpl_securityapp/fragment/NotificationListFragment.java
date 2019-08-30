@@ -26,7 +26,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
+import static com.ats.gfpl_securityapp.activity.TabActivity.staticVisitorModel;
+
+//import static com.ats.gfpl_securityapp.fragment.TabFragment.staticVisitorModel;
 
 public class NotificationListFragment extends Fragment implements NotificationInterface {
 

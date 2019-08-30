@@ -34,9 +34,9 @@ import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.activity.CloseMeetingActivity;
 import com.ats.gfpl_securityapp.activity.ImageZoomActivity;
 import com.ats.gfpl_securityapp.activity.MainActivity;
+import com.ats.gfpl_securityapp.activity.TabActivity;
 import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.fragment.AddInfoFragment;
-import com.ats.gfpl_securityapp.fragment.TabFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassFragment;
 import com.ats.gfpl_securityapp.fragment.VisitorGatePassListFragment;
 import com.ats.gfpl_securityapp.model.Gate;
@@ -63,7 +63,11 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
     private Context context;
     private Login login;
     ArrayList<Sync> syncArray = new ArrayList<>();
-
+    private String fromDate;
+    private String toDate;
+    ArrayList<Integer> getPassType = new ArrayList<>();
+    private String empId;
+    ArrayList<Integer> status = new ArrayList<>();
 
 //    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context,Login login) {
 //        this.visitorList = visitorList;
@@ -76,6 +80,18 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
         this.context = context;
         this.login = login;
         this.syncArray = syncArray;
+    }
+
+    public VisitorGatePassListAdapter(ArrayList<VisitorList> visitorList, Context context, Login login, ArrayList<Sync> syncArray, String fromDate, String toDate, ArrayList<Integer> getPassType, String empId, ArrayList<Integer> status) {
+        this.visitorList = visitorList;
+        this.context = context;
+        this.login = login;
+        this.syncArray = syncArray;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
+        this.getPassType = getPassType;
+        this.empId = empId;
+        this.status = status;
     }
 
     @NonNull
@@ -161,6 +177,14 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }
 
                     }
@@ -186,6 +210,14 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             myViewHolder.ivApprove.setVisibility(View.GONE);
                             myViewHolder.ivReject.setVisibility(View.GONE);
                             myViewHolder.ivClose.setVisibility(View.VISIBLE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
                             myViewHolder.ivInfo.setVisibility(View.GONE);
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
@@ -239,6 +271,14 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             myViewHolder.ivOutFactory.setVisibility(View.VISIBLE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }else if(model.getVisitStatus()==2)
+                        {
+                            myViewHolder.ivApprove.setVisibility(View.GONE);
+                            myViewHolder.ivReject.setVisibility(View.GONE);
+                            myViewHolder.ivClose.setVisibility(View.GONE);
+                            myViewHolder.ivInfo.setVisibility(View.GONE);
+                            myViewHolder.ivOutFactory.setVisibility(View.GONE);
+                            myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
+                        }else if(model.getVisitStatus()==5)
                         {
                             myViewHolder.ivApprove.setVisibility(View.GONE);
                             myViewHolder.ivReject.setVisibility(View.GONE);
@@ -378,16 +418,27 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
             @Override
             public void onClick(View v) {
 
+//                Gson gson = new Gson();
+//                String json = gson.toJson(model);
+//                MainActivity activity = (MainActivity) context;
+
+//                TabFragment adf = new TabFragment();
+//                Bundle args = new Bundle();
+//                args.putString("model", json);
+//                args.putString("fromDate", fromDate);
+//                args.putString("toDate", toDate);
+//                args.putIntegerArrayList("getPassType", getPassType);
+//                args.putString("empId", empId);
+//                args.putIntegerArrayList("status", status);
+//                adf.setArguments(args);
+//                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
+
                 Gson gson = new Gson();
                 String json = gson.toJson(model);
-                MainActivity activity = (MainActivity) context;
 
-                TabFragment adf = new TabFragment();
-                Bundle args = new Bundle();
-                args.putString("model", json);
-                adf.setArguments(args);
-                activity.getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, adf, "VisitorGPListFragment").commit();
-
+                Intent intent = new Intent(context, TabActivity.class);
+                intent.putExtra("model", json);
+                context.startActivity(intent);
             }
         });
 
