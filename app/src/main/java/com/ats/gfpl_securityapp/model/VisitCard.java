@@ -33,6 +33,8 @@ public class VisitCard {
     @Expose
     private String exVar2;
 
+    private Boolean isChecked;
+
     public VisitCard(Integer cardId, String cardNumber, String cardDesc, Integer delStatus, Integer isActive, Integer exInt1, Integer exInt2, String exVar1, String exVar2) {
         this.cardId = cardId;
         this.cardNumber = cardNumber;
@@ -117,6 +119,14 @@ public class VisitCard {
         this.exVar2 = exVar2;
     }
 
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
+
     @Override
     public String toString() {
         return "VisitCard{" +
@@ -129,6 +139,7 @@ public class VisitCard {
                 ", exInt2=" + exInt2 +
                 ", exVar1='" + exVar1 + '\'' +
                 ", exVar2='" + exVar2 + '\'' +
+                ", isChecked=" + isChecked +
                 '}';
     }
 }

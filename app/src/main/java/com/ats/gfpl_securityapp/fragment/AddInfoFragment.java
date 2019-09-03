@@ -1,6 +1,7 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,17 +13,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,6 +41,7 @@ import android.widget.Toast;
 import com.ats.gfpl_securityapp.BuildConfig;
 import com.ats.gfpl_securityapp.R;
 import com.ats.gfpl_securityapp.constants.Constants;
+import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.VisitCard;
 import com.ats.gfpl_securityapp.model.VisitorList;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
@@ -61,13 +72,23 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
     private Spinner spCard;
     private Button btnSubmit;
     private RadioButton rbYes, rbNo;
-    private TextView tvPhoto1, tvPhoto2, tvPhoto3;
+    private TextView tvPhoto1, tvPhoto2, tvPhoto3,tvCard,tvCardId;
+    private RecyclerView recyclerView;
     VisitorList model;
     int submitMob;
-    String type;
+    String type,strCardId;
+    String stringId,stringName;
 
     ArrayList<String> cardNumberList = new ArrayList<>();
     ArrayList<Integer> cardIdList = new ArrayList<>();
+    ArrayList<VisitCard> cardList = new ArrayList<>();
+
+    Dialog dialog;
+    int deptId;
+    CardListDialogAdapter cardAdapter;
+    public static ArrayList<Employee> assignCardList = new ArrayList<>();
+
+    public static ArrayList<VisitCard> assignCardNoStaticList = new ArrayList<>();
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -89,17 +110,21 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
         ivPhoto2 = view.findViewById(R.id.ivPhoto2);
         ivPhoto3 = view.findViewById(R.id.ivPhoto3);
         spCard = view.findViewById(R.id.spCard);
+        tvCard = view.findViewById(R.id.tvCard);
+        tvCardId = view.findViewById(R.id.tvCardId);
         btnSubmit = view.findViewById(R.id.btnSubmit);
         rbYes = view.findViewById(R.id.rbYes);
         rbNo = view.findViewById(R.id.rbNo);
         tvPhoto1 = view.findViewById(R.id.tvPhoto1);
         tvPhoto2 = view.findViewById(R.id.tvPhoto2);
         tvPhoto3 = view.findViewById(R.id.tvPhoto3);
+      //  recyclerView = view.findViewById(R.id.recyclerView);
 
         ivCamera1.setOnClickListener(this);
         ivCamera2.setOnClickListener(this);
         ivCamera3.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
+        tvCard.setOnClickListener(this);
 
         rbYes.setChecked(true);
 
@@ -146,20 +171,37 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
                             cardNumberList.clear();
                             cardIdList.clear();
+                            cardList.clear();
+                            cardList=response.body();
 
-                            cardNumberList.add("Select Card Number");
-                            cardIdList.add(0);
+                            assignCardNoStaticList.clear();
+                            assignCardNoStaticList = cardList;
 
-                            if (response.body().size() > 0) {
-                                for (int i = 0; i < response.body().size(); i++) {
-                                    cardIdList.add(response.body().get(i).getCardId());
-                                    cardNumberList.add(response.body().get(i).getCardNumber());
-                                }
 
-                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, cardNumberList);
-                                spCard.setAdapter(projectAdapter);
-
+                            for (int i = 0; i < assignCardNoStaticList.size(); i++) {
+                                assignCardNoStaticList.get(i).setChecked(false);
                             }
+
+
+//                            CardAdapter mAdapter = new CardAdapter(assignCardNoStaticList, getActivity());
+//                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+//                            recyclerView.setLayoutManager(mLayoutManager);
+//                            recyclerView.setItemAnimator(new DefaultItemAnimator());
+//                            recyclerView.setAdapter(mAdapter);
+
+//                            cardNumberList.add("Select Card Number");
+////                            cardIdList.add(0);
+
+//                            if (response.body().size() > 0) {
+//                                for (int i = 0; i < response.body().size(); i++) {
+//                                    cardIdList.add(response.body().get(i).getCardId());
+//                                    cardNumberList.add(response.body().get(i).getCardNumber());
+//                                }
+//
+//                                ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, cardNumberList);
+//                                spCard.setAdapter(projectAdapter);
+//
+//                            }
                             commonDialog.dismiss();
 
                         } else {
@@ -199,7 +241,13 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
             showCameraDialog("Photo3");
 
-        } else if (v.getId() == R.id.btnSubmit) {
+        }else if(v.getId()==R.id.tvCard)
+        {
+            showDialog();
+        }
+        else if (v.getId() == R.id.btnSubmit) {
+
+           // getAssignUser();
 
             submitMob = 1;
             if (rbYes.isChecked()) {
@@ -215,16 +263,16 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (cardID == 0) {
-                TextView viewProj = (TextView) spCard.getSelectedView();
-                viewProj.setError("required");
-            } else {
-                TextView viewProj = (TextView) spCard.getSelectedView();
-                viewProj.setError(null);
-            }
-            if (cardID != 0)
-            {
-                final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), "", "", "", model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), cardID, cardNumber, submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3(), model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
+//            if (cardID == 0) {
+//                TextView viewProj = (TextView) spCard.getSelectedView();
+//                viewProj.setError("required");
+//            } else {
+//                TextView viewProj = (TextView) spCard.getSelectedView();
+//                viewProj.setError(null);
+//            }
+//            if (cardID != 0)
+//            {
+                final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), "", "", "", model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), 1, "1", submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), stringId, model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
 
             if (imagePath1 == null && imagePath2 == null && imagePath3 == null) {
 
@@ -294,7 +342,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 final String currDate = sdf1.format(System.currentTimeMillis());
 
-                final VisitorList visitor1 = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), photo1, photo2, photo3, model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), cardID, cardNumber, submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), model.getExVar3(), model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
+                final VisitorList visitor1 = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), photo1, photo2, photo3, model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), 1, "1", submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), stringId, model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Confirmation");
                 builder.setMessage("Do you want to add info ?");
@@ -319,9 +367,244 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
 
             }
-            }
+           // }
         }
     }
+
+
+    private void showDialog() {
+        dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = li.inflate(R.layout.custom_dialog_card_layout, null, false);
+        dialog.setContentView(v);
+        dialog.setCancelable(true);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        RecyclerView rvCustomerList = dialog.findViewById(R.id.rvCustomerList);
+        EditText edSearch = dialog.findViewById(R.id.edSearch);
+        Button btnSubmit = dialog.findViewById(R.id.btnSubmit);
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                ArrayList<VisitCard> assignedArray = new ArrayList<>();
+                final ArrayList<Integer> assignedEmpIdArray = new ArrayList<>();
+                final ArrayList<String> assignedEmpNameArray = new ArrayList<>();
+                if (assignCardNoStaticList != null) {
+                    if (assignCardNoStaticList.size() > 0) {
+                        assignedArray.clear();
+                        for (int i = 0; i < assignCardNoStaticList.size(); i++) {
+                            if (assignCardNoStaticList.get(i).getChecked()) {
+                                assignedArray.add(assignCardNoStaticList.get(i));
+                                assignedEmpIdArray.add(assignCardNoStaticList.get(i).getCardId());
+                                assignedEmpNameArray.add(assignCardNoStaticList.get(i).getCardNumber());
+
+                            }
+                        }
+                    }
+                    Log.e("ASSIGN EMP", "---------------------------------" + assignedArray);
+                    Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedArray.size());
+                    Log.e("ASSIGN EMP ID", "---------------------------------" + assignedEmpIdArray);
+                    Log.e("ASSIGN EMP Name", "---------------------------------" + assignedEmpNameArray);
+
+                    String empIds=assignedEmpIdArray.toString().trim();
+                    Log.e("ASSIGN EMP ID","---------------------------------"+empIds);
+
+                    String a1 = ""+empIds.substring(1, empIds.length()-1).replace("][", ",")+"";
+                    stringId = a1.replaceAll("\\s","");
+
+                    Log.e("ASSIGN EMP ID STRING","---------------------------------"+stringId);
+                    Log.e("ASSIGN EMP ID STRING1","---------------------------------"+a1);
+
+                    String empName=assignedEmpNameArray.toString().trim();
+                    Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
+
+                    stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+
+                    // stringName = a.replaceAll("\\s","");
+
+                    Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+                    //Log.e("ASSIGN EMP NAME STRING1","---------------------------------"+a);
+
+                    tvCard.setText(""+stringName);
+                    tvCardId.setText(""+stringId);
+                }
+            }
+        });
+
+        cardAdapter = new CardListDialogAdapter(cardList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        rvCustomerList.setLayoutManager(mLayoutManager);
+        rvCustomerList.setItemAnimator(new DefaultItemAnimator());
+        rvCustomerList.setAdapter(cardAdapter);
+
+        edSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    if (cardAdapter != null) {
+                        filterDept(editable.toString());
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        dialog.show();
+    }
+    void filterDept(String text) {
+        ArrayList<VisitCard> temp = new ArrayList();
+        for (VisitCard d : cardList) {
+            if (d.getCardNumber().toLowerCase().contains(text.toLowerCase())) {
+                temp.add(d);
+            }
+        }
+        //update recyclerview
+        cardAdapter.updateList(temp);
+    }
+
+    public class CardListDialogAdapter extends RecyclerView.Adapter<CardListDialogAdapter.MyViewHolder> {
+
+        private ArrayList<VisitCard> cardList;
+        private Context context;
+
+        public CardListDialogAdapter(ArrayList<VisitCard> cardList, Context context) {
+            this.cardList = cardList;
+            this.context = context;
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+            public TextView tvCardNo;
+            public CheckBox checkBox;
+            public LinearLayout linearLayout;
+
+            public MyViewHolder(View view) {
+                super(view);
+                tvCardNo = view.findViewById(R.id.tvCardNo);
+                checkBox = view.findViewById(R.id.checkBox);
+                linearLayout = view.findViewById(R.id.linearLayout);
+            }
+        }
+
+
+        @NonNull
+        @Override
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.adapter_card_layout, viewGroup, false);
+
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int i) {
+            final VisitCard model = cardList.get(i);
+            final int pos = i;
+            myViewHolder.tvCardNo.setText(model.getCardNumber());
+            //holder.tvAddress.setText(model.getCustAddress());
+
+            myViewHolder.checkBox.setChecked(cardList.get(i).getChecked());
+
+            myViewHolder.checkBox.setTag(cardList.get(i));
+
+            myViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox cb = (CheckBox) v;
+                    VisitCard visitCard = (VisitCard) cb.getTag();
+
+                    visitCard.setChecked(cb.isChecked());
+                    cardList.get(pos).setChecked(cb.isChecked());
+
+                }
+            });
+//
+//            myViewHolder.linearLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+////                        Intent customerDataIntent = new Intent();
+////                        customerDataIntent.setAction("CUSTOMER_DATA");
+////                        customerDataIntent.putExtra("name", model.getEmpDeptName());
+////                        customerDataIntent.putExtra("id", model.getEmpDeptId());
+////                        LocalBroadcastManager.getInstance(context).sendBroadcast(customerDataIntent);
+//                    dialog.dismiss();
+//                    tvCard.setText(""+model.getCardNumber());
+//                    tvCardId.setText(""+model.getCardId());
+//                  //  deptId= Integer.parseInt(tvDeptId.getText().toString());
+//
+//                }
+//            });
+        }
+
+
+
+        @Override
+        public int getItemCount() {
+            return cardList.size();
+        }
+
+        public void updateList(ArrayList<VisitCard> list) {
+            cardList = list;
+            notifyDataSetChanged();
+        }
+
+    }
+
+    private void getAssignUser() {
+
+        ArrayList<VisitCard> assignedCardArray = new ArrayList<>();
+        ArrayList<Integer> assignedCardIdArray = new ArrayList<>();
+        ArrayList<String> assignedCardNameArray = new ArrayList<>();
+
+        assignedCardIdArray.clear();
+        Log.e("ID ARRAY","------------------------------"+assignedCardIdArray);
+
+        if (assignCardNoStaticList != null) {
+
+            if (assignCardNoStaticList.size() > 0) {
+
+                assignedCardArray.clear();
+                assignedCardIdArray.clear();
+                assignedCardNameArray.clear();
+
+                for (int i = 0; i < assignCardNoStaticList.size(); i++) {
+
+                    if (assignCardNoStaticList.get(i).getChecked()) {
+
+                        assignedCardArray.add(assignCardNoStaticList.get(i));
+                        assignedCardIdArray.add(assignCardNoStaticList.get(i).getCardId());
+                        //  assignedEmpNameArray.add(assignVisitorEmpStaticList.get(i).getEmpFname() + " " + assignVisitorEmpStaticList.get(i).getEmpMname() + " " + assignVisitorEmpStaticList.get(i).getEmpSname());
+                    }
+                }
+            }
+            Log.e("ASSIGN EMP", "---------------------------------" + assignedCardIdArray);
+            Log.e("ASSIGN EMP SIZE", "---------------------------------" + assignedCardIdArray.size());
+
+            String empIds = assignedCardIdArray.toString().trim();
+            Log.e("ASSIGN EMP ID", "---------------------------------" + empIds);
+
+            String a1 = "" + empIds.substring(1, empIds.length() - 1).replace("][", ",") + "";
+            strCardId = a1.replaceAll("\\s","");
+            Log.e("ASSIGN EMP ID STRING", "---------------------------------" + strCardId);
+
+//            String empName=assignedEmpNameArray.toString().trim();
+////            Log.e("ASSIGN EMP NAME","---------------------------------"+empName);
+////
+////            stringName = ""+empName.substring(1, empName.length()-1).replace("][", ",")+"";
+////
+////            Log.e("ASSIGN EMP NAME STRING","---------------------------------"+stringName);
+////            edEmployee.setText(stringName);
+        }
+    }
+
 
     private void sendImage(final ArrayList<String> filePath, final ArrayList<String> fileName, final VisitorList visitor) {
 

@@ -40,7 +40,25 @@ public class VisitorEmployeeAdapter extends RecyclerView.Adapter<VisitorEmployee
     @Override
     public void onBindViewHolder(@NonNull VisitorEmployeeAdapter.MyViewHolder myViewHolder, int i) {
         final Employee model=empList.get(i);
+        final int pos = i;
         myViewHolder.tvEmp.setText(model.getEmpFname()+" "+model.getEmpSname());
+
+//        myViewHolder.checkBox.setChecked(empList.get(i).getChecked());
+//
+//        myViewHolder.checkBox.setTag(empList.get(i));
+//
+//        myViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CheckBox cb = (CheckBox) v;
+//                Employee employee = (Employee) cb.getTag();
+//
+//                employee.setChecked(cb.isChecked());
+//                empList.get(pos).setChecked(cb.isChecked());
+//
+//            }
+//        });
+
 
         if(model.getChecked())
         {
