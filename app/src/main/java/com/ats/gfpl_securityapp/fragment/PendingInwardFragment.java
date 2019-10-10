@@ -218,25 +218,30 @@ public class PendingInwardFragment extends Fragment implements View.OnClickListe
 //
 //                Log.e("ASSIGN EMP ID STRING","---------------------------------"+stringId);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                builder.setTitle("Confirmation");
-                builder.setMessage("Do you want to Approve Material ?");
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                if(assignedMaterialIdArray.size()==0) {
+                    Toast.makeText(getActivity(), "Please select inward........", Toast.LENGTH_SHORT).show();
+                }else {
 
-                        saveAssigneMaterial(assignedMaterialIdArray,1);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                    builder.setTitle("Confirmation");
+                    builder.setMessage("Do you want to Approve Material ?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                            saveAssigneMaterial(assignedMaterialIdArray, 1);
+
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
 
         }

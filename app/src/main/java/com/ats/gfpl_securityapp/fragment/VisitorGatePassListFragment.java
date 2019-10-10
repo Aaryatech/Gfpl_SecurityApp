@@ -108,7 +108,6 @@ public class VisitorGatePassListFragment extends Fragment implements View.OnClic
             e.printStackTrace();
         }
 
-
         try {
             String userStr = CustomSharedPreference.getString(getActivity(), CustomSharedPreference.KEY_USER);
             Gson gson = new Gson();

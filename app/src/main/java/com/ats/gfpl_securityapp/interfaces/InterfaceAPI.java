@@ -20,6 +20,7 @@ import com.ats.gfpl_securityapp.model.Sync;
 import com.ats.gfpl_securityapp.model.VisitCard;
 import com.ats.gfpl_securityapp.model.Visitor;
 import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.model.VisitorMaster;
 
 import org.json.JSONObject;
 
@@ -76,11 +77,18 @@ public interface InterfaceAPI {
     @POST("transaction/saveGatepassVisitor")
     Call<Visitor> saveGatepassVisitor(@Body Visitor visitor);
 
+    @POST("saveVisitor")
+    Call<VisitorMaster> saveVisitor(@Body VisitorMaster visitorMaster);
+
     @POST("transaction/saveGatepassVisitor")
     Call<VisitorList> saveGatepassVisitor(@Body VisitorList visitorList);
 
     @POST("transaction/getVisitorGatepassListInDate")
     Call<ArrayList<VisitorList>> getVisitorGatepassListInDate(@Query("fromDate") String fromDate, @Query("toDate") String toDate, @Query("gatepassType") ArrayList<Integer> gatepassType, @Query("empIds") String empIds, @Query("status") List<Integer> status);
+
+    @GET("getVisitorList")
+    Call<ArrayList<VisitorMaster>> getVisitorList();
+
 
     @POST("transaction/updateGatepassStatus")
     Call<Info> updateGatepassStatus(@Query("gatepassVisitorId") int gatepassVisitorId, @Query("empId") int empId,@Query("status") int status,@Query("gateId") int gateId);
@@ -94,6 +102,9 @@ public interface InterfaceAPI {
 
     @POST("master/deleteVisitor")
     Call<Info> deleteVisitor(@Query("gatepassVisitorId") int gatepassVisitorId);
+
+    @POST("deleteVistor ")
+    Call<Info> deleteVistor(@Query("visitorId") int visitorId);
 
     @POST("transaction/updateVisitorStatus")
     Call<Info> updateVisitorStatus(@Query("gatepassVisitorId") int gatepassVisitorId,@Query("status") int status);
@@ -170,4 +181,6 @@ public interface InterfaceAPI {
     @POST("master/deleteCompany")
     Call<Info> deleteCompany(@Query("companyId") int companyId);
 
+    @POST("getVisitorById")
+    Call<VisitorMaster> getVisitorById(@Query("visitorId") int visitorId);
 }

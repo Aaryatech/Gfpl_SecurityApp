@@ -22,6 +22,18 @@
         <!--android:title="Purpose List" />-->
 
         <item
+            android:id="@+id/nav_visitor_mgp"
+            android:icon="@drawable/ic_employee"
+            android:visible="false"
+            android:title="Visitor GatePass Master" />
+
+        <item
+            android:id="@+id/nav_visitor_mgp_list"
+            android:icon="@drawable/ic_employee"
+            android:visible="false"
+            android:title="Visitor GatePass Master List" />
+
+        <item
             android:id="@+id/nav_visitor_gp"
             android:icon="@drawable/ic_employee"
             android:visible="false"

@@ -1,6 +1,7 @@
 package com.ats.gfpl_securityapp.fragment;
 
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
@@ -31,10 +33,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,9 +63,11 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -75,21 +81,32 @@ import static android.app.Activity.RESULT_OK;
 public class InwardGatePassFragment extends Fragment implements View.OnClickListener {
 
     private RadioButton rbInward, rbParcel;
-    private EditText edInvoice, edNugs;
+    private EditText edInvoice, edNugs,edFromDate,edParty,edItem;
     private ImageView ivCamera1, ivCamera2, ivCamera3, ivPhoto1, ivPhoto2, ivPhoto3;
     private Spinner spParty, spItem;
     private Button btnSubmit;
+    private RadioGroup rg;
+    private TextInputLayout textInputItem,textInputParty;
     private LinearLayout linearLayout_photo1,LinearLayout_photo2;
-    private TextView tvPhoto1,tvPhoto2,tvPhoto3,tvPhoto1lable,tvPhoto2label,tvPartyName,tvPartyId,tvItemName,tvItemId;
+    private TextView tvPhoto1,tvPhoto2,tvPhoto3,tvPhoto1lable,tvPhoto2label,tvPartyName,tvPartyId,tvItemName,tvItemId,tvPartyNameLable,tvItemNameLable;
+    private View tvItemView,tvPartyView;
     private int gatePassType;
     Login loginUser;
     MaterialDetail model;
     int materialType;
 
+    String selectedText;
+    Material material = null;
+
+
     Dialog dialog;
     private BroadcastReceiver mBroadcastReceiver;
     PartyListDialogAdapter partyAdapter;
     ItemListDialogAdapter itemAdapter;
+
+    long fromDateMillis, toDateMillis;
+    int yyyy, mm, dd;
+
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -124,10 +141,24 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         spParty = view.findViewById(R.id.spParty);
         spItem = view.findViewById(R.id.spItem);
         btnSubmit = view.findViewById(R.id.btnSubmit);
+        edFromDate = view.findViewById(R.id.edFromDate);
+        rg=view.findViewById(R.id.rg);
+
         tvPartyName = view.findViewById(R.id.tvPartyName);
+        tvPartyNameLable = view.findViewById(R.id.tvPartyNameLable);
         tvPartyId = view.findViewById(R.id.tvPartyId);
+        tvPartyView = view.findViewById(R.id.tvPartyView);
+
         tvItemName = view.findViewById(R.id.tvItemName);
+        tvItemNameLable = view.findViewById(R.id.tvItemNameLable);
         tvItemId = view.findViewById(R.id.tvItemId);
+        tvItemView = view.findViewById(R.id.tvItemView);
+
+
+        edParty=view.findViewById(R.id.edParty);
+        edItem=view.findViewById(R.id.edItem);
+        textInputItem=view.findViewById(R.id.textInputItem);
+        textInputParty=view.findViewById(R.id.textInputParty);
 
 
         tvPhoto1 = view.findViewById(R.id.tvPhoto1);
@@ -140,12 +171,75 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
         linearLayout_photo1 = view.findViewById(R.id.linearLayout_photo1);
         LinearLayout_photo2 = view.findViewById(R.id.linearLayout_photo2);
 
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int radioButtonID = group.getCheckedRadioButtonId();
+                View radioButton = group.findViewById(radioButtonID);
+                int idx = group.indexOfChild(radioButton);
+                RadioButton r = (RadioButton) group.getChildAt(idx);
+                selectedText = r.getText().toString();
+                Log.e(" Radio", "----------" + idx);
+                Log.e(" Radio Text", "----------" + selectedText);
+
+                if(selectedText.equalsIgnoreCase("Inward"))
+                {
+                    tvPartyName.setVisibility(View.VISIBLE);
+                    tvPartyNameLable.setVisibility(View.VISIBLE);
+                    tvPartyId.setVisibility(View.GONE);
+                    tvPartyView.setVisibility(View.VISIBLE);
+
+                    tvItemName.setVisibility(View.VISIBLE);
+                    tvItemNameLable.setVisibility(View.VISIBLE);
+                    tvItemId.setVisibility(View.GONE);
+                    tvItemView.setVisibility(View.VISIBLE);
+
+
+                    edParty.setVisibility(View.GONE);
+                    edItem.setVisibility(View.GONE);
+                    textInputItem.setVisibility(View.GONE);
+                    textInputParty.setVisibility(View.GONE);
+
+
+                }else if(selectedText.equalsIgnoreCase("Parcel"))
+                {
+                    tvPartyName.setVisibility(View.GONE);
+                    tvPartyNameLable.setVisibility(View.GONE);
+                    tvPartyId.setVisibility(View.GONE);
+                    tvPartyView.setVisibility(View.GONE);
+
+                    tvItemName.setVisibility(View.GONE);
+                    tvItemNameLable.setVisibility(View.GONE);
+                    tvItemId.setVisibility(View.GONE);
+                    tvItemView.setVisibility(View.GONE);
+
+                    edParty.setVisibility(View.VISIBLE);
+                    edItem.setVisibility(View.VISIBLE);
+                    textInputItem.setVisibility(View.VISIBLE);
+                    textInputParty.setVisibility(View.VISIBLE);
+
+
+                }
+            }
+        });
+
         ivCamera1.setOnClickListener(this);
         ivCamera2.setOnClickListener(this);
         ivCamera3.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
         tvPartyName.setOnClickListener(this);
         tvItemName.setOnClickListener(this);
+        edFromDate.setOnClickListener(this);
+
+        Date todayDate = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String currentDate = formatter.format(todayDate);
+
+        fromDateMillis = todayDate.getTime();
+        toDateMillis = todayDate.getTime();
+
+        //  Log.e("Mytag", "todayString" + currentDate);
+        edFromDate.setText(currentDate);
 
         getAllItem();
         getAllPart();
@@ -386,16 +480,52 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
             showDialog1();
 
-        } else if (v.getId() == R.id.btnSubmit) {
-            String strInvoiceNumber,strNoOfNugs,strParty,strPartyId,strItem,strItemId;
+        }else if(v.getId()==R.id.edFromDate)
+        {
+            int yr, mn, dy;
+
+            if (fromDateMillis > 0) {
+                Calendar purchaseCal = Calendar.getInstance();
+                purchaseCal.setTimeInMillis(fromDateMillis);
+                yr = purchaseCal.get(Calendar.YEAR);
+                mn = purchaseCal.get(Calendar.MONTH);
+                dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
+            } else {
+                Calendar purchaseCal = Calendar.getInstance();
+                yr = purchaseCal.get(Calendar.YEAR);
+                mn = purchaseCal.get(Calendar.MONTH);
+                dy = purchaseCal.get(Calendar.DAY_OF_MONTH);
+            }
+            DatePickerDialog dialog = new DatePickerDialog(getContext(), fromDateListener, yr, mn, dy);
+           // dialog.getDatePicker().setMinDate(minDate);
+            dialog.show();
+        }
+        else if (v.getId() == R.id.btnSubmit) {
+            String strInvoiceNumber,strNoOfNugs,strPartyId,strItemId,strFromDate,strParty,strItem,strEdParty,strEdItem;
             boolean isValidInvoiceNumber = false,isvalidNoNuges = false,isvalidParty = false,isvalidItem = false;
 
             strInvoiceNumber=edInvoice.getText().toString();
             strParty=tvPartyName.getText().toString();
+            strEdParty=edParty.getText().toString();
             strPartyId=tvPartyId.getText().toString();
             strItem=tvItemName.getText().toString();
+            strEdItem=edItem.getText().toString();
             strItemId=tvItemId.getText().toString();
             strNoOfNugs=edNugs.getText().toString();
+            strFromDate = edFromDate.getText().toString();
+
+            SimpleDateFormat formatter3 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy");
+
+            Date ToDate = null;
+            try {
+                ToDate = formatter1.parse(strFromDate);//catch exception
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            final String inwardDate = formatter3.format(ToDate);
+            Log.e("Date Formate","--------------------"+inwardDate);
 
             float noOfNuges = 0;
             int partyId = 0,itemId=0;
@@ -406,6 +536,13 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
             }catch (Exception e)
             {
                 e.printStackTrace();
+            }
+
+            gatePassType = 1;
+            if (rbInward.isChecked()) {
+                gatePassType = 1;
+            } else if (rbParcel.isChecked()) {
+                gatePassType = 2;
             }
 
             if (strInvoiceNumber.isEmpty()) {
@@ -420,30 +557,42 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                 edNugs.setError(null);
                 isvalidNoNuges = true;
             }
-            if (strParty.isEmpty()) {
-                tvPartyName.setError("required");
-            } else {
-                tvPartyName.setError(null);
-                isvalidParty = true;
-            }
-            if (strItem.isEmpty()) {
-                tvItemName.setError("required");
-            } else {
-                tvItemName.setError(null);
-                isvalidItem = true;
+
+            if(gatePassType==1) {
+                if (strParty.isEmpty()) {
+                    tvPartyName.setError("required");
+                } else {
+                    tvPartyName.setError(null);
+                    isvalidParty = true;
+                }
+                if (strItem.isEmpty()) {
+                    tvItemName.setError("required");
+                } else {
+                    tvItemName.setError(null);
+                    isvalidItem = true;
+                }
+            }else if(gatePassType==2)
+            {
+                if (strEdParty.isEmpty()) {
+                    edParty.setError("required");
+                } else {
+                    edParty.setError(null);
+                    isvalidParty = true;
+                }
+                if (strEdItem.isEmpty()) {
+                    edItem.setError("required");
+                } else {
+                    edItem.setError(null);
+                    isvalidItem = true;
+                }
             }
 
-            gatePassType = 1;
-            if (rbInward.isChecked()) {
-                gatePassType = 1;
-            } else if (rbParcel.isChecked()) {
-                gatePassType = 2;
-            }
+
             //int partyId = partyIdList.get(spParty.getSelectedItemPosition());
             //int itemId = itemIdList.get(spItem.getSelectedItemPosition());
             //String partyName = partyNameList.get(spParty.getSelectedItemPosition());
 
-            if(isValidInvoiceNumber && isvalidNoNuges && isvalidParty && isvalidItem)
+            if(isValidInvoiceNumber && isvalidNoNuges && isvalidParty &&isvalidItem)
             {
                 Calendar calender = Calendar.getInstance();
                 SimpleDateFormat mdformat = new SimpleDateFormat("hh:mm");
@@ -452,7 +601,12 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
 
                 if (model == null) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    final Material material = new Material(0, sdf.format(System.currentTimeMillis()), 1, gatePassType, strInvoiceNumber, strParty, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", strItem, "");
+                    //sdf.format(System.currentTimeMillis())
+                    if(gatePassType==1) {
+                         material = new Material(0, inwardDate, 1, gatePassType, strInvoiceNumber, strParty, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", strItem, "");
+                    }else if(gatePassType==2) {
+                         material = new Material(0, inwardDate, 1, gatePassType, strInvoiceNumber, strEdParty, partyId, loginUser.getEmpId(), loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", "", strTime, noOfNuges, itemId, 1, 0, loginUser.getEmpId(), loginUser.getEmpDeptId(), 0, loginUser.getEmpFname() + " " + loginUser.getEmpMname() + " " + loginUser.getEmpSname(), "", 0, 0, 0, "", strEdItem, "");
+                    }
                     if (imagePath1 != null && imagePath2 != null) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                         builder.setTitle("Confirmation");
@@ -512,7 +666,7 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
                         Toast.makeText(getActivity(), "Please Select Photo", Toast.LENGTH_SHORT).show();
                     }
                 }else {
-                     final Material material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, strParty, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "",strItem,"");
+                     material = new Material(model.getGatepassInwardId(), model.getInwardDate(), model.getGatePassType(), gatePassType, strInvoiceNumber, strParty, partyId, model.getSecurityId(), model.getSecurityName(), model.getPersonPhoto(), model.getInwardPhoto(), strTime, noOfNuges, itemId, model.getDelStatus(), model.getStatus(), model.getToEmpId(), model.getToDeptId(), model.getToStatus(), model.getToEmpName(), model.getToDeptName(), model.getExInt1(), model.getExInt2(), model.getExInt3(), "",strItem,"");
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                     builder.setTitle("Confirmation");
                     builder.setMessage("Do you want to edit Material gate pass ?");
@@ -537,6 +691,28 @@ public class InwardGatePassFragment extends Fragment implements View.OnClickList
             }
         }
     }
+
+    DatePickerDialog.OnDateSetListener fromDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            yyyy = year;
+            mm = month + 1;
+            dd = dayOfMonth;
+            edFromDate.setText(dd + "-" + mm + "-" + yyyy);
+
+            Calendar calendar = Calendar.getInstance();
+           // calendar.add(Calendar.DATE, -7);
+            calendar.set(yyyy, mm - 1, dd);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.HOUR, 0);
+            fromDateMillis = calendar.getTimeInMillis();
+
+
+        }
+    };
+
 
     private void showDialog1() {
         dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);

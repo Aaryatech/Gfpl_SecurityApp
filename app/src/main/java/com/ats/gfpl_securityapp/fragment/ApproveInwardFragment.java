@@ -232,26 +232,31 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
                 Log.e("ASSIGN EMP", "---------------------------------" + assignedArray);
                 Log.e("ASSIGN EMP ID", "---------------------------------" + assignedMaterialIdArray);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                builder.setTitle("Confirmation");
-                builder.setMessage("Do you want to Reject Material ?");
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                if(assignedMaterialIdArray.size()==0) {
+                    Toast.makeText(getActivity(), "Please select inward........", Toast.LENGTH_SHORT).show();
+                }else {
 
-                        rejectAssigneMaterial(assignedMaterialIdArray, 2);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
+                    builder.setTitle("Confirmation");
+                    builder.setMessage("Do you want to Reject Material ?");
+                    builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            rejectAssigneMaterial(assignedMaterialIdArray, 2);
 
 
-                    }
-                });
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                        }
+                    });
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         }
         else if (v.getId() == R.id.btnSubmit) {
@@ -269,7 +274,12 @@ public class ApproveInwardFragment extends Fragment implements ApproveInwardInte
                 Log.e("ASSIGN EMP", "---------------------------------" + assignedArray);
                 Log.e("ASSIGN EMP ID", "---------------------------------" + assignedMaterialIdArray);
 
-                new ApproveDialog(getContext(),assignedMaterialIdArray,staticLoginUser).show();
+
+                if(assignedMaterialIdArray.size()==0) {
+                    Toast.makeText(getActivity(), "Please select inward........", Toast.LENGTH_SHORT).show();
+                }else{
+                    new ApproveDialog(getContext(),assignedMaterialIdArray,staticLoginUser).show();
+                }
 
             }
 

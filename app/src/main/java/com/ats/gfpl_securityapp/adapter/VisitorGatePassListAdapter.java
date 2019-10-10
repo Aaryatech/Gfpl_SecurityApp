@@ -287,8 +287,6 @@ public class VisitorGatePassListAdapter extends RecyclerView.Adapter<VisitorGate
                             myViewHolder.ivOutFactory.setVisibility(View.GONE);
                             myViewHolder.ivOutSide.setVisibility(View.VISIBLE);
                         }
-
-
                     }
                 }
             }

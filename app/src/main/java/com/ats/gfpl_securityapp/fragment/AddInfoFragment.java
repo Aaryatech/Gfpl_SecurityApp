@@ -44,16 +44,16 @@ import com.ats.gfpl_securityapp.constants.Constants;
 import com.ats.gfpl_securityapp.model.Employee;
 import com.ats.gfpl_securityapp.model.VisitCard;
 import com.ats.gfpl_securityapp.model.VisitorList;
+import com.ats.gfpl_securityapp.model.VisitorMaster;
 import com.ats.gfpl_securityapp.utils.CommonDialog;
 import com.ats.gfpl_securityapp.utils.PermissionsUtil;
-import com.ats.gfpl_securityapp.utils.RealPathUtil;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -89,6 +89,8 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
     public static ArrayList<Employee> assignCardList = new ArrayList<>();
 
     public static ArrayList<VisitCard> assignCardNoStaticList = new ArrayList<>();
+    ArrayList<VisitorMaster> visitorList = new ArrayList<>();
+    VisitorMaster visitorMaster;
 
     File folder = new File(Environment.getExternalStorageDirectory() + File.separator, "gfpl_security");
     File f;
@@ -126,7 +128,7 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
         btnSubmit.setOnClickListener(this);
         tvCard.setOnClickListener(this);
 
-        rbYes.setChecked(true);
+        //rbYes.setChecked(true);
 
         try {
             String quoteStr = getArguments().getString("model");
@@ -152,7 +154,88 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
         createFolder();
         getCardNumber();
+        getVisitorList(model.getExInt2());
+
         return view;
+    }
+
+    private void getVisitorList(Integer visitorId) {
+        if (Constants.isOnline(getContext())) {
+            final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+            commonDialog.show();
+
+            Call<VisitorMaster> listCall = Constants.myInterface.getVisitorById(visitorId);
+            listCall.enqueue(new Callback<VisitorMaster>() {
+                @Override
+                public void onResponse(Call<VisitorMaster> call, Response<VisitorMaster> response) {
+                    try {
+                        if (response.body() != null) {
+
+                            Log.e("VISITOR LIST : ", " ----------------------------INFO VISITOR-------------------------------- " + response.body());
+                            visitorMaster = response.body();
+
+                            try {
+                                String imageUri = String.valueOf(visitorMaster.getIdProof());
+                                Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+imageUri);
+                                Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.ic_photo)).into(ivPhoto1);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            try {
+                                String imageUri = String.valueOf(visitorMaster.getIdProof1());
+                                Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+imageUri);
+                                Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.ic_photo)).into(ivPhoto2);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            try {
+                                String imageUri = String.valueOf(visitorMaster.getOtherPhoto());
+                                Log.e("Image Path","---------------------"+ Constants.IMAGE_URL+imageUri);
+                                Picasso.with(getActivity()).load(Constants.IMAGE_URL+imageUri).placeholder(getActivity().getResources().getDrawable(R.drawable.ic_photo)).into(ivPhoto3);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            tvPhoto1.setText(visitorMaster.getIdProof());
+                            tvPhoto2.setText(visitorMaster.getIdProof1());
+                            tvPhoto3.setText(visitorMaster.getOtherPhoto());
+
+                            if(visitorMaster.getTakeMobile().equalsIgnoreCase("Yes"))
+                            {
+                                rbYes.setChecked(true);
+                            }else if(visitorMaster.getTakeMobile().equalsIgnoreCase("No"))
+                            {
+                                rbNo.setChecked(true);
+                            }
+
+                            commonDialog.dismiss();
+
+                        } else {
+                            commonDialog.dismiss();
+                            Log.e("Data Null : ", "-----------");
+                        }
+                    } catch (Exception e) {
+                        commonDialog.dismiss();
+                        Log.e("Exception : ", "-----------" + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<VisitorMaster> call, Throwable t) {
+                    commonDialog.dismiss();
+                    Log.e("onFailure : ", "-----------" + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "No Internet Connection !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getCardNumber() {
@@ -263,19 +346,12 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            if (cardID == 0) {
-//                TextView viewProj = (TextView) spCard.getSelectedView();
-//                viewProj.setError("required");
-//            } else {
-//                TextView viewProj = (TextView) spCard.getSelectedView();
-//                viewProj.setError(null);
-//            }
-//            if (cardID != 0)
-//            {
-                final VisitorList visitor = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), "", "", "", model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), 1, "1", submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), stringId, model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
 
-            if (imagePath1 == null && imagePath2 == null && imagePath3 == null) {
+            String Photo1=tvPhoto1.getText().toString();
+            String Photo2=tvPhoto2.getText().toString();
+            String Photo3=tvPhoto3.getText().toString();
 
+            final VisitorList visitor1 = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), Photo1, Photo2, Photo3, model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), 1, "1", submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), stringId, model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
                 builder.setTitle("Confirmation");
                 builder.setMessage("Do you want to add info ?");
@@ -283,76 +359,9 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        saveVisitor(visitor);
 
-                    }
-                });
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }else{
-
-                final ArrayList<String> pathArray = new ArrayList<>();
-                final ArrayList<String> fileNameArray = new ArrayList<>();
-
-                String photo1 = "", photo2 = "", photo3 = "";
-
-                //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                if (imagePath1 != null) {
-
-                    pathArray.add(imagePath1);
-
-                    File imgFile1 = new File(imagePath1);
-                    int pos = imgFile1.getName().lastIndexOf(".");
-                    String ext = imgFile1.getName().substring(pos + 1);
-                    photo1 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p1." + ext;
-                    fileNameArray.add(photo1);
-                }
-
-                if (imagePath2 != null) {
-
-                    pathArray.add(imagePath2);
-
-                    File imgFile2 = new File(imagePath2);
-                    int pos2 = imgFile2.getName().lastIndexOf(".");
-                    String ext2 = imgFile2.getName().substring(pos2 + 1);
-                    photo2 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p2." + ext2;
-                    fileNameArray.add(photo2);
-
-                }
-
-                if (imagePath3 != null) {
-
-                    pathArray.add(imagePath3);
-
-                    File imgFile3 = new File(imagePath3);
-                    int pos3 = imgFile3.getName().lastIndexOf(".");
-                    String ext3 = imgFile3.getName().substring(pos3 + 1);
-                    photo3 = sdf.format(Calendar.getInstance().getTimeInMillis()) + "_p3." + ext3;
-                    fileNameArray.add(photo3);
-
-                }
-
-                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                final String currDate = sdf1.format(System.currentTimeMillis());
-
-                final VisitorList visitor1 = new VisitorList(model.getGatepassVisitorId(), model.getVisitDateIn(), model.getSecurityIdIn(), model.getPersonName(), model.getPersonCompany(), model.getPersonPhoto(), model.getMobileNo(), photo1, photo2, photo3, model.getPurposeId(), model.getPurposeHeading(), model.getPurposeRemark(), model.getEmpIds(), model.getEmpName(), model.getGateId(), model.getGatePasstype(), 3, model.getVisitType(), model.getInTime(), 1, "1", submitMob, model.getMeetingDiscussion(), "", model.getVisitOutTime(), (int) model.getTotalTimeDifference(), model.getSecurityIdOut(), model.getVisitDateOut(), model.getUserSignImage(), model.getDelStatus(), model.getIsUsed(), model.getExInt1(), model.getExInt2(), model.getExInt3(), model.getExVar1(), model.getExVar2(), stringId, model.getSecurityInName(), model.getSecurityOutName(), model.getPurposeHeading(), model.getGateName(), model.getAssignEmpName());
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogTheme);
-                builder.setTitle("Confirmation");
-                builder.setMessage("Do you want to add info ?");
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // saveVisitor(visitor);
-                        // Log.e("VISITOR", "-----------------------" + visitor);
-                        sendImage(pathArray, fileNameArray, visitor1);
+                       // sendImage(pathArray, fileNameArray, visitor1);
+                        saveVisitor(visitor1);
 
                     }
                 });
@@ -365,12 +374,10 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
-
-            }
+           // }
            // }
         }
     }
-
 
     private void showDialog() {
         dialog = new Dialog(getContext(), android.R.style.Theme_Light_NoTitleBar);
@@ -544,8 +551,6 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 //            });
         }
 
-
-
         @Override
         public int getItemCount() {
             return cardList.size();
@@ -639,6 +644,53 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
 
                 Log.e("Response : ", "--" + response.body());
                 saveVisitor(visitor);
+                commonDialog.dismiss();
+
+            }
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e("Error : ", "--" + t.getMessage());
+                commonDialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(getContext(), "Unable To Process", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void uploadImage(final ArrayList<String> filePath, final ArrayList<String> fileName) {
+
+        Log.e("PARAMETER : ", "   FILE PATH : " + filePath + "            FILE NAME : " + fileName);
+
+        final CommonDialog commonDialog = new CommonDialog(getContext(), "Loading", "Please Wait...");
+        commonDialog.show();
+
+        File imgFile = null;
+
+        MultipartBody.Part[] uploadImagesParts = new MultipartBody.Part[filePath.size()];
+
+        for (int index = 0; index < filePath.size(); index++) {
+            Log.e("ATTACH ACT", "requestUpload:  image " + index + "  " + filePath.get(index));
+            imgFile = new File(filePath.get(index));
+            RequestBody surveyBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            uploadImagesParts[index] = MultipartBody.Part.createFormData("file", "" + fileName.get(index), surveyBody);
+        }
+
+        // RequestBody imgName = RequestBody.create(MediaType.parse("text/plain"), "photo1");
+        RequestBody imgType = RequestBody.create(MediaType.parse("text/plain"), "1");
+
+        Call<JSONObject> call = Constants.myInterface.imageUpload(uploadImagesParts, fileName, imgType);
+        call.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                commonDialog.dismiss();
+
+                imagePath1 = null;
+                imagePath2 = null;
+                imagePath3 = null;
+
+                Log.e("Response : ", "--" + response.body());
+                //saveVisitor(visitor);
                 commonDialog.dismiss();
 
             }
@@ -870,38 +922,18 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 }
                 imagePath1 = f.getAbsolutePath();
                 tvPhoto1.setText("" + f.getName());
+
+                final ArrayList<String> pathArray = new ArrayList<>();
+                final ArrayList<String> fileNameArray = new ArrayList<>();
+                pathArray.add(imagePath1);
+                fileNameArray.add(f.getName());
+                uploadImage(pathArray,fileNameArray);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        } else if (resultCode == RESULT_OK && requestCode == 101) {
-            try {
-                realPath = RealPathUtil.getRealPathFromURI_API19(getContext(), data.getData());
-                Uri uriFromPath = Uri.fromFile(new File(realPath));
-                myBitmap1 = getBitmapFromCameraData(data, getContext());
-
-                ivPhoto1.setImageBitmap(myBitmap1);
-                imagePath1 = uriFromPath.getPath();
-                tvPhoto1.setText("" + uriFromPath.getPath());
-
-                try {
-
-                    FileOutputStream out = new FileOutputStream(uriFromPath.getPath());
-                    myBitmap1.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.flush();
-                    out.close();
-                    //Log.e("Image Saved  ", "---------------");
-
-                } catch (Exception e) {
-                    // Log.e("Exception : ", "--------" + e.getMessage());
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Log.e("Image Compress : ", "-----Exception : ------" + e.getMessage());
-            }
-        } else if (resultCode == RESULT_OK && requestCode == 202) {
+        }  else if (resultCode == RESULT_OK && requestCode == 202) {
             try {
                 String path = f.getAbsolutePath();
                 File imgFile = new File(path);
@@ -925,38 +957,18 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 }
                 imagePath2 = f.getAbsolutePath();
                 tvPhoto2.setText("" + f.getName());
+
+                final ArrayList<String> pathArray = new ArrayList<>();
+                final ArrayList<String> fileNameArray = new ArrayList<>();
+                pathArray.add(imagePath2);
+                fileNameArray.add(f.getName());
+                uploadImage(pathArray,fileNameArray);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        } else if (resultCode == RESULT_OK && requestCode == 201) {
-            try {
-                realPath = RealPathUtil.getRealPathFromURI_API19(getContext(), data.getData());
-                Uri uriFromPath = Uri.fromFile(new File(realPath));
-                myBitmap2 = getBitmapFromCameraData(data, getContext());
-
-                ivPhoto2.setImageBitmap(myBitmap2);
-                imagePath2 = uriFromPath.getPath();
-                tvPhoto2.setText("" + uriFromPath.getPath());
-
-                try {
-
-                    FileOutputStream out = new FileOutputStream(uriFromPath.getPath());
-                    myBitmap2.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.flush();
-                    out.close();
-                    //Log.e("Image Saved  ", "---------------");
-
-                } catch (Exception e) {
-                    // Log.e("Exception : ", "--------" + e.getMessage());
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Log.e("Image Compress : ", "-----Exception : ------" + e.getMessage());
-            }
-        } else if (resultCode == RESULT_OK && requestCode == 302) {
+        }  else if (resultCode == RESULT_OK && requestCode == 302) {
             try {
                 String path = f.getAbsolutePath();
                 File imgFile = new File(path);
@@ -980,37 +992,17 @@ public class AddInfoFragment extends Fragment implements View.OnClickListener {
                 }
                 imagePath3 = f.getAbsolutePath();
                 tvPhoto3.setText("" + f.getName());
+
+                final ArrayList<String> pathArray = new ArrayList<>();
+                final ArrayList<String> fileNameArray = new ArrayList<>();
+                pathArray.add(imagePath3);
+                fileNameArray.add(f.getName());
+                uploadImage(pathArray,fileNameArray);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        } else if (resultCode == RESULT_OK && requestCode == 301) {
-            try {
-                realPath = RealPathUtil.getRealPathFromURI_API19(getContext(), data.getData());
-                Uri uriFromPath = Uri.fromFile(new File(realPath));
-                myBitmap3 = getBitmapFromCameraData(data, getContext());
-
-                ivPhoto3.setImageBitmap(myBitmap3);
-                imagePath3 = uriFromPath.getPath();
-                tvPhoto3.setText("" + uriFromPath.getPath());
-
-                try {
-
-                    FileOutputStream out = new FileOutputStream(uriFromPath.getPath());
-                    myBitmap3.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.flush();
-                    out.close();
-                    //Log.e("Image Saved  ", "---------------");
-
-                } catch (Exception e) {
-                    // Log.e("Exception : ", "--------" + e.getMessage());
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Log.e("Image Compress : ", "-----Exception : ------" + e.getMessage());
-            }
         }
     }
 

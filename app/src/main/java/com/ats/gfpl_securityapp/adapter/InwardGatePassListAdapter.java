@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,6 +49,7 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
        final MaterialDetail model=materialList.get(i);
+        final int pos = i;
        myViewHolder.tvGPNo.setText(""+model.getExVar1());
        myViewHolder.tvInvoice.setText(""+model.getInvoiceNumber());
       // myViewHolder.tvDate.setText(""+model.getInwardDate());
@@ -107,29 +107,46 @@ public class InwardGatePassListAdapter extends RecyclerView.Adapter<InwardGatePa
             }
         });
 
-        if(model.getChecked())
-        {
-            myViewHolder.checkBox.setChecked(true);
-        }else{
-            myViewHolder.checkBox.setChecked(false);
-        }
+        myViewHolder.checkBox.setChecked(materialList.get(i).getChecked());
 
+        myViewHolder.checkBox.setTag(materialList.get(i));
 
-        myViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        myViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+            public void onClick(View v) {
+                CheckBox cb = (CheckBox) v;
+                MaterialDetail materialDetail = (MaterialDetail) cb.getTag();
 
-                    model.setChecked(true);
-
-                } else {
-
-                    model.setChecked(false);
-
-                }
+                materialDetail.setChecked(cb.isChecked());
+                materialList.get(pos).setChecked(cb.isChecked());
 
             }
         });
+
+
+//        if(model.getChecked())
+//        {
+//            myViewHolder.checkBox.setChecked(true);
+//        }else{
+//            myViewHolder.checkBox.setChecked(false);
+//        }
+//
+//
+//        myViewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//
+//                    model.setChecked(true);
+//
+//                } else {
+//
+//                    model.setChecked(false);
+//
+//                }
+//
+//            }
+//        });
 
         myViewHolder.linearLayoutTracking.setOnClickListener(new View.OnClickListener() {
             @Override

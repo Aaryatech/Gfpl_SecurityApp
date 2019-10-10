@@ -108,16 +108,18 @@
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
                     android:layout_margin="3dp"
-                    android:fontFamily="@font/sf_ui_regular"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/sf_ui_bold"
                     android:text="Invoice No : " />
 
                 <TextView
                     android:id="@+id/tvInvoice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp"
+                    android:textSize="20sp"
                     android:layout_margin="3dp"
-                    android:fontFamily="@font/sf_ui_regular"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:fontFamily="@font/sf_ui_bold"
                     android:text="12523423423fd" />
 
             </LinearLayout>
